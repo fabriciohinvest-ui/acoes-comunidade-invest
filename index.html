@@ -18,7 +18,8 @@ a{color:inherit;text-decoration:none}
 .num{font-variant-numeric:tabular-nums}
 .bar{position:sticky;top:0;z-index:5;background:var(--ac);color:var(--on-ac)}
 .bar .in{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:16px;align-items:center;height:46px}
-.bar b{white-space:nowrap}.bar span{opacity:.75;font-size:14px}
+.bar b{white-space:nowrap;margin-right:10px}.bar .in{gap:6px;overflow-x:auto;white-space:nowrap}.bar a{opacity:.75;font-size:14px;padding:6px 10px;border-radius:8px}.bar a.on{opacity:1;background:rgba(255,255,255,.14);font-weight:600}
+@media (max-width:760px){.bar b{display:none}}
 .wrap{max-width:1120px;margin:0 auto;padding:26px 20px 60px}
 h1{font-size:28px;line-height:1.15}
 .sub{color:var(--mu);font-size:14.5px;margin-top:4px}
@@ -54,7 +55,7 @@ footer{font-size:12.5px;color:var(--mu);margin-top:20px}
 </style>
 </head>
 <body>
-<nav class="bar"><div class="in"><b>Comunidade Invest</b><span>Ações, FIIs e BDRs</span></div></nav>
+<nav class="bar"><div class="in"><b>Comunidade Invest</b><a class="on" href="index.html">Ações, FIIs e BDRs</a><a href="tesouro.html">Tesouro Direto</a></div></nav>
 <main class="wrap">
   <h1>Pesquise uma ação, FII ou BDR</h1>
   <p class="sub" id="sub">Digite o código (ex.: BBAS3) ou o nome da empresa ou do fundo.</p>

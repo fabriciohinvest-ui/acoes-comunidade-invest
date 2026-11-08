@@ -53,6 +53,7 @@ Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Co
 | `atualizar.py` | O robô (cerca de 980 linhas). Baixa, calcula e grava `dados/<TICKER>.json` + `dados/indice.json` |
 | `index.html` | A pesquisa. Lê `indice.json` e manda para `acao.html?t=TICKER`. Lê `?q=` e `?tipo=` da URL |
 | `acao.html` | A página de qualquer ativo (`?t=TICKER`). `render()` faz ação e BDR, `renderFii()` faz FII |
+| `tesouro.html` + `tesouro.py` | Página do Tesouro Direto (veio da área de investimentos da Comunidade; CSS e JS embutidos) e o robô dela, que grava `dados/tesouro.json`. A página busca esse JSON ao abrir e, se falhar, usa os dados embutidos. Pegadinha: a API do Banco Central responde 304 para `ultimos/1`; use `ultimos/10` |
 | `config.js` | `window.CI_DADOS_URL` (onde estão os JSON). Opcionais: `CI_PAGINA_ATIVO`, `CI_PAGINA_PESQUISA` |
 | `netlify.toml` | Sem build, publica a raiz e dá CORS `*` em `/dados/*`. Tem uma linha `ignore` comentada (parte B do passo a passo) |
 | `.github/workflows/atualizar.yml` | Cron `30 0 * * 2-6` (21h30 BRT, seg a sex) e `0 11 * * 2-6` (repescagem às 8h), mais `workflow_dispatch` |

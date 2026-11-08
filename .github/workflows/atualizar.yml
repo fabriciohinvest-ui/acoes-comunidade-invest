@@ -26,6 +26,9 @@ jobs:
           python-version: '3.12'
       - name: Baixar dados e recalcular indicadores
         run: python atualizar.py
+      - name: Tesouro Direto (taxas do dia)
+        run: python tesouro.py
+        continue-on-error: true   # se o Tesouro falhar, as acoes salvam do mesmo jeito
       - name: Salvar no repositório (a Netlify publica sozinha)
         run: |
           git config user.name "robo-comunidade-invest"

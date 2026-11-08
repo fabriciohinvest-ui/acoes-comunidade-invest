@@ -9,6 +9,8 @@
 | `atualizar.py` | O robô. Baixa os dados públicos, calcula os indicadores e grava `dados/<TICKER>.json` |
 | `dados/` | O que a página lê (um JSON por ação + `indice.json` com o resumo de todas) |
 | `cache/` | Histórico guardado pelo robô (cotações desde 2009, balanços da CVM, proventos de BDR). Não apague |
+| `tesouro.html` | Tesouro Direto: todas as taxas à venda, se estão altas ou baixas contra 5 anos, simulador até o vencimento e de venda antecipada. Lê `dados/tesouro.json` |
+| `tesouro.py` | Robô do Tesouro: baixa as taxas do Tesouro Transparente e os juros do Banco Central e grava `dados/tesouro.json` (roda junto com o `atualizar.py`) |
 | `config.js` | Onde as páginas buscam os dados (padrão: a pasta `dados/` do próprio site) |
 | `netlify.toml` | Configuração da Netlify (sem build; libera a leitura dos dados por outros sites) |
 | `.github/workflows/atualizar.yml` | Agenda o robô todo dia útil às 21h30 (e repete às 8h do dia seguinte) |
