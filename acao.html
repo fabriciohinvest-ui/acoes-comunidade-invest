@@ -10,7 +10,7 @@
   --font:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --bg:#f6f6f6;--s:#fff;--s2:#f0f0f0;--line:#e0e0e0;--fg:#1a1a1a;--mu:#6b6b6b;--ac:#2b2b2b;--on-ac:#fff;--soft:#ececec;--ac2:#8a8a8a;
   --up:#b3261e;--upsoft:#f8e5e3;--down:#1e7a46;--downsoft:#e2f2e8;
-  --c1:#2b3a55;--c2:#1e7a46;--c3:#d08a1e;--c4:#7fb04a;--c5:#3d6fb5;
+  --c1:#2b3a55;--c2:#1e7a46;--c3:#d08a1e;--c4:#7fb04a;--c5:#3d6fb5;--c6:#8e5ba8;--c7:#c2577a;--c8:#5aa5a0;
 }
 *{box-sizing:border-box;margin:0}
 body{background:var(--bg);font-family:var(--font);color:var(--fg);line-height:1.45}
@@ -98,6 +98,27 @@ footer{font-size:12.5px;color:var(--mu);margin-top:24px}footer p+p{margin-top:6p
 #pop{position:absolute;z-index:30;max-width:330px;width:calc(100vw - 32px);background:var(--s);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:12px 14px 13px;font-size:14px;line-height:1.5;display:none}
 #pop h4{font-size:14.5px;margin-bottom:4px;padding-right:22px}#pop button{position:absolute;top:6px;right:8px;border:0;background:none;font-size:18px;cursor:pointer;color:var(--mu)}
 @media (max-width:760px){.wrap{padding:0 12px 48px}.kp{grid-template-columns:repeat(2,1fr)}.kp div:first-child{grid-column:1/-1}.inf{grid-template-columns:1fr 1fr}.box2{grid-template-columns:1fr}.sh,.sb{padding-left:14px;padding-right:14px}.hd h1{font-size:24px}.cards{grid-template-columns:1fr 1fr}.radar{grid-template-columns:repeat(4,1fr)}}
+
+/* ---- extras: emojis, comunicados, comparacao, termometro, quedas, rosca ---- */
+.inf div{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center}.inf span,.inf b{grid-column:2;overflow-wrap:anywhere}
+.inf .emo{grid-row:1/3;font-style:normal;font-size:19px;width:38px;height:38px;flex:none;border-radius:10px;background:var(--s2);display:grid;place-items:center;line-height:1}
+.com{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 8px;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;border-radius:8px}.com:hover{background:var(--s2)}
+.com .dt{font-size:13px;color:var(--mu)}.com .ti b{display:block;font-weight:600;font-size:14.5px}.com .ti small{color:var(--mu);font-size:12.5px}
+.com .ver{font-size:13px;font-weight:600;border:1px solid var(--line);border-radius:8px;padding:4px 10px;white-space:nowrap}
+.calc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 10px;font-size:15px}.calc input{width:120px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--s);color:var(--fg);font:inherit}
+#cmpRes b{font-size:18px}
+.cmpg{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}.cmpg div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;column-gap:10px;align-items:center;background:var(--s2);border-radius:10px;padding:8px 12px;font-size:13.5px}
+.cmpg i{width:10px;height:10px;border-radius:3px;grid-row:1/3}.cmpg b{font-size:15px}.cmpg small{grid-column:3;text-align:right;font-size:12px}
+.trm{display:grid;grid-template-columns:190px 96px minmax(0,1fr);gap:4px 16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.trm:last-child{border-bottom:0}
+.trm .nm small{display:block;color:var(--mu);font-size:12px;font-weight:400}.trm .tx{font-size:18px;font-weight:700}.trm .ds{grid-column:2/-1;font-size:13.5px;color:var(--mu)}.trm .ds b{color:var(--fg)}
+.rg{position:relative;height:10px;border-radius:6px;background:var(--s2);border:1px solid var(--line);margin:8px 0 5px}
+.rg i{position:absolute;top:-6px;width:5px;height:20px;border-radius:3px;background:var(--fg);transform:translateX(-50%)}.rg em{position:absolute;top:-3px;width:2px;height:14px;background:var(--mu);transform:translateX(-50%)}
+.rgl{display:flex;justify-content:space-between;gap:6px;font-size:11.5px;color:var(--mu)}
+.box2.b3{grid-template-columns:repeat(3,1fr)}.box2 small{display:block;font-size:12px;color:var(--mu)}
+.rosca{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;align-items:center;margin-bottom:8px}.rosca svg{width:220px;height:220px}
+.rl div{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.rl i{width:12px;height:12px;border-radius:3px}
+@media (max-width:760px){.com{grid-template-columns:minmax(0,1fr) auto;gap:2px 10px}.com .dt{grid-column:1/-1}.com .ver{grid-row:2;grid-column:2}
+.trm{grid-template-columns:minmax(0,1fr) auto}.trm .rgw,.trm .ds{grid-column:1/-1}.box2.b3{grid-template-columns:1fr}.rosca{grid-template-columns:1fr;justify-items:center}.rosca .rl{width:100%}.inf{grid-template-columns:1fr;gap:8px}.inf div{padding:8px 12px}.inf .emo{width:32px;height:32px;font-size:16px}}
 </style>
 </head>
 <body>
@@ -232,7 +253,7 @@ const IND=[
  ['Endividamento',[['divliq_pl','Dív. Líquida/PL','x'],['divliq_ebitda','Dív. Líquida/EBITDA','x'],['liquidez_corrente','Liquidez Corrente','x'],['pl_ativos','Patrimônio/Ativos','x'],['passivos_ativos','Passivos/Ativos','x']]],
  ['Crescimento',[['cagr_receitas_5a','CAGR Receitas 5 anos','p'],['cagr_lucros_5a','CAGR Lucros 5 anos','p']]]
 ];
-let st={ab:{},cot:'1a',ind:'pl',hi:5,dv:'10',dvm:'dy',pg:0,rad:'com',po:'5',rl:'10',rlp:'anual',res:5,pt:'10'};
+let st={cmp:'5',trm:'10',dd:'max',cpg:0,ab:{},cot:'1a',ind:'pl',hi:5,dv:'10',dvm:'dy',pg:0,rad:'com',po:'5',rl:'10',rlp:'anual',res:5,pt:'10'};
 const anos=()=>Object.keys(A.anual).map(Number).sort((a,b)=>a-b);
 const seg=(id,ops,k)=>`<div class="seg" data-seg="${k}">${ops.map(([v,t])=>`<button data-v="${v}" class="${String(st[k])===String(v)?'on':''}">${t}</button>`).join('')}</div>`;
 function sec(id,titulo,ctrls,corpo,prev){return`<section class="sec ${prev?prev+(st.ab[id]?'':' fechado'):''}" id="${id}"><div class="sh"><h2>${titulo}</h2><div class="ctrls">${ctrls||''}</div></div><div class="sb">${corpo}</div>${prev?`<button class="mais" data-mais="${id}">${st.ab[id]?'Ver menos ▴':'Ver mais ▾'}</button>`:''}</section>`}
@@ -241,7 +262,7 @@ function render(){
   M=A.moeda_balanco==='USD'?'US$':'R$';const I=A.indicadores,bdr=A.tipo==='bdr';
   const c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],v12=c.find(r=>r[0]>=String(+u[0].slice(0,4)-1)+u[0].slice(4));
   document.title=`${A.ticker}: ${A.nome} · Comunidade Invest`;
-  const secs=[['cotacao','Cotação'],['indicadores','Indicadores'],['hist','Histórico'],['dividendos','Dividendos'],['sobre','Empresa'],['resultados','Resultados'],['balanco','Balanço'],['graficos','Gráficos']];
+  const secs=[['cotacao','Cotação'],['indicadores','Indicadores'],['hist','Histórico'],['dividendos','Dividendos'],['sobre','Empresa'],['comunicados','Comunicados'],['resultados','Resultados'],['balanco','Balanço'],['graficos','Gráficos']];
   $('#nav').innerHTML=`<a class="volta" href="${PESQUISA}">← Pesquisa</a><b>${A.ticker}</b>`+secs.map(([i,t])=>`<a data-go="${i}">${t}</a>`).join('');
   const indDisp=IND.flatMap(g=>g[1]).filter(([k])=>isNum(I[k])||Object.values(A.hist_indicadores).some(h=>isNum(h[k])));
   $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${A.setor} · ${A.segmento}${bdr?' · BDR':''} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
@@ -253,6 +274,7 @@ function render(){
   ${sec('dividendos','Histórico de dividendos · '+A.ticker,'','<div class="box2" id="dvBox" style="margin-top:0"></div><div class="tw" id="tProv" style="margin-top:14px"></div><div class="pg" id="pg"></div>','l5')}
   ${sec('radar','Radar de dividendos · '+A.ticker,'',`<p style="font-size:14.5px">Com base no histórico de proventos da ${A.ticker} nos últimos 5 anos, os meses em que costuma haver data com ou pagamento.</p><div style="margin-top:12px">${seg('rad',[['com','Data Com'],['pag','Data Pagamento']],'rad')}</div><div class="radar" id="rad"></div>`)}
   ${sec('sobre','Informações sobre a empresa','',`<div class="inf" id="inf"></div>`)}
+  ${secCom()}
   ${sec('resultados','Resultados '+A.nome,seg('res',[[5,'5 anos'],[10,'10 anos']],'res'),`<div class="tw" id="tRes"></div><p class="note">Valores em ${M==='US$'?'dólares':'reais'}${bdr?', como entregues à SEC (EUA)':', do balanço consolidado entregue à CVM'}.</p>`,'l4')}
   ${sec('balanco','Balanço patrimonial '+A.nome,'','<div class="tw" id="tBal"></div>','l3')}
   <h2 class="divisor" id="graficos">Gráficos</h2>
@@ -262,10 +284,11 @@ function render(){
   ${sec('receitas','Receitas e lucros',`<select class="sel" id="rlp"><option value="anual">Anual</option><option value="trim">Trimestral</option></select>`+seg('rl',[['5','5A'],['10','10A'],['max','MAX']],'rl'),'<div id="gRl"></div>')}
   ${sec('lxc','Lucro x cotação · '+A.ticker,'','<div id="gLc"></div>'+(bdr?`<p class="note">Cotação de ${A.info.ticker_eua} nos EUA em dólar, no fim de cada ano.</p>`:''))}
   ${sec('patrimonio','Evolução do patrimônio · '+A.nome,seg('pt',[['5','5A'],['10','10A'],['max','MAX']],'pt'),'<div id="gPt"></div>')}
-  <footer><p><b>Fontes:</b> ${bdr?`B3 (cotação e proventos do BDR), SEC/EUA (balanços da ${A.razao}), Yahoo Finance (cotação nos EUA), Banco Central (dólar PTAX)`:'B3 (cotações, proventos e desdobramentos), CVM (balanços DFP e ITR, free float no Formulário de Referência)'}. Balanço mais recente: ${dBR(A.balanco_ref)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
+  ${secExtrasGraf()}
+  <footer><p><b>Fontes:</b> ${bdr?`B3 (cotação e proventos do BDR), SEC/EUA (balanços da ${A.razao}), Yahoo Finance (cotação nos EUA), Banco Central (dólar PTAX, CDI e IPCA), B3 (índices), SEC (documentos da empresa)`:'B3 (cotações, proventos, desdobramentos e índices), CVM (balanços DFP e ITR, free float no Formulário de Referência, comunicados e fatos relevantes), Banco Central (CDI e IPCA), Yahoo Finance (IVVB11)'}. Balanço mais recente: ${dBR(A.balanco_ref)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
   <p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>`;
   ligar();ligarBusca();
-  ['cot','ind','hi','dv','prov','rad','po','inf','rl','lc','res','pt','bal'].forEach(desenhar);
+  ['cot','ind','hi','dv','prov','rad','po','inf','rl','lc','res','pt','bal'].forEach(desenhar);ligarExtras();
 }
 // ---------- busca rapida no topo (usa o mesmo indice.json da pagina de pesquisa) ----------
 let INDICE=null;
@@ -285,7 +308,7 @@ async function ligarBusca(){
     if(e.key==='Enter'){e.preventDefault();if(res[sel])ir(res[sel].ticker);else if(inp.value)location.href=PESQUISA+'?q='+encodeURIComponent(inp.value)}if(e.key==='Escape')sug.style.display='none'};
   if(!window._bqL){window._bqL=1;document.addEventListener('click',e=>{const g=$('#sug');if(g&&!e.target.closest('.bmini'))g.style.display='none'})}
 }
-const DES=k=>A.tipo==='fii'?desenharFii(k):desenhar(k);
+const DES=k=>EXTRA[k]?EXTRA[k]():A.tipo==='fii'?desenharFii(k):desenhar(k);
 function ligar(){
   const fii=A.tipo==='fii';
   const ir=id=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};
@@ -333,7 +356,7 @@ function desenhar(k){
     ['Valor de mercado (empresa)',GU(f.valor_mercado)],['Valor de firma',GU(f.valor_firma)],['Patrimônio Líquido',GU(f.pl)],['Nº de ações (empresa)',grande(f.n_papeis)],['Ativos',GU(f.ativos)],['Ativo Circulante',GU(f.ativo_circ)],['Caixa e aplicações',GU(f.disponibilidade)],['Dívida Bruta',GU(f.divida_bruta)],['Dívida Líquida',GU(f.divida_liquida)],
     ['Cotação nos EUA ('+f.ticker_eua+')','US$ '+N2.format(f.preco_eua)],['Dólar PTAX',brl(f.dolar)],['Paridade',`1 ação ≈ ${N1.format(f.paridade)} BDRs`],['Liquidez Média Diária (BDR)',G(f.liquidez_diaria)],['Nº de BDRs',grande(f.n_bdrs)],['Depositário',f.depositario||'-'],['Setor',A.setor],['Segmento',A.segmento]]:[
     ['Valor de mercado',G(f.valor_mercado)],['Valor de firma',G(f.valor_firma)],['Patrimônio Líquido',G(f.pl)],['Nº total de papéis',grande(f.n_papeis)],['Ativos',G(f.ativos)],['Ativo Circulante',G(f.ativo_circ)],['Disponibilidade',G(f.disponibilidade)],['Segmento de Listagem',f.listagem||'-'],['Free Float',F.p(f.free_float)],['Tag Along',F.p(f.tag_along)],['Liquidez Média Diária',G(f.liquidez_diaria)],['Setor',A.setor],['Segmento',A.segmento],['Acionistas',isNum(f.acionistas)?N0.format(f.acionistas):'-'],['CNPJ',f.cnpj]];
-    $('#inf').innerHTML=it.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('')}
+    $('#inf').innerHTML=infHTML(it)}
   if(k==='rl'){let lb,rec,luc,dest;if(st.rlp==='anual'){const yy=corte(ys,st.rl);lb=[...yy.map(String),'ÚLT 12M'];rec=[...yy.map(y=>A.anual[y].receita),A.ttm.receita];luc=[...yy.map(y=>A.anual[y].lucro_liquido),A.ttm.lucro_liquido];dest=yy.length}
     else{const ts=corte(Object.keys(A.trimestres).sort(),st.rl==='max'?'max':String(+st.rl*4));lb=ts.map(d=>Math.ceil(+d.slice(5,7)/3)+'T'+d.slice(2,4));rec=ts.map(d=>A.trimestres[d].receita);luc=ts.map(d=>A.trimestres[d].lucro_liquido)}
     chart($('#gRl'),lb,[{nome:'Receita Líquida',tipo:'barra',cor:'var(--c2)',vals:rec,fmt:v=>grande(v,M)},{nome:'Lucro Líquido',tipo:'linha',cor:'var(--c3)',vals:luc,fmt:v=>grande(v,M)}],{destaque:dest})}
@@ -356,7 +379,7 @@ function renderFii(){
   M='R$';const I=A.indicadores,f=A.info;
   const c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],v12=c.find(r=>r[0]>=String(+u[0].slice(0,4)-1)+u[0].slice(4));
   document.title=`${A.ticker}: ${A.nome} · Comunidade Invest`;
-  const secs=[['cotacao','Cotação'],['indicadores','Indicadores'],['rentab','Rentabilidade'],['hist','Histórico'],['dividendos','Dividendos'],['sobre','Fundo'],['carteira','Carteira'],['graficos','Gráficos']];
+  const secs=[['cotacao','Cotação'],['indicadores','Indicadores'],['rentab','Rentabilidade'],['hist','Histórico'],['dividendos','Dividendos'],['sobre','Fundo'],['carteira','Carteira'],['comunicados','Comunicados'],['graficos','Gráficos']];
   $('#nav').innerHTML=`<a class="volta" href="${PESQUISA}">← Pesquisa</a><b>${A.ticker}</b>`+secs.map(([i,t])=>`<a data-go="${i}">${t}</a>`).join('');
   const R=A.rentab,P=[['1m','1 mês'],['3m','3 meses'],['6m','6 meses'],['12m','1 ano'],['24m','2 anos'],['60m','5 anos'],['120m','10 anos']].filter(([k])=>R[k]);
   $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${A.setor} · ${A.segmento}${A.tipo_fundo?' · '+A.tipo_fundo:''} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
@@ -368,19 +391,20 @@ function renderFii(){
   ${sec('hist','Histórico anual '+A.ticker,seg('fha',[[5,'5A'],[10,'10A']],'fha'),'<div class="tw" id="tHi"></div>','l4')}
   ${sec('dividendos','Histórico de rendimentos · '+A.ticker,'','<div class="box2" id="dvBox" style="margin-top:0"></div><div class="tw" id="tProv" style="margin-top:14px"></div><div class="pg" id="pg"></div>','l5')}
   ${sec('radar','Radar de rendimentos · '+A.ticker,'',`<p style="font-size:14.5px">Com base no histórico de rendimentos da ${A.ticker} nos últimos 5 anos, os meses em que costuma haver data com ou pagamento.</p><div style="margin-top:12px">${seg('rad',[['com','Data Com'],['pag','Data Pagamento']],'rad')}</div><div class="radar" id="rad"></div>`)}
-  ${sec('sobre','Informações sobre o fundo','',`<div class="inf">${[['Razão social',f.razao],['CNPJ',f.cnpj],['Público-alvo',f.publico_alvo],['Mandato',f.mandato],['Segmento',A.segmento],['Segmento (cadastro na CVM)',f.segmento_cvm],['Tipo de fundo',A.tipo_fundo],['Tipo de gestão',f.tipo_gestao],['Prazo de duração',f.prazo],['Administrador',f.administrador],['Início do fundo',f.inicio?dBR(f.inicio):'-'],['Valor patrimonial',grande(I.pl,'R$')],['Valor patrimonial por cota',brl(I.vp_cota)],['Cotas emitidas',FF.n(I.cotas)],['Nº de cotistas',FF.n(I.cotistas)],['Taxa de adm. (12M)',F.p(I.taxa_adm_12m)+' do PL'],['Último rendimento',`${brl3(I.ultimo_rendimento)} (data com ${dBR(I.ultimo_rend_data)})`],['Código ISIN',f.isin]].map(([k,v])=>`<div><span>${k}</span><b>${v||'-'}</b></div>`).join('')}</div>`)}
+  ${sec('sobre','Informações sobre o fundo','',`<div class="inf">${infHTML([['Razão social',f.razao],['CNPJ',f.cnpj],['Público-alvo',f.publico_alvo],['Mandato',f.mandato],['Segmento',A.segmento],['Segmento (cadastro na CVM)',f.segmento_cvm],['Tipo de fundo',A.tipo_fundo],['Tipo de gestão',f.tipo_gestao],['Prazo de duração',f.prazo],['Administrador',f.administrador],['Início do fundo',f.inicio?dBR(f.inicio):'-'],['Valor patrimonial',grande(I.pl,'R$')],['Valor patrimonial por cota',brl(I.vp_cota)],['Cotas emitidas',FF.n(I.cotas)],['Nº de cotistas',FF.n(I.cotistas)],['Taxa de adm. (12M)',F.p(I.taxa_adm_12m)+' do PL'],['Último rendimento',`${brl3(I.ultimo_rendimento)} (data com ${dBR(I.ultimo_rend_data)})`],['Código ISIN',f.isin]])}</div>`)}
   ${sec('carteira','Composição da carteira',``,`<div class="tw" id="tCart"></div><p class="note">Último informe mensal entregue à CVM (${mesBR(A.composicao.data)}). Percentual sobre o total de ativos do fundo.</p>`,'l4')}
+  ${secCom()}
   <h2 class="divisor" id="graficos">Gráficos</h2>
   ${sec('gind','Histórico do indicador',`<select class="sel" id="selInd">${[['dy','Dividend Yield (ano)'],['pvp','P/VP'],['vp_cota','Valor patrimonial por cota'],['rend','Rendimentos no ano (R$/cota)'],['cotistas','Nº de cotistas'],['pl','Patrimônio líquido']].map(([k,t])=>`<option value="${k}">${t}</option>`).join('')}</select>`,'<div id="gIh"></div>')}
   ${sec('gdiv','Rendimentos por mês · '+A.ticker,`<select class="sel" id="dvm"><option value="valor">Valor por cota</option><option value="dy">Dividend Yield do mês</option></select>`+seg('fdv',[['12','1A'],['24','2A'],['60','5A'],['max','MAX']],'fdv'),'<div id="gDv"></div>')}
   ${sec('gvp','Valor patrimonial x cotação',seg('fvp',[['1','1A'],['5','5A'],['max','MAX']],'fvp'),'<div id="gVp"></div><p class="note">Fim de cada mês. P/VP abaixo de 1 = cota negociada abaixo do valor patrimonial.</p>')}
-  ${sec('grt','Rentabilidade acumulada x CDI e IPCA',seg('frt',[['1','1A'],['5','5A'],['10','10A'],['max','MAX']],'frt'),'<div id="gRt"></div><p class="note">Reinvestindo os rendimentos todo mês.</p>')}
   ${sec('gpl','Patrimônio e cotistas','','<div id="gPl"></div>')}
-  ${sec('gcart','Composição da carteira','','<div id="gCart"></div>')}
-  <footer><p><b>Fontes:</b> B3 (cotações e rendimentos), CVM (informe mensal do fundo: patrimônio, cotas, cotistas e carteira), Banco Central (CDI e IPCA), Yahoo Finance (rendimentos antigos). Os rendimentos começam em ${mesBR(A.proventos[A.proventos.length-1].data_com.slice(0,7))}: antes disso não há histórico público confiável, por isso DY e rentabilidade dos anos anteriores aparecem como "-". Informe mais recente: ${mesBR(A.composicao.data)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
+  ${sec('gcart','Distribuição da carteira do fundo','','<div id="gCart"></div>')}
+  ${secExtrasGraf()}
+  <footer><p><b>Fontes:</b> B3 (cotações e rendimentos), CVM (informe mensal do fundo: patrimônio, cotas, cotistas e carteira), Banco Central (CDI e IPCA), B3 (índices IFIX, IBOV, SMLL e IDIV; documentos no Fundos.NET), Yahoo Finance (rendimentos antigos e IVVB11). Os rendimentos começam em ${mesBR(A.proventos[A.proventos.length-1].data_com.slice(0,7))}: antes disso não há histórico público confiável, por isso DY e rentabilidade dos anos anteriores aparecem como "-". Informe mais recente: ${mesBR(A.composicao.data)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
   <p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>`;
   ligar();ligarBusca();
-  ['cot','find','fhi','fdvbox','prov','rad','fcart','find','fdv','fvp','frt','fpl','fgc'].forEach(desenharFii);
+  ['cot','find','fhi','fdvbox','prov','rad','fcart','fdv','fvp','fpl'].forEach(desenharFii);ligarExtras();
 }
 const mesBR=m=>m?MES[+m.slice(5,7)-1]+'/'+m.slice(0,4):'-',mesC=m=>MES[+m.slice(5,7)-1]+'/'+m.slice(2,4);
 function desenharFii(k){
@@ -392,8 +416,6 @@ function desenharFii(k){
   if(k==='fdvbox')$('#dvBox').innerHTML=`<div><span>Dividend Yield (12M)</span><b>${F.p(I.dy)}</b></div><div><span>Dividend Yield médio de 5 anos</span><b>${F.p(I.dy_medio_5a)}</b></div><div><span>Último rendimento</span><b>${brl3(I.ultimo_rendimento)}</b></div><div><span>Rendimento médio (12M)</span><b>${brl3(I.rend_medio_12m)}</b></div>`;
   if(k==='fcart'){const it=A.composicao.itens,t=it.reduce((s,x)=>s+x[1],0);
     $('#tCart').innerHTML=`<table class="t num"><thead><tr><th>Ativo</th><th class="r">Valor</th><th class="r">% da carteira</th></tr></thead><tbody>${it.slice().sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<tr><td>${n}</td><td class="r">${grande(v,'R$')}</td><td class="r">${N2.format(v/t*100)}%</td></tr>`).join('')}</tbody></table>`}
-  if(k==='fgc'){const it=A.composicao.itens.slice().sort((a,b)=>b[1]-a[1]),t=it.reduce((s,x)=>s+x[1],0),cores=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--ac2)','var(--up)','var(--mu)'];
-    $('#gCart').innerHTML=`<div style="display:flex;height:22px;border-radius:6px;overflow:hidden;margin-bottom:14px">${it.map(([n,v],i)=>`<div title="${n}" style="width:${v/t*100}%;background:${cores[i%8]}"></div>`).join('')}</div>`+it.map(([n,v],i)=>`<div style="display:grid;grid-template-columns:minmax(120px,220px) 1fr 64px;gap:10px;align-items:center;margin:7px 0;font-size:14px"><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${cores[i%8]};margin-right:7px"></i>${n}</span><div style="background:var(--s2);border-radius:5px;height:14px"><div style="width:${v/t*100}%;height:100%;border-radius:5px;background:${cores[i%8]}"></div></div><b class="num" style="text-align:right">${N1.format(v/t*100)}%</b></div>`).join('')}
   if(k==='find'){const c=st.ind,yy=ys.slice(-10),fm=c==='dy'?F.p:c==='pl'?v=>grande(v,'R$'):c==='cotistas'?FF.n:c==='pvp'?F.x:v=>'R$ '+N2.format(v);
     const atual={dy:I.dy,pvp:I.pvp,vp_cota:I.vp_cota,rend:I.rend_12m,cotistas:I.cotistas,pl:I.pl}[c];
     chart($('#gIh'),[...yy,c==='rend'||c==='dy'?'Últ. 12M':'Atual'],[{nome:$('#selInd').selectedOptions[0].text,tipo:'barra',cor:'var(--c1)',vals:[...yy.map(y=>an[y][c]),atual],fmt:fm}],{fmtE:c==='pl'?curto:c==='dy'?v=>N1.format(v)+'%':c==='cotistas'?curto:v=>N2.format(v),legenda:false,destaque:yy.length})}
@@ -402,15 +424,161 @@ function desenharFii(k){
     chart($('#gDv'),mm.map(mesC),[{nome:st.fdvm==='dy'?'Dividend Yield do mês':'Rendimento por cota (R$)',tipo:'barra',cor:'var(--c1)',vals,fmt:st.fdvm==='dy'?F.p:brl3}],{fmtE:st.fdvm==='dy'?v=>N2.format(v)+'%':v=>N3.format(v),legenda:false,ticks:12})}
   if(k==='fvp'){const mm=st.fvp==='max'?ms:ms.slice(-(+st.fvp*12)),M2=A.mensal;
     chart($('#gVp'),mm.map(mesC),[{nome:'Valor patrimonial por cota',tipo:'linha',cor:'var(--c1)',vals:mm.map(m=>M2[m].vp_cota),fmt:brl},{nome:'Cotação',tipo:'linha',cor:'var(--c3)',vals:mm.map(m=>M2[m].preco),fmt:brl},{nome:'P/VP',tipo:'linha',eixo:'d',cor:'var(--c4)',vals:mm.map(m=>M2[m].pvp),fmt:F.x,w:1.6}],{fmtE:v=>N2.format(v),fmtD:v=>N2.format(v),ticks:10})}
-  if(k==='frt'){const S=A.serie_rent,n=S.datas.length,i0=st.frt==='max'?0:Math.max(0,n-1-(+st.frt*12)),b=x=>{const base=1+x[i0]/100;return x.slice(i0).map(v=>((1+v/100)/base-1)*100)};
-    chart($('#gRt'),S.datas.slice(i0).map(mesC),[{nome:A.ticker,tipo:'linha',cor:'var(--c1)',vals:b(S.fii),fmt:F.p},{nome:'CDI',tipo:'linha',cor:'var(--c3)',vals:b(S.cdi),fmt:F.p},{nome:'IPCA',tipo:'linha',cor:'var(--c4)',vals:b(S.ipca),fmt:F.p}],{fmtE:v=>N0.format(v)+'%',ticks:10,zero:true})}
   if(k==='fpl'){const yy=ys.filter(y=>an[y].pl);chart($('#gPl'),yy,[{nome:'Patrimônio líquido',tipo:'barra',cor:'var(--c1)',vals:yy.map(y=>an[y].pl),fmt:v=>grande(v,'R$')},{nome:'Nº de cotistas',tipo:'linha',eixo:'d',cor:'var(--c3)',vals:yy.map(y=>an[y].cotistas),fmt:FF.n}],{fmtD:v=>v>=1e6?N1.format(v/1e6)+' mi':N0.format(v/1e3)+' mil',zeroD:true})}
 }
 
 // carrega: dados embutidos (previa) ou do servidor
+// ================= EXTRAS: comparacao com indices, comunicados, termometro, quedas, renda x inflacao, rosca da carteira =================
+// Tudo calculado a partir de dados/<TICKER>.json e dados/indices.json, que o robo atualiza todo dia util.
+let IX=null; // dados/indices.json
+const EMO={ // emoji de cada informacao da empresa/fundo
+ 'Razão social':'🏢','CNPJ':'🪪','Público-alvo':'👥','Mandato':'🎯','Segmento':'🧩','Segmento (cadastro na CVM)':'🗂️','Tipo de fundo':'📄','Tipo de gestão':'🧭','Prazo de duração':'⏳','Administrador':'🏛️','Início do fundo':'📅',
+ 'Valor patrimonial':'💰','Valor patrimonial por cota':'🧮','Cotas emitidas':'🎟️','Nº de cotistas':'🙋','Taxa de adm. (12M)':'🧾','Último rendimento':'💸','Código ISIN':'🔖',
+ 'Valor de mercado':'💹','Valor de mercado (empresa)':'💹','Valor de firma':'🏗️','Patrimônio Líquido':'💰','Nº total de papéis':'🎟️','Nº de ações (empresa)':'🎟️','Ativos':'🏦','Ativo Circulante':'🔄','Disponibilidade':'💵','Caixa e aplicações':'💵',
+ 'Dívida Bruta':'💳','Dívida Líquida':'⚖️','Segmento de Listagem':'🏷️','Free Float':'🌊','Tag Along':'🤝','Liquidez Média Diária':'💧','Liquidez Média Diária (BDR)':'💧','Setor':'🏭','Acionistas':'🙋',
+ 'Dólar PTAX':'💲','Paridade':'🔁','Nº de BDRs':'🎟️','Depositário':'🏛️'};
+const emo=k=>EMO[k]||(k.startsWith('Cotação nos EUA')?'🇺🇸':'📌');
+const infHTML=it=>it.map(([k,v])=>`<div><i class="emo" aria-hidden="true">${emo(k)}</i><span>${k}</span><b>${v||'-'}</b></div>`).join('');
+
+// ---------- series mensais ----------
+const mesK=d=>d.slice(0,7);
+function precoMes(){const o={};A.cotacao.forEach(r=>o[mesK(r[0])]=r[4]);return o}
+function provMes(){const o={};A.proventos.forEach(p=>{const k=mesK(p.data_com);o[k]=(o[k]||0)+p.valor});return o}
+const provInicio=()=>A.proventos.length?A.proventos[A.proventos.length-1].data_com:null;
+// retorno total mensal do ativo: cotacao + proventos reinvestidos no mes da data com
+function retornoTotal(){const pm=precoMes(),dm=provMes(),ks=Object.keys(pm).sort(),o={};let v=100;ks.forEach((k,i)=>{if(i)v*=(pm[k]+(dm[k]||0))/pm[ks[i-1]];o[k]=v});return o}
+function acumula(tx,ks){const o={};let v=100;ks.forEach((k,i)=>{if(i){if(!isNum(tx[k])){v=null}else if(v!=null)v*=1+tx[k]/100}o[k]=v});return o}
+const rotM=k=>MES[+k.slice(5,7)-1]+'/'+k.slice(2,4);
+const CMP_CORES={ativo:'var(--c1)',CDI:'var(--c2)',IPCA:'var(--c3)',IBOV:'var(--c4)',IFIX:'var(--c5)',SMLL:'var(--c6)',IDIV:'var(--c7)',IVVB11:'var(--c8)'};
+function serieCmp(anos){
+  const tr=retornoTotal(),todos=Object.keys(tr).sort(),fim=todos[todos.length-1];
+  let ini=`${+fim.slice(0,4)-anos}-${fim.slice(5,7)}`;
+  const pi=A.tipo==='fii'&&provInicio()?mesK(provInicio()):null; // FII: so a partir do primeiro rendimento conhecido
+  let cortado=false;if(pi&&ini<pi){ini=pi;cortado=true}if(ini<todos[0]){ini=todos[0];cortado=true}
+  const ks=todos.filter(k=>k>=ini),base=v=>v==null?null:v;
+  const norm=o=>{const b=o[ks[0]];return ks.map(k=>isNum(o[k])&&isNum(b)?(o[k]/b-1)*100:null)};
+  const S=[{id:'ativo',nome:A.ticker,vals:norm(tr)}];
+  if(IX){S.push({id:'CDI',nome:'CDI',vals:norm(acumula(IX.cdi_mes,ks))},{id:'IPCA',nome:'IPCA',vals:norm(acumula(IX.ipca_mes,ks))});
+    ['IBOV','IFIX','SMLL','IDIV','IVVB11'].forEach(x=>{const m=IX.mensal[x]||{};if(m[ks[0]]!=null)S.push({id:x,nome:x,vals:norm(m)})})}
+  return{ks,S,cortado};
+}
+function desenharCmp(){
+  const el=$('#gCmp');if(!el)return;const anos=+st.cmp,{ks,S,cortado}=serieCmp(anos);
+  if(!el._ini){el._ini=1;el._ocultas=new Set(A.tipo==='fii'?['SMLL','IDIV','IVVB11']:A.tipo==='bdr'?['IFIX','SMLL','IDIV']:['IFIX','SMLL','IVVB11'])}
+  chart(el,ks.map(rotM),S.map(s=>({nome:s.nome,tipo:'linha',cor:CMP_CORES[s.id],vals:s.vals,w:s.id==='ativo'?3:1.8,fmt:v=>isNum(v)?(v>=0?'+':'')+N1.format(v)+'%':'-'})),{fmtE:v=>N0.format(v)+'%',rotTip:i=>mesBR(ks[i]),ticks:10});
+  $('#cmpNota').innerHTML=(cortado?`Período começa em ${mesBR(ks[0])}: ${A.tipo==='fii'?'é o primeiro rendimento com histórico público confiável':'é o início do histórico'}. `:'')+`${A.ticker} com ${A.tipo==='fii'?'rendimentos':'proventos'} reinvestidos no mês da data com. IBOV, IFIX, SMLL e IDIV como divulgados pela B3; IVVB11 pela cotação; IPCA até ${IX?mesBR(Object.keys(IX.ipca_mes).sort().pop()):'-'}.`;
+  calcCmp();
+}
+function calcCmp(){
+  const box=$('#cmpCalc');if(!box)return;const v=Math.max(0,parseFloat(String($('#cmpV').value).replace(/\./g,'').replace(',','.'))||0),anos=+$('#cmpA').value,{ks,S,cortado}=serieCmp(anos);
+  const fim=s=>{for(let i=s.vals.length-1;i>=0;i--)if(isNum(s.vals[i]))return s.vals[i];return null};
+  const at=S[0],r=fim(at);
+  $('#cmpRes').innerHTML=isNum(r)?`hoje você teria <b class="${r>=0?'pos':'neg'}">${brl(v*(1+r/100))}</b>`:'-';
+  box.innerHTML=S.map(s=>{const x=fim(s);return`<div><i style="background:${CMP_CORES[s.id]}"></i><span>${s.id==='ativo'?s.nome:'No '+s.nome}</span><b class="num">${isNum(x)?brl(v*(1+x/100)):'-'}</b><small class="num ${isNum(x)&&x>=0?'pos':'neg'}">${isNum(x)?(x>=0?'+':'')+N1.format(x)+'%':''}</small></div>`}).join('');
+  $('#cmpDesde').textContent=cortado?'desde '+mesBR(ks[0]):'';
+}
+
+// ---------- comunicados ----------
+function desenharCom(){
+  const el=$('#comLista');if(!el)return;const L=A.comunicados||[],por=6,np=Math.ceil(L.length/por);st.cpg=Math.min(st.cpg||0,Math.max(0,np-1));
+  if(!L.length){el.innerHTML='<p class="note">Nenhum documento encontrado.</p>';$('#comPg').innerHTML='';return}
+  el.innerHTML=L.slice(st.cpg*por,st.cpg*por+por).map(c=>`<a class="com" href="${c.url}" target="_blank" rel="noopener"><span class="dt num">${dBR(c.data)}</span><span class="ti"><b>${c.titulo}</b>${c.tipo&&c.tipo!==c.titulo?`<small>${c.tipo}</small>`:''}</span><span class="ver">Ver ↗</span></a>`).join('');
+  const pg=[];for(let i=0;i<np;i++)if(i<2||i>np-3||Math.abs(i-st.cpg)<=1)pg.push(i);else if(pg[pg.length-1]!=='…')pg.push('…');
+  $('#comPg').innerHTML=np>1?`<button data-cp="${st.cpg-1}" ${st.cpg?'':'disabled'}>‹</button>`+pg.map(i=>i==='…'?'<span>…</span>':`<button data-cp="${i}" class="${i===st.cpg?'on':''}">${i+1}</button>`).join('')+`<button data-cp="${st.cpg+1}" ${st.cpg<np-1?'':'disabled'}>›</button>`:'';
+  $$('#comPg [data-cp]').forEach(b=>b.onclick=()=>{st.cpg=+b.dataset.cp;desenharCom()});
+}
+const secCom=()=>sec('comunicados','Comunicados · '+A.ticker,'',`<p class="note" style="margin:0 0 10px">${A.tipo==='bdr'?`Documentos que a ${A.razao} entrega à SEC, a CVM dos EUA (em inglês).`:A.tipo==='fii'?'Documentos que o fundo publica na B3 (Fundos.NET): relatórios, avisos de rendimento, informes e fatos relevantes.':'Documentos que a empresa entrega à CVM: fatos relevantes, comunicados ao mercado, atas e avisos.'}</p><div id="comLista"></div><div class="pg" id="comPg"></div>`);
+
+// ---------- termometro do proprio historico ----------
+function termDados(){
+  const anos=+st.trm,out=[];
+  const linha=(nome,k,atual,vals,fmt,desde)=>{vals=vals.filter(isNum);if(!isNum(atual)||vals.length<3)return;const mn=Math.min(...vals,atual),mx=Math.max(...vals,atual),md=vals.reduce((s,x)=>s+x,0)/vals.length;out.push({nome,k,atual,mn,mx,md,pct:Math.round(100*vals.filter(x=>x<atual).length/vals.length),n:vals.length,fmt,desde})};
+  if(A.tipo==='fii'){const ms=Object.keys(A.mensal).sort(),cut=`${+ms[ms.length-1].slice(0,4)-anos}-${ms[ms.length-1].slice(5)}`,mm=ms.filter(m=>m>cut);
+    linha('P/VP','pvp',A.indicadores.pvp,mm.map(m=>A.mensal[m].pvp),F.x,mm[0]);
+    const pm=precoMes(),pi=provInicio(),dm=provMes(),dy=[];Object.keys(pm).sort().forEach(m=>{if(m<=cut||!pi)return;const a=`${+m.slice(0,4)-1}-${m.slice(5)}`;if(a<mesK(pi))return;let s=0;Object.keys(dm).forEach(x=>{if(x>a&&x<=m)s+=dm[x]});dy.push(s/pm[m]*100)});
+    linha('Dividend Yield (12M)','dy',A.indicadores.dy,dy.slice(0,-1),F.p,null);
+    linha('Rendimento por cota (mês)','ultimo_rendimento',A.indicadores.ultimo_rendimento,mm.map(m=>A.mensal[m].rend),v=>brl3(v),mm[0]);
+  }else{const h=A.hist_indicadores,ys=Object.keys(h).sort().slice(-anos);
+    [['P/L','pl',v=>v>0],['P/VP','pvp',v=>v>0],['Dividend Yield','dy',v=>v>=0],['EV/EBIT','ev_ebit',v=>v>0],['ROE','roe',()=>1],['Margem líquida','margem_liquida',()=>1]].forEach(([n,k,ok])=>{
+      const f=['dy','roe','margem_liquida'].includes(k)?F.p:F.x;linha(n,k,ok(A.indicadores[k])?A.indicadores[k]:null,ys.map(y=>h[y][k]).filter(v=>isNum(v)&&ok(v)),f,ys[0])})}
+  return out;
+}
+function desenharTerm(){
+  const el=$('#gTerm');if(!el)return;const L=termDados();
+  if(!L.length){el.innerHTML='<p class="note">Ainda não há histórico suficiente.</p>';return}
+  const pos=(x,r)=>r.mx===r.mn?50:(x-r.mn)/(r.mx-r.mn)*100;
+  el.innerHTML=L.map(r=>`<div class="trm"><div class="nm"><b>${r.nome}${aj(r.k)}</b><small>${r.n} ${A.tipo==='fii'?'meses':'anos'} de histórico</small></div><div class="tx num">${r.fmt(r.atual)}</div>
+    <div class="rgw"><div class="rg"><em style="left:${pos(r.md,r)}%"></em><i style="left:${pos(r.atual,r)}%"></i></div><div class="rgl num"><span>mín. ${r.fmt(r.mn)}</span><span>média ${r.fmt(r.md)}</span><span>máx. ${r.fmt(r.mx)}</span></div></div>
+    <div class="ds">${r.atual<=r.mn?'Hoje está <b>no menor valor</b> do período.':r.atual>=r.mx?'Hoje está <b>no maior valor</b> do período.':`Hoje está <b>${r.pct>=67?'na parte alta':r.pct<=33?'na parte baixa':'no meio'}</b> do histórico: mais alto que em ${r.pct}% ${A.tipo==='fii'?'dos meses':'dos anos'}.`}</div></div>`).join('');
+}
+
+// ---------- quedas e tempo de recuperacao ----------
+function quedas(){
+  const pi=A.tipo==='fii'?provInicio():null,dv={};A.proventos.forEach(p=>dv[p.data_com]=(dv[p.data_com]||0)+p.valor);
+  const c=A.cotacao.filter(r=>!pi||r[0]>=pi);let v=100,top=100,topD=c[0][0];const pts=[],ep=[];let cur=null;
+  c.forEach((r,i)=>{if(i)v*=(r[4]+(dv[c[i-1][0]]||0))/c[i-1][4];
+    if(v>=top){if(cur){cur.rec=r[0];ep.push(cur);cur=null}top=v;topD=r[0]}
+    const dd=(v/top-1)*100;if(dd<0){if(!cur)cur={pico:topD,fundo:r[0],q:dd};if(dd<cur.q){cur.q=dd;cur.fundo=r[0]}}pts.push([r[0],dd])});
+  if(cur)ep.push(cur);
+  return{pts,ep:ep.filter(e=>e.q<=-10).sort((a,b)=>a.q-b.q),desde:c[0][0],atual:pts[pts.length-1][1]};
+}
+const mesesEntre=(a,b)=>Math.max(0,Math.round((new Date(b)-new Date(a))/2629800000));
+const tempo=m=>m<1?'menos de 1 mês':m<24?m+(m>1?' meses':' mês'):N1.format(m/12)+' anos';
+function desenharDd(){
+  const el=$('#gDd');if(!el)return;const Q=quedas(),fim=Q.pts[Q.pts.length-1][0];
+  const ini=st.dd==='max'?'0':`${+fim.slice(0,4)-(+st.dd)}${fim.slice(4)}`;const p=Q.pts.filter(x=>x[0]>=ini),pas=Math.max(1,Math.floor(p.length/400)),s=p.filter((x,i)=>i%pas===0||i===p.length-1);
+  chart(el,s.map(x=>MES[+x[0].slice(5,7)-1]+'/'+x[0].slice(2,4)),[{nome:'Queda desde o topo',tipo:'linha',cor:'var(--up)',vals:s.map(x=>x[1]),fmt:v=>N1.format(v)+'%',w:1.6}],{fmtE:v=>N0.format(v)+'%',legenda:false,rotTip:i=>dBR(s[i][0]),ticks:8});
+  const top=Q.ep.slice(0,5),mx=top[0];
+  $('#ddBox').innerHTML=`<div><span>Maior queda</span><b class="neg">${mx?N1.format(mx.q)+'%':'-'}</b><small>${mx?`de ${dBR(mx.pico)} a ${dBR(mx.fundo)}`:''}</small></div><div><span>Tempo para voltar ao topo</span><b>${mx?(mx.rec?tempo(mesesEntre(mx.fundo,mx.rec)):'ainda não voltou'):'-'}</b><small>${mx&&mx.rec?'depois do fundo, em '+dBR(mx.rec):''}</small></div><div><span>Hoje</span><b class="${Q.atual<-0.5?'neg':'pos'}">${Q.atual<-0.5?N1.format(Q.atual)+'% abaixo do topo':'no topo'}</b><small>${A.tipo==='fii'?'rendimentos':'proventos'} reinvestidos</small></div>`;
+  $('#ddTab').innerHTML=top.length?`<table class="t num"><thead><tr><th>Topo</th><th>Fundo</th><th class="r">Queda</th><th class="r">Caindo por</th><th class="r">Recuperação</th></tr></thead><tbody>${top.map(e=>`<tr><td>${dBR(e.pico)}</td><td>${dBR(e.fundo)}</td><td class="r neg">${N1.format(e.q)}%</td><td class="r">${tempo(mesesEntre(e.pico,e.fundo))}</td><td class="r">${e.rec?tempo(mesesEntre(e.fundo,e.rec)):'ainda não voltou'}</td></tr>`).join('')}</tbody></table>`:'<p class="note">Nenhuma queda de 10% ou mais no período.</p>';
+  $('#ddNota').textContent=`Considera a cotação com os ${A.tipo==='fii'?'rendimentos':'proventos'} reinvestidos, desde ${dBR(Q.desde)}. A tabela lista as maiores quedas de 10% ou mais.`;
+}
+
+// ---------- renda x inflacao e yield on cost ----------
+function desenharRenda(){
+  const el=$('#gRenda');if(!el)return;const pi=provInicio();if(!pi){el.innerHTML='<p class="note">Sem proventos no histórico.</p>';return}
+  const ip={};let v=1;const ipm=(IX&&IX.ipca_mes)||{};Object.keys(ipm).sort().forEach(k=>{v*=1+ipm[k]/100;ip[k]=v});const ipK=Object.keys(ip).sort(),ipU=ip[ipK[ipK.length-1]];
+  const fator=d=>{const k=mesK(d);const kk=ipK.filter(x=>x<=k).pop();return kk&&ipU?ipU/ip[kk]:null};
+  const ult=A.fechamento,y0=Math.max(+pi.slice(0,4)+(pi.slice(5,7)>'01'?1:0),ipK.length?+ipK[0].slice(0,4):9999),yN=+ult.slice(0,4)-1,anos=[];for(let y=Math.max(y0,yN-(A.tipo==='fii'?9:14));y<=yN;y++)anos.push(y);
+  const nom={},real={};A.proventos.forEach(p=>{const y=+p.data_com.slice(0,4),f=fator(p.data_com);nom[y]=(nom[y]||0)+p.valor;if(f)real[y]=(real[y]||0)+p.valor*f});
+  const a12=`${+ult.slice(0,4)-1}${ult.slice(4)}`,p12=A.proventos.filter(p=>p.data_com>a12),n12=p12.reduce((s,p)=>s+p.valor,0),r12=p12.reduce((s,p)=>s+p.valor*(fator(p.data_com)||1),0);
+  const lb=[...anos.map(String),'Últ. 12M'];
+  chart(el,lb,[{nome:'Valor pago (R$ por '+(A.tipo==='fii'?'cota':'ação')+')',tipo:'barra',cor:'var(--c5)',vals:[...anos.map(y=>nom[y]||0),n12],fmt:v=>brl3(v)},{nome:'Corrigido pela inflação (R$ de hoje)',tipo:'barra',cor:'var(--c3)',vals:[...anos.map(y=>isNum(real[y])?real[y]:nom[y]?null:0),r12],fmt:v=>brl3(v)}],{fmtE:v=>N2.format(v),destaque:anos.length});
+  // yield on cost: quem comprou no comeco de cada ano
+  const c=A.cotacao,lin=[];for(let y=Math.max(+c[0][0].slice(0,4),+ult.slice(0,4)-10);y<=+ult.slice(0,4);y++){const r=c.find(x=>x[0]>=y+'-01-01');if(!r)continue;const yoc=n12/r[4]*100;lin.push([y,r,yoc,10000/r[4]*n12/12])}
+  $('#yocTab').innerHTML=`<table class="t num"><thead><tr><th>Comprou em</th><th class="r">Preço pago</th><th class="r">Renda hoje<br><small>sobre o preço pago</small></th><th class="r">R$ 10 mil rendem<br><small>por mês, hoje</small></th></tr></thead><tbody>${lin.reverse().map(([y,r,yoc,m])=>`<tr><td>jan/${y}</td><td class="r">${brl(r[4])}</td><td class="r"><b>${N2.format(yoc)}% a.a.</b></td><td class="r">${brl(m)}</td></tr>`).join('')}</tbody></table>`;
+  $('#rendaNota').textContent=`Inflação pelo IPCA até ${IX&&ipK.length?mesBR(ipK[ipK.length-1]):'-'}. "Renda hoje" usa os ${A.tipo==='fii'?'rendimentos':'proventos'} dos últimos 12 meses (${brl3(n12)} por ${A.tipo==='fii'?'cota':'ação'}). Preço pago corrigido por desdobramentos.${A.tipo==='fii'?' Rendimentos com histórico desde '+mesBR(mesK(pi))+'.':''}`;
+}
+
+// ---------- rosca da carteira (FII) ----------
+function desenharRosca(){
+  const el=$('#gCart');if(!el)return;const it=A.composicao.itens.slice().sort((a,b)=>b[1]-a[1]),t=it.reduce((s,x)=>s+x[1],0),cores=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--c6)','var(--c7)','var(--c8)'];
+  let a=-Math.PI/2,arc='';const R=90,r=58,cx=110,cy=110;
+  it.forEach(([n,v],i)=>{const f=v/t,b=a+f*Math.PI*2,lg=f>.5?1:0,p=(ang,rad)=>[cx+rad*Math.cos(ang),cy+rad*Math.sin(ang)];const[x1,y1]=p(a,R),[x2,y2]=p(b-1e-4,R),[x3,y3]=p(b-1e-4,r),[x4,y4]=p(a,r);
+    arc+=`<path d="M${x1} ${y1}A${R} ${R} 0 ${lg} 1 ${x2} ${y2}L${x3} ${y3}A${r} ${r} 0 ${lg} 0 ${x4} ${y4}Z" fill="${cores[i%8]}" stroke="var(--s)" stroke-width="2"><title>${n}: ${N1.format(f*100)}%</title></path>`;a=b});
+  el.innerHTML=`<div class="rosca"><svg viewBox="0 0 220 220" role="img" aria-label="Composição da carteira">${arc}<text x="110" y="104" text-anchor="middle" font-size="12" fill="var(--mu)">Total</text><text x="110" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="var(--fg)">${grande(t,'R$').replace(/ (Bilhões|Bilhão)/,' bi').replace(/ (Milhões|Milhão)/,' mi')}</text></svg>
+    <div class="rl">${it.map(([n,v],i)=>`<div><i style="background:${cores[i%8]}"></i><span>${n}</span><b class="num">${N1.format(v/t*100)}%</b></div>`).join('')}</div></div><p class="note">Último informe mensal entregue à CVM (${mesBR(A.composicao.data)}). Percentual sobre o total de ativos do fundo.</p>`;
+}
+
+// ---------- secoes ----------
+function secExtrasGraf(){
+  const anosCmp=[['1','1A'],['2','2A'],['5','5A'],['10','10A']];
+  return sec('gcmp','Comparação de '+A.ticker+' com índices',seg('cmp',anosCmp,'cmp'),`<div id="gCmp"></div><div class="calc"><span>Se você tivesse investido</span><input id="cmpV" inputmode="decimal" value="1.000,00" aria-label="Valor investido"><span>em ${A.ticker} há</span><select class="sel" id="cmpA">${anosCmp.map(([v])=>`<option value="${v}" ${v===st.cmp?'selected':''}>${v} ${v==='1'?'ano':'anos'}</option>`).join('')}</select><span id="cmpDesde" class="note" style="margin:0"></span><span id="cmpRes"></span></div><div class="cmpg" id="cmpCalc"></div><p class="note" id="cmpNota"></p>`)
+  +sec('gterm','Termômetro: hoje comparado ao próprio histórico',seg('trm',[['5','5A'],['10','10A']],'trm'),`<p class="note" style="margin:0 0 6px">O traço grande é o valor de hoje e o pequeno é a média; a barra vai do menor ao maior valor do próprio ${A.tipo==='fii'?'fundo':'ativo'} no período. Não diz se é hora de comprar ou vender: só mostra se o número está alto ou baixo para o padrão dele.</p><div id="gTerm"></div>`)
+  +sec('gdd','Quanto caiu e quanto demorou para voltar',seg('dd',[['5','5A'],['10','10A'],['max','MAX']],'dd'),`<div class="box2 b3" id="ddBox" style="margin:0 0 12px"></div><div id="gDd"></div><div class="tw" id="ddTab" style="margin-top:12px"></div><p class="note" id="ddNota"></p>`)
+  +sec('grenda','Renda x inflação',``,`<p class="note" style="margin:0 0 6px">${A.tipo==='fii'?'Rendimentos':'Proventos'} pagos por ${A.tipo==='fii'?'cota':'ação'} em cada ano, no valor da época e corrigidos pela inflação até hoje. Quando a barra corrigida diminui com o tempo, a renda não acompanhou a inflação.</p><div id="gRenda"></div><h3 style="font-size:16px;margin:18px 0 4px">Quem comprou em cada ano recebe hoje</h3><div class="tw" id="yocTab"></div><p class="note" id="rendaNota"></p>`);
+}
+const EXTRA={cmp:desenharCmp,trm:desenharTerm,dd:desenharDd,com:desenharCom,renda:desenharRenda,rosca:desenharRosca};
+function ligarExtras(){
+  const v=$('#cmpV'),a=$('#cmpA');if(v){v.oninput=calcCmp;v.onblur=()=>{const x=parseFloat(String(v.value).replace(/\./g,'').replace(',','.'))||0;v.value=N2.format(x);calcCmp()};a.onchange=calcCmp}
+  ['com','cmp','trm','dd','renda'].forEach(k=>EXTRA[k]());if(A.tipo==='fii')desenharRosca();
+}
+
 async function abrirAcao(t){
   T=String(t).toUpperCase();
-  try{A=(window.CI_ACOES&&window.CI_ACOES[T])||await (await fetch(DADOS_URL+T+'.json',{cache:'no-cache'})).json();st.ab={};st.pg=0;render();scrollTo(0,0)}
+  try{A=(window.CI_ACOES&&window.CI_ACOES[T])||await (await fetch(DADOS_URL+T+'.json',{cache:'no-cache'})).json();
+    if(!IX){try{IX=window.CI_INDICES||await (await fetch(DADOS_URL+'indices.json',{cache:'no-cache'})).json()}catch(e){IX=null;console.warn('indices.json indisponível',e)}}
+    st.ab={};st.pg=0;st.cpg=0;render();scrollTo(0,0)}
   catch(e){$('#app').innerHTML=`<div class="load">Não foi possível carregar ${T}.</div>`;console.error(e)}
 }
 window.abrirAcao=abrirAcao;
@@ -421,7 +589,7 @@ document.addEventListener('click',e=>{const a=e.target.closest('.aj'),pop=$('#po
   if(!e.target.closest('#pop')||e.target.closest('#pop button'))pop.style.display='none'},true);
 
 abrirAcao(T);
-{let t;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>A&&(A.tipo==='fii'?['cot','find','fdv','fvp','frt','fpl']:['cot','ind','dv','po','rl','lc','pt']).forEach(DES),200)})}
+{let t;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>A&&(A.tipo==='fii'?['cot','find','fdv','fvp','fpl','cmp','dd','renda']:['cot','ind','dv','po','rl','lc','pt','cmp','dd','renda']).forEach(DES),200)})}
 </script>
 </body>
 </html>

@@ -522,6 +522,31 @@ def proventos_bdr(e, prov_b3, divs_us, px):
     return sorted(reais + est, key=lambda p: p['data_com'], reverse=True)
 
 
+def trocas_paridade(cot, fat, px_us, px):
+    """BDR: a B3 nem sempre lista a troca de paridade do BDR (ex.: GOGL34 em 22/10/2020, de 1 para 6).
+    Procura saltos de preco que o papel nos EUA (convertido pelo dolar) nao teve e devolve o fator,
+    no mesmo formato dos desdobramentos: (ultimo dia com o preco antigo, fator)."""
+    ds = sorted(cot)
+    out = []
+    for a, b in zip(ds, ds[1:]):
+        if not cot[b][3]:
+            continue
+        f = cot[a][3] / cot[b][3]
+        if 0.6 < f < 1.6 or any(abs((dt.date.fromisoformat(d) - dt.date.fromisoformat(a)).days) <= 7 for d, _ in fat):
+            continue
+        ua, ub, da, db = preco_em(px_us, a), preco_em(px_us, b), preco_em(px, a), preco_em(px, b)
+        if not all((ua, ub, da, db)):
+            continue
+        g = f * (ub * db) / (ua * da)  # o salto que nao veio do papel la fora nem do dolar
+        for den in range(1, 26):
+            n = round(g * den)
+            if n and abs(n / den / g - 1) < 0.03:
+                out.append((a, n / den))
+                print(f'   troca de paridade detectada em {a}: fator {n}/{den}')
+                break
+    return out
+
+
 def ajustar(cot, fat):
     """divide os precos anteriores a cada desdobramento pelo fator (precos comparaveis com hoje)"""
     out = {}
@@ -814,6 +839,14 @@ def montar(e, historico=False):
     print('==', e['ticker'])
     cot_raw = atualizar_cotacoes([e['ticker']], historico)[e['ticker']]
     fat, prov, sup, det = eventos_b3(e)
+    if e['tipo'] == 'bdr':
+        yh, px = yahoo(e['us']), ptax()
+        extra = trocas_paridade(cot_raw, fat, yh[0], px)
+        for p_ in prov:
+            for d, k in extra:
+                if p_['data_com'] <= d:
+                    p_['valor'] /= k
+        fat = sorted(fat + extra, reverse=True)
     cot = ajustar(cot_raw, fat)
     dias = sorted(cot)
     hoje_d = dias[-1]
@@ -851,9 +884,8 @@ def montar(e, historico=False):
         moeda = 'BRL'
     else:
         anual, ttm, ref, trim = fin_eua(e['cik'])
-        px_us, divs_us, splits = yahoo(e['us'])
+        px_us, divs_us, splits = yh
         splits_depois = lambda d: __import__('math').prod(k for dd, k in splits if dd > d)
-        px = ptax()
         prov = proventos_bdr(e, prov, divs_us, px)
         d_us = max(px_us); p_us = px_us[d_us]
         n = ttm['acoes']
@@ -912,6 +944,113 @@ def resumo(d):
             'valor_mercado': I.get('valor_mercado') if fii else inf.get('valor_mercado'), 'moeda_vm': 'USD' if d['tipo'] == 'bdr' else 'BRL'}
 
 
+# ---------------------------------------------------------------- indices de comparacao
+INDICES_B3 = ['IBOV', 'IFIX', 'SMLL', 'IDIV']
+INDICE_INICIO = 2012
+
+
+def indice_b3_ano(idx, ano):
+    """fechamento diario de um indice da B3 num ano {data ISO: valor} (tabela dia x mes do site da B3)"""
+    q = base64.b64encode(json.dumps({'language': 'pt-br', 'index': idx, 'year': str(ano)}).encode()).decode()
+    d = json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/indexStatisticsProxy/IndexCall/GetPortfolioDay/{q}', timeout=60))
+    out = {}
+    for r in d.get('results', []):
+        for m in range(1, 13):
+            v = r.get(f'rateValue{m}')
+            if v:
+                out[f'{ano}-{m:02d}-{r["day"]:02d}'] = float(v.replace('.', '').replace(',', '.'))
+    return out
+
+
+def fim_de_mes(serie):
+    """{data ISO: valor} -> {AAAA-MM: ultimo valor do mes}"""
+    out = {}
+    for d in sorted(serie):
+        out[d[:7]] = serie[d]
+    return out
+
+
+def indices():
+    """dados/indices.json: fim de cada mes de IBOV, IFIX, SMLL, IDIV (B3), IVVB11 (Yahoo), CDI e IPCA do mes (Banco Central).
+    Os anos fechados ficam em cache/indices/; so o ano corrente e baixado de novo."""
+    hoje = dt.date.today()
+    pasta = os.path.join(CACHE, 'indices')
+    os.makedirs(pasta, exist_ok=True)
+    series, ultimo = {}, {}
+    for idx in INDICES_B3:
+        diario = {}
+        for ano in range(INDICE_INICIO, hoje.year + 1):
+            arq = os.path.join(pasta, f'{idx}_{ano}.json')
+            if ano < hoje.year and os.path.exists(arq):
+                diario.update(json.load(open(arq)))
+                continue
+            v = indice_b3_ano(idx, ano)
+            if ano < hoje.year and v:
+                json.dump(v, open(arq, 'w'), separators=(',', ':'))
+            diario.update(v)
+        series[idx] = fim_de_mes(diario)
+        ultimo[idx] = max(diario) if diario else None
+    precos, _, _ = yahoo('IVVB11.SA')
+    series['IVVB11'] = fim_de_mes(precos)
+    ultimo['IVVB11'] = max(precos)
+    cdi = {d[:7]: v for d, v in sgs(4391, INDICE_INICIO).items()}
+    ipca = {d[:7]: v for d, v in sgs(433, INDICE_INICIO).items()}
+    return {'atualizado': dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).strftime('%Y-%m-%d %H:%M'),
+            'ultimo_dia': ultimo, 'mensal': series, 'cdi_mes': cdi, 'ipca_mes': ipca,
+            'fontes': 'B3 (IBOV, IFIX, SMLL, IDIV), Yahoo Finance (IVVB11), Banco Central (CDI e IPCA do mês)'}
+
+
+# ---------------------------------------------------------------- comunicados
+_IPE = {}
+
+
+def ipe(ano):
+    """documentos entregues pelas companhias abertas a CVM num ano (um zip para todas)"""
+    if ano not in _IPE:
+        z = zipfile.ZipFile(io.BytesIO(baixar(f'{CVM}/IPE/DADOS/ipe_cia_aberta_{ano}.zip', timeout=180)))
+        _IPE[ano] = list(csv.DictReader(io.TextIOWrapper(z.open(z.namelist()[0]), encoding='latin-1'), delimiter=';'))
+    return _IPE[ano]
+
+
+SEC_FORMS = {'10-K': 'Relatório anual (10-K)', '10-Q': 'Relatório trimestral (10-Q)', '8-K': 'Comunicado ao mercado (8-K)',
+             'DEF 14A': 'Convocação de assembleia (DEF 14A)', '20-F': 'Relatório anual (20-F)', '6-K': 'Comunicado ao mercado (6-K)'}
+COMUNICADOS_MAX = 60
+
+
+def comunicados(e):
+    """ultimos documentos oficiais do ativo: FNET (FII), CVM IPE (acao) ou SEC (BDR). Lista de {data, titulo, tipo, url}."""
+    out = []
+    if e['tipo'] == 'fii':
+        cnpj = re.sub(r'\D', '', e['cnpj'])
+        raw = baixar('https://fnet.bmfbovespa.com.br/fnet/publico/pesquisarGerenciadorDocumentosDados?d=0&s=0&l=' + str(COMUNICADOS_MAX) +
+                     '&o%5B0%5D%5BdataEntrega%5D=desc&cnpjFundo=' + cnpj, headers={'User-Agent': UA, 'X-Requested-With': 'XMLHttpRequest'}, timeout=60)
+        for x in json.loads(raw)['data']:
+            tipo = (x.get('tipoDocumento') or '').strip()
+            cat = (x.get('categoriaDocumento') or '').strip()
+            titulo = tipo if tipo and tipo != 'Outros Documentos' else (x.get('especieDocumento') or '').strip() or cat
+            d, m, a = x['dataEntrega'][:10].split('/')
+            out.append({'data': f'{a}-{m}-{d}', 'titulo': titulo, 'tipo': cat,
+                        'url': f'https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id={x["id"]}'})
+    elif e['tipo'] == 'acao':
+        hoje = dt.date.today()
+        lin = [x for ano in (hoje.year, hoje.year - 1) for x in ipe(ano) if x['CNPJ_Companhia'] == e['cnpj']]
+        for x in lin:
+            if x['Categoria'].startswith('Valores Mobiliários negociados'):
+                continue  # posicao mensal de administradores: muito repetitivo
+            titulo = x['Assunto'].strip() or x['Tipo'].strip() or x['Categoria'].strip()
+            out.append({'data': x['Data_Entrega'][:10], 'titulo': titulo[:140], 'tipo': x['Categoria'].strip(), 'url': x['Link_Download']})
+    elif e['tipo'] == 'bdr':
+        raw = baixar(f'https://data.sec.gov/submissions/CIK{e["cik"]}.json', headers={'User-Agent': UA}, timeout=60)
+        r = json.loads(raw)['filings']['recent']
+        for i, f in enumerate(r['form']):
+            if f in SEC_FORMS:
+                ac = r['accessionNumber'][i].replace('-', '')
+                out.append({'data': r['filingDate'][i], 'titulo': SEC_FORMS[f], 'tipo': 'SEC (em inglês)',
+                            'url': f'https://www.sec.gov/Archives/edgar/data/{int(e["cik"])}/{ac}/{r["primaryDocument"][i]}'})
+    out.sort(key=lambda x: x['data'], reverse=True)
+    return out[:COMUNICADOS_MAX]
+
+
 def gravar(arq, d):
     """grava o JSON so se mudou algo alem do horario de 'atualizado' (evita commit e nova publicacao na Netlify sem dado novo)"""
     sem_hora = lambda x: {k: v for k, v in x.items() if k != 'atualizado'}
@@ -951,9 +1090,23 @@ def main():
             if e['ticker'] in antigo:
                 indice.append(antigo[e['ticker']])
             continue
-        gravar(os.path.join(SAIDA, e['ticker'] + '.json'), d)
+        arq = os.path.join(SAIDA, e['ticker'] + '.json')
+        try:
+            d['comunicados'] = comunicados(e)
+        except Exception as ex:  # fonte fora do ar: fica a lista de ontem
+            print('  aviso: comunicados de', e['ticker'], repr(ex))
+            try:
+                d['comunicados'] = json.load(open(arq, encoding='utf-8')).get('comunicados', [])
+            except Exception:
+                d['comunicados'] = []
+        gravar(arq, d)
         indice.append(resumo(d))
         print(f"  ok {d['ticker']}: R$ {d['preco']} em {d['fechamento']}, balanço {d['balanco_ref']}")
+    try:
+        gravar(os.path.join(SAIDA, 'indices.json'), indices())
+        print('  ok índices de comparação')
+    except Exception as ex:  # fica o arquivo de ontem
+        print('  aviso: índices de comparação', repr(ex))
     gravar(arq_ind, {'atualizado': dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).strftime('%Y-%m-%d %H:%M'), 'acoes': indice})
     if erros and len(erros) == len(EMPRESAS):
         sys.exit('nenhuma empresa foi atualizada')

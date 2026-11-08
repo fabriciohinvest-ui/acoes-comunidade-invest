@@ -45,12 +45,21 @@ Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Co
 - **ⓘ ao lado de cada nome** (ROE, ROIC, P/VP...): abre um quadradinho com explicação simples **na própria página**, sem ir para outra. Os textos estão nos dicionários `EXP` (ações e BDR) e `EXPF` (FII) em `acao.html`. Todo indicador novo precisa ganhar texto lá.
 - **"← Pesquisa"** no topo da página do ativo e uma **caixa "Buscar outro ativo"** com sugestões enquanto digita.
 - Funciona no celular. Testado em 390 px de largura, sem rolagem lateral.
+- **Emoji em cada informação** da empresa ou do fundo (dicionário `EMO` em `acao.html`; diferentes dos do Investidor10). Campo novo sem emoji ganha 📌.
+- **Comunicados** (seção depois de "Informações"): 6 por página, com link para o documento original. Ação: CVM (IPE). FII: B3 (Fundos.NET). BDR: SEC (em inglês).
+- **Gráficos novos, no fim da página**, todos calculados no navegador a partir do JSON do ativo + `dados/indices.json`, então se atualizam junto com o robô:
+  - *Comparação com índices* (1A, 2A, 5A, 10A): o ativo com proventos reinvestidos contra CDI, IPCA, IBOV, IFIX, SMLL, IDIV e IVVB11, com a calculadora "Se você tivesse investido R$ X há N anos". FII começa no primeiro rendimento confiável (abr/2022 no MXRF11) e a nota avisa.
+  - *Termômetro*: cada indicador de hoje numa régua do mínimo ao máximo do próprio ativo (5 ou 10 anos), com a média. Texto neutro ("parte alta/baixa do histórico"), nunca "barato/caro".
+  - *Quanto caiu e quanto demorou para voltar*: queda desde o topo (com proventos reinvestidos), a maior queda, o tempo de recuperação e a tabela das quedas de 10% ou mais.
+  - *Renda x inflação*: proventos por ano no valor da época e corrigidos pelo IPCA, e a tabela de *yield on cost* (quem comprou em janeiro de cada ano recebe hoje X% sobre o que pagou).
+  - FII: a *Distribuição da carteira* virou rosca (SVG). Saiu o gráfico antigo "Rentabilidade acumulada x CDI e IPCA", que a comparação substitui.
+- Cores dos gráficos: `--c1` a `--c8` no `:root` (`--c6` a `--c8` são da comparação e da rosca).
 
 ## 4. Mapa dos arquivos
 
 | Arquivo | O que é |
 |---|---|
-| `atualizar.py` | O robô (cerca de 980 linhas). Baixa, calcula e grava `dados/<TICKER>.json` + `dados/indice.json` |
+| `atualizar.py` | O robô (cerca de 1.250 linhas). Baixa, calcula e grava `dados/<TICKER>.json` + `dados/indice.json` + `dados/indices.json` (índices para a comparação) |
 | `index.html` | A pesquisa. Lê `indice.json` e manda para `acao.html?t=TICKER`. Lê `?q=` e `?tipo=` da URL |
 | `acao.html` | A página de qualquer ativo (`?t=TICKER`). `render()` faz ação e BDR, `renderFii()` faz FII |
 | `tesouro.html` + `tesouro.py` | Página do Tesouro Direto (veio da área de investimentos da Comunidade; CSS e JS embutidos) e o robô dela, que grava `dados/tesouro.json`. A página busca esse JSON ao abrir e, se falhar, usa os dados embutidos. Pegadinha: a API do Banco Central responde 304 para `ultimos/1`; use `ultimos/10` |
@@ -92,7 +101,9 @@ Regras do índice:
 
 ### `dados/<TICKER>.json`
 
-**Campos comuns a todos:** `ticker`, `tipo`, `nome`, `razao`, `setor`, `segmento`, `atualizado` (horário de Brasília), `fechamento` (último pregão), `preco`, `cotacao`, `moeda_balanco`, `balanco_ref`, `proventos`, `eventos`.
+**Campos comuns a todos:** `ticker`, `tipo`, `nome`, `razao`, `setor`, `segmento`, `atualizado` (horário de Brasília), `fechamento` (último pregão), `preco`, `cotacao`, `moeda_balanco`, `balanco_ref`, `proventos`, `eventos`, `comunicados`.
+
+- `comunicados` é uma lista de até 60 `{data, titulo, tipo, url}`, do mais novo para o mais antigo. Se a fonte falhar, o robô mantém a lista de ontem.
 
 - `cotacao` é uma lista de `[data, abertura, máxima, mínima, fechamento, volume_R$]`, ajustada por desdobramentos e grupamentos.
 - `proventos` é uma lista de `{tipo, data_com, pagamento, valor}`, já ajustados por desdobramento.
@@ -117,6 +128,10 @@ Regras do índice:
 - `serie_rent`: datas e as séries acumuladas fii, cdi e ipca.
 - `composicao`: `{data, itens}`, a carteira por categoria.
 
+### `dados/indices.json` (um arquivo só, para todos os ativos)
+
+`{atualizado, ultimo_dia, mensal: {IBOV, IFIX, SMLL, IDIV, IVVB11: {"AAAA-MM": pontos no último pregão do mês}}, cdi_mes: {"AAAA-MM": % no mês}, ipca_mes: {"AAAA-MM": % no mês}, fontes}`, desde jan/2012 (IVVB11 desde abr/2014). Os anos fechados ficam em `cache/indices/{INDICE}_{ano}.json` e não são baixados de novo.
+
 ## 6. Fontes, endereços e pegadinhas
 
 Todas sem login e sem chave. O que cada uma dá:
@@ -132,6 +147,10 @@ Todas sem login e sem chave. O que cada uma dá:
 | CVM FII | `https://dados.cvm.gov.br/dados/FII/DOC/INF_MENSAL/DADOS/inf_mensal_fii_{ano}.zip` | Informe mensal de **todos** os FIIs: arquivos `geral`, `complemento` e `ativo_passivo` |
 | SEC | `https://data.sec.gov/api/xbrl/companyfacts/CIK{10 dígitos}.json` | Balanços das empresas americanas (BDR e EUA) |
 | Yahoo | `https://query1.finance.yahoo.com/v8/finance/chart/{SYM}?period1=..&period2=..&interval=1d&events=div%7Csplit` | Cotação nos EUA, dividendos e splits; rendimentos antigos de FII (`MXRF11.SA`) |
+| B3 índices | `https://sistemaswebb3-listados.b3.com.br/indexStatisticsProxy/IndexCall/GetPortfolioDay/{base64 de {"language":"pt-br","index":"IFIX","year":"2025"}}` | Fechamento diário de IBOV, IFIX, SMLL e IDIV num ano: `results` com 31 linhas `{day, rateValue1..rateValue12}` (uma coluna por mês, número em formato brasileiro). `GetYearlyIndexes` e `GetIndexHistory` dão 404 |
+| CVM IPE | `https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_{ano}.zip` | Comunicados das empresas (fato relevante, comunicado ao mercado, atas, avisos). **Um zip por ano traz todas as empresas**. Colunas `CNPJ_Companhia, Categoria, Tipo, Especie, Assunto, Data_Entrega, Link_Download`. Pule a categoria "Valores Mobiliários negociados e detidos" (é repetitiva) |
+| B3 Fundos.NET | `https://fnet.bmfbovespa.com.br/fnet/publico/pesquisarGerenciadorDocumentosDados?d=0&s=0&l=60&o%5B0%5D%5BdataEntrega%5D=desc&cnpjFundo={só dígitos}` com o cabeçalho `X-Requested-With: XMLHttpRequest` | Documentos do FII. Link: `https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id={id}` |
+| SEC submissions | `https://data.sec.gov/submissions/CIK{10 dígitos}.json` → `filings.recent` | Documentos da empresa americana (10-K, 10-Q, 8-K...). Link: `https://www.sec.gov/Archives/edgar/data/{cik sem zeros}/{accessionNumber sem traços}/{primaryDocument}` |
 | Banco Central SGS | `https://api.bcb.gov.br/dados/serie/bcdata.sgs.{N}/dados?formato=json&dataInicial=..&dataFinal=..` | 1 = dólar PTAX, 12 = CDI diário, 433 = IPCA mensal. Pedir em janelas de até 10 anos |
 
 **Pegadinhas já resolvidas** (não "conserte" de volta):
@@ -150,6 +169,8 @@ Todas sem login e sem chave. O que cada uma dá:
 - **DY_mes da CVM** de anos antigos tem lixo (negativo, repetido). Não use para estimar rendimento.
 - **Coluna de CNPJ do informe de FII** muda de nome: é `CNPJ_Fundo_Classe` nos anos novos e `CNPJ_Fundo` nos antigos.
 - **www.sec.gov** (onde fica `company_tickers.json`) deu **403** a partir do ambiente do Claude. Já `data.sec.gov` funciona. No GitHub Actions, com um User-Agent de contato correto, deve funcionar; senão use a lista do S&P 500 da Wikipédia, que já traz o CIK.
+- **Troca de paridade de BDR**: a B3 nem sempre lista nos eventos. O GOGL34 passou de 1 para 6 em 22/10/2020 e a B3 não mostra; sem ajuste, o gráfico de quedas dizia "-84%". `trocas_paridade()` procura saltos de mais de 40% num dia que o papel nos EUA (convertido pelo dólar) não teve, e acrescenta o fator aos eventos. O robô imprime `troca de paridade detectada` quando acha uma.
+- **IPCA** sai por volta do dia 10 do mês seguinte, então a linha do IPCA na comparação termina um ou dois meses antes das outras. A nota do gráfico mostra até quando vai.
 - A **BBAS3 caiu cerca de 30% em 26/10/2026**. É dado real da B3, não erro de ajuste.
 
 ## 7. Fórmulas (conferidas contra o Investidor10 no BBAS3 e no GOGL34)
@@ -215,6 +236,8 @@ O robô de hoje já baixa os zips da CVM uma vez e filtra pelos CNPJs. Em escala
   - `GetDetail`: uma vez por mês.
   - Guarde a data da última busca no cache.
 - **SEC**: balanço só muda a cada trimestre. Busque o `companyfacts` de um CIK uma vez por semana, ou só quando o endpoint `https://data.sec.gov/submissions/CIK{cik}.json` mostrar um 10-Q/10-K novo. Limite: no máximo 10 requisições por segundo.
+- **Comunicados**: o IPE da CVM é um zip por ano para todas as empresas (baixe uma vez por rodada). Fundos.NET e SEC são uma chamada por ativo: em escala, busque uma vez por dia só para quem negociou, ou uma vez por semana para o resto.
+- **Índices**: `indices.json` é um só para todos os ativos; não muda com a escala.
 - **Yahoo**: uma chamada por ativo americano por dia, usando `range=5d` no dia a dia e o histórico inteiro só na primeira vez.
 - **Paralelismo**: `concurrent.futures.ThreadPoolExecutor(max_workers=8)` para B3, Yahoo e SEC, com novas tentativas e pausa crescente (já existe em `baixar`). Se a B3 ou o Yahoo devolverem 429, baixe para 4 workers.
 - Meta: atualização diária em **menos de 15 minutos** no GitHub Actions. A primeira carga leva horas e pode rodar em partes.

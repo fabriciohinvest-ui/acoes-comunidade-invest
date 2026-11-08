@@ -7,7 +7,7 @@
 | `index.html` | A pesquisa: lista todos os ativos do `dados/indice.json`, com busca, filtro por tipo e setor e ordenação |
 | `acao.html` | A página do ativo. Abre pelo endereço: `acao.html?t=BBAS3`, `acao.html?t=GOGL34` ou `acao.html?t=MXRF11` (ações, BDRs e fundos imobiliários usam a mesma página) |
 | `atualizar.py` | O robô. Baixa os dados públicos, calcula os indicadores e grava `dados/<TICKER>.json` |
-| `dados/` | O que a página lê (um JSON por ação + `indice.json` com o resumo de todas) |
+| `dados/` | O que a página lê (um JSON por ação + `indice.json` com o resumo de todas + `indices.json` com IBOV, IFIX, SMLL, IDIV, IVVB11, CDI e IPCA mês a mês, para a comparação) |
 | `cache/` | Histórico guardado pelo robô (cotações desde 2009, balanços da CVM, proventos de BDR). Não apague |
 | `tesouro.html` | Tesouro Direto: todas as taxas à venda, se estão altas ou baixas contra 5 anos, simulador até o vencimento e de venda antecipada. Lê `dados/tesouro.json` |
 | `tesouro.py` | Robô do Tesouro: baixa as taxas do Tesouro Transparente e os juros do Banco Central e grava `dados/tesouro.json` (roda junto com o `atualizar.py`) |
@@ -22,6 +22,8 @@
 - **SEC (EUA)**: balanços das empresas americanas, usados nos BDRs.
 - **Yahoo Finance**: cotação da ação original nos EUA e dividendos pagos lá (só BDR).
 - **Banco Central**: dólar PTAX, CDI e IPCA.
+- **B3 (índices)**: IBOV, IFIX, SMLL e IDIV, para o gráfico de comparação. O IVVB11 (S&P 500 em reais) vem da cotação no Yahoo.
+- **Comunicados**: CVM (documentos das empresas), B3 Fundos.NET (documentos dos FIIs) e SEC (documentos das empresas dos BDRs).
 - **CVM (fundos imobiliários)**: informe mensal de cada fundo (patrimônio, valor patrimonial por cota, cotas, cotistas, taxa de administração, carteira).
 
 ## Como colocar no ar
