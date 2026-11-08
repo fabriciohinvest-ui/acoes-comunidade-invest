@@ -11,6 +11,7 @@
   --bg:#f6f6f6;--s:#fff;--s2:#f0f0f0;--line:#e0e0e0;--fg:#1a1a1a;--mu:#6b6b6b;--ac:#2b2b2b;--on-ac:#fff;--soft:#ececec;--ac2:#8a8a8a;
   --up:#b3261e;--upsoft:#f8e5e3;--down:#1e7a46;--downsoft:#e2f2e8;
   --c1:#2b3a55;--c2:#1e7a46;--c3:#d08a1e;--c4:#7fb04a;--c5:#3d6fb5;--c6:#8e5ba8;--c7:#c2577a;--c8:#5aa5a0;
+  --azul:#3d6fb5; /* a media do "Quanto tempo segurar" */
 }
 *{box-sizing:border-box;margin:0}
 body{background:var(--bg);font-family:var(--font);color:var(--fg);line-height:1.45}
@@ -143,6 +144,23 @@ h4.tech{font-size:13.5px;margin:14px 0 0;color:var(--mu);font-weight:600}
 .rl div{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.rl i{width:12px;height:12px;border-radius:3px}
 @media (max-width:760px){.com{grid-template-columns:minmax(0,1fr) auto;gap:2px 10px}.com .dt{grid-column:1/-1}.com .ver{grid-row:2;grid-column:2}
 .trm{grid-template-columns:minmax(0,1fr) auto}.trm .rgw,.trm .ds{grid-column:1/-1}.box2.b3{grid-template-columns:1fr}.rosca{grid-template-columns:1fr;justify-items:center}.rosca .rl{width:100%}.inf{grid-template-columns:1fr;gap:8px}.inf div{padding:8px 12px}.inf .emo{width:32px;height:32px;font-size:16px}}
+
+/* ---- ajustes de 08/11/2026: RSI com periodo, termometro com escolha, lado a lado com caixa, trava ---- */
+.tec .rsiw{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.tec .rsiop{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;color:var(--mu);margin-right:4px}.tec .rsiop[hidden]{display:none}.tec .rsiop button{padding:3px 9px;font-size:12.5px}
+.trmAdd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:4px 0 6px}.trmAdd label{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:650}
+.trmAdd select{font:inherit;font-size:13px;font-weight:400;color:var(--fg);background:var(--s);border:1px solid var(--line);border-radius:8px;padding:5px 8px;max-width:230px}
+.trmAdd button{font:inherit;font-size:12.5px;color:var(--mu);background:none;border:0;text-decoration:underline;cursor:pointer;padding:4px 2px}.trmAdd button:hover{color:var(--fg)}
+.trmE{grid-template-columns:150px 74px minmax(0,1fr) 190px 26px}
+.trmX{grid-column:5;grid-row:1;justify-self:end;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--s);color:var(--mu);font:inherit;font-size:16px;line-height:1;cursor:pointer;padding:0}.trmX:hover,.trmX:focus-visible{color:var(--fg);border-color:var(--fg)}
+.cmpQuem{border:1px solid var(--line);border-radius:10px;background:var(--s2);margin:0 0 4px}
+.cmpQuem summary{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-weight:650;font-size:14px;list-style:none}.cmpQuem summary::-webkit-details-marker{display:none}
+.cmpQuem summary b{margin-left:auto;font-size:12px;background:var(--soft);border-radius:999px;padding:2px 9px}.cmpQuem summary::after{content:"Ver ▾";font-size:12.5px;font-weight:400;color:var(--mu)}.cmpQuem[open] summary::after{content:"Fechar ▴"}
+.cmpQuemC{padding:0 14px 12px}.cmpQuemC p{font-size:13px;color:var(--mu);margin:0 0 8px}
+.cmpQuemC ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.cmpQuemC a{display:block;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--s);color:var(--fg);text-decoration:none;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cmpQuemC a b{margin-right:4px}.cmpQuemC a:hover,.cmpQuemC a:focus-visible{border-color:var(--ac)}
+.lock .lockImp{display:block;color:var(--fg);margin-top:8px}
+@media (max-width:760px){.trmE{grid-template-columns:minmax(0,1fr) auto 26px}.trmX{grid-column:3}.cmpQuemC ul{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){.cmpQuemC ul{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -178,7 +196,8 @@ function tecCalc(){
   [20,50,100,200].forEach(p=>o['mm'+p]=mm(p));
   const ema=(x,p)=>{const r=Array(n).fill(null),k=2/(p+1);let e=null,s=0,q=0;for(let i=0;i<n;i++){if(!isNum(x[i]))continue;if(e==null){s+=x[i];q++;if(q===p){e=s/p;r[i]=e}}else{e=x[i]*k+e*(1-k);r[i]=e}}return r};
   const e12=ema(c,12),e26=ema(c,26);o.macd=c.map((_,i)=>isNum(e12[i])&&isNum(e26[i])?e12[i]-e26[i]:null);o.sinal=ema(o.macd,9);o.hist=o.macd.map((v,i)=>isNum(v)&&isNum(o.sinal[i])?v-o.sinal[i]:null);
-  o.rsi=Array(n).fill(null);let g=0,l=0;for(let i=1;i<n;i++){const d=c[i]-c[i-1],up=Math.max(d,0),dn=Math.max(-d,0);if(i<=14){g+=up/14;l+=dn/14;if(i===14)o.rsi[i]=l?100-100/(1+g/l):100}else{g=(g*13+up)/14;l=(l*13+dn)/14;o.rsi[i]=l?100-100/(1+g/l):100}}
+  const rsi=p=>{const r=Array(n).fill(null);let g=0,l=0;for(let i=1;i<n;i++){const d=c[i]-c[i-1],up=Math.max(d,0),dn=Math.max(-d,0);if(i<=p){g+=up/p;l+=dn/p;if(i===p)r[i]=l?100-100/(1+g/l):100}else{g=(g*(p-1)+up)/p;l=(l*(p-1)+dn)/p;r[i]=l?100-100/(1+g/l):100}}return r};
+  o.rsiN={};RSI_P.forEach(p=>o.rsiN[p]=rsi(p));o.rsi=o.rsiN[14];
   const d=A.cotacao.map(r=>r[0]);o.mx52=Array(n).fill(null);o.mn52=Array(n).fill(null);let a=0;
   for(let i=0;i<n;i++){const lim=new Date(new Date(d[i]).getTime()-365*864e5).toISOString().slice(0,10);while(d[a]<lim)a++;if(d[0]>lim)continue;let mx=-Infinity,mn=Infinity;for(let j=a;j<=i;j++){if(c[j]>mx)mx=c[j];if(c[j]<mn)mn=c[j]}o.mx52[i]=mx;o.mn52[i]=mn}
   return _tec=o;
@@ -226,7 +245,7 @@ const EXP={
  t_mm:['Média móvel (20, 50, 100 e 200)','Média dos preços de fechamento dos últimos 20, 50, 100 ou 200 pregões. Suaviza o sobe e desce do dia a dia e mostra a tendência: a de 20 reage rápido, a de 200 mostra o rumo de quase um ano.'],
  t_m:['Máxima e mínima de 52 semanas','O maior e o menor preço de fechamento dos últimos 12 meses, em cada dia. Mostra onde o preço está dentro da faixa do último ano.'],
  t_vol:['Volume','Quanto dinheiro foi negociado no dia (em reais). Volume alto mostra que muita gente comprou e vendeu naquele dia.'],
- t_rsi:['RSI (Índice de Força Relativa)','Compara o tamanho das altas com o das quedas dos últimos 14 pregões, numa escala de 0 a 100. Acima de 70 costuma ser chamado de "sobrecompra" e abaixo de 30 de "sobrevenda": quer dizer que o preço subiu ou caiu forte em pouco tempo, não que vai virar.'],
+ t_rsi:['RSI (Índice de Força Relativa)','Compara o tamanho das altas com o das quedas dos últimos pregões, numa escala de 0 a 100. Dá para escolher 7, 14 ou 21 pregões: 14 é o padrão do mercado; com 7 ele reage mais rápido e oscila mais, com 21 fica mais suave. Acima de 70 costuma ser chamado de "sobrecompra" e abaixo de 30 de "sobrevenda": quer dizer que o preço subiu ou caiu forte em pouco tempo, não que vai virar.'],
  t_macd:['MACD','Diferença entre a média exponencial de 12 e a de 26 pregões (linha MACD), comparada com a média de 9 dela mesma (linha de sinal). As barras mostram a distância entre as duas: verdes quando o MACD está acima do sinal, vermelhas quando está abaixo. Ajuda a ver se o movimento do preço está ganhando ou perdendo força.'],
  pl:['P/L (Preço / Lucro)','Quantos anos de lucro seriam necessários para "pagar" o preço da ação, se o lucro ficasse igual. P/L 8 = o preço equivale a 8 anos de lucro. Quanto menor, mais barata em relação ao lucro. Compare sempre com empresas do mesmo setor.'],
  pvp:['P/VP (Preço / Valor Patrimonial)','Compara o preço com o patrimônio por ação ou cota (o que sobraria se vendesse tudo e pagasse as dívidas). Abaixo de 1: a bolsa paga menos que o patrimônio. Acima de 1: paga mais.'],
@@ -347,8 +366,12 @@ const IND=[
  ['Endividamento',[['divliq_pl','Dív. Líquida/PL','x'],['divliq_ebitda','Dív. Líquida/EBITDA','x'],['liquidez_corrente','Liquidez Corrente','x'],['pl_ativos','Patrimônio/Ativos','x'],['passivos_ativos','Passivos/Ativos','x']]],
  ['Crescimento',[['cagr_receitas_5a','CAGR Receitas 5 anos','p'],['cagr_lucros_5a','CAGR Lucros 5 anos','p']]]
 ];
-let st={tec:new Set(['vol','rsi','macd']),tecAb:false,dn:'cotistas',na:'5',cmp:'5',trm:'5',dd:'5',sg:'5',cpg:0,rpg:0,ab:{},cot:'1a',ind:'pl',hi:5,dv:'10',dvm:'dy',pg:0,rad:'com',po:'5',rl:'10',rlp:'anual',res:5,pt:'10'};
+const RSI_P=[7,14,21];
+let st={tec:new Set(['vol','rsi','macd']),tecAb:false,rsi:14,dn:'cotistas',na:'5',cmp:'5',trm:'5',dd:'5',sg:'5',cpg:0,rpg:0,ab:{},cot:'1a',ind:'pl',hi:5,dv:'10',dvm:'dy',pg:0,rad:'com',po:'5',rl:'10',rlp:'anual',res:5,pt:'10'};
 const anos=()=>Object.keys(A.anual).map(Number).sort((a,b)=>a-b);
+// botoes da analise tecnica; o RSI tem 3 periodos (14 e o padrao do mercado)
+function tecBotoes(){return[['mm20','Média 20'],['mm50','Média 50'],['mm100','Média 100'],['mm200','Média 200'],['m52','Máx. e mín. 52 sem.'],['|',''],['vol','Volume'],['rsi','RSI'],['macd','MACD']].map(([k,t])=>k==='|'?'<span class="tl tl2">Gráficos abaixo:</span>':(k==='rsi'?'<span class="rsiw">':'')+`<button data-tec="${k}" class="${st.tec.has(k)?'on':''}">${t}${k==='mm20'||!k.startsWith('mm')?aj('t_'+k.replace(/\d+/,'')):''}</button>`
+  +(k==='rsi'?`<span class="rsiop" id="rsiOp" role="group" aria-label="Período do RSI"${st.tec.has('rsi')?'':' hidden'}><span>de</span>${RSI_P.map(p=>`<button data-rsi="${p}" class="${st.rsi===p?'on':''}" aria-pressed="${st.rsi===p}">${p}</button>`).join('')}<span>dias</span></span></span>`:'')).join('')}
 const seg=(id,ops,k)=>`<div class="seg" data-seg="${k}">${ops.map(([v,t])=>`<button data-v="${v}" class="${String(st[k])===String(v)?'on':''}">${t}</button>`).join('')}</div>`;
 // ===== SECOES SO PARA ASSINANTES =====
 // O site da Comunidade checa o login e define window.CI_ASSINANTE = true (assinante) ou false (visitante)
@@ -360,7 +383,7 @@ const SO_ASSINANTE={gterm:'Veja se P/L, P/VP, DY e outros indicadores de hoje es
   gdonos:'Veja quem são os maiores acionistas e se a empresa emitiu ou recomprou ações ao longo dos anos.'};
 const assinante=()=>window.CI_ASSINANTE!==false;
 function sec(id,titulo,ctrls,corpo,prev){
-  if(SO_ASSINANTE[id]){if(!assinante())return`<section class="sec trava" id="${id}"><div class="sh"><h2>${titulo} <span class="tagA">Assinantes</span></h2></div><div class="sb"><div class="lock"><b>🔒 Exclusivo para assinantes da Comunidade Invest</b><p>${SO_ASSINANTE[id]}</p><a class="btnA" href="${window.CI_LINK_ASSINAR||'#'}">Quero ser assinante</a></div></div></section>`;
+  if(SO_ASSINANTE[id]){if(!assinante())return`<section class="sec trava" id="${id}"><div class="sh"><h2>${titulo} <span class="tagA">Assinantes</span></h2></div><div class="sb"><div class="lock"><b>🔒 Exclusivo para assinantes da Comunidade Invest</b><p>${SO_ASSINANTE[id]}<b class="lockImp">Indicador muito importante para você decidir a compra.</b></p><a class="btnA" href="${window.CI_LINK_ASSINAR||'#'}">Quero ser assinante</a></div></div></section>`;
     titulo+=' <span class="tagA">Assinantes</span>'}
   return`<section class="sec ${prev?prev+(st.ab[id]?'':' fechado'):''}" id="${id}"><div class="sh"><h2>${titulo}</h2><div class="ctrls">${ctrls||''}</div></div><div class="sb">${corpo}</div>${prev?`<button class="mais" data-mais="${id}">${st.ab[id]?'Ver menos ▴':'Ver mais ▾'}</button>`:''}</section>`}
 function render(){
@@ -374,7 +397,7 @@ function render(){
   $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${A.setor} · ${A.segmento}${bdr?' · BDR':''} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
   <div class="kp"><div><span>Cotação</span><b class="num">${brl(A.preco)}</b><small class="num ${u[4]>=ant[4]?'pos':'neg'}">${(u[4]>=ant[4]?'+':'')+N2.format((u[4]/ant[4]-1)*100)}% no dia</small></div>
   <div><span>Variação (12M)</span><b class="num ${u[4]>=v12[4]?'pos':'neg'}">${N2.format((u[4]/v12[4]-1)*100)}%</b></div><div><span>P/L</span><b class="num">${F.x(I.pl)}</b></div><div><span>P/VP</span><b class="num">${F.x(I.pvp)}</b></div><div><span>DY</span><b class="num">${F.p(I.dy)}</b></div></div>
-  ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><div class="tecbox"><button class="techead" id="tecTg" aria-expanded="'+(st.tecAb?'true':'false')+'"><span>Análise técnica</span><small>'+(st.tecAb?'Ver menos ▴':'Ver mais ▾')+'</small></button><div id="tecCorpo"'+(st.tecAb?'':' hidden')+'><div class="tec" id="tec" role="group" aria-label="Análise técnica"><span class="tl">No gráfico do preço:</span>'+[['mm20','Média 20'],['mm50','Média 50'],['mm100','Média 100'],['mm200','Média 200'],['m52','Máx. e mín. 52 sem.'],['|',''],['vol','Volume'],['rsi','RSI'],['macd','MACD']].map(([k,t])=>k==='|'?'<span class="tl tl2">Gráficos abaixo:</span>':`<button data-tec="${k}" class="${st.tec.has(k)?'on':''}">${t}${k==='mm20'||!k.startsWith('mm')?aj('t_'+k.replace(/\d+/,'')):''}</button>`).join('')+'</div><div id="gTec"></div></div></div><p class="note">Clique no gráfico e arraste para o lado para ver quanto o preço subiu ou caiu entre duas datas (só o preço, sem proventos). Preço de fechamento na B3, corrigido por desdobramentos e grupamentos. Indicadores técnicos descrevem o comportamento passado do preço; não são recomendação de compra ou venda.</p>')}
+  ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><div class="tecbox"><button class="techead" id="tecTg" aria-expanded="'+(st.tecAb?'true':'false')+'"><span>Análise técnica</span><small>'+(st.tecAb?'Ver menos ▴':'Ver mais ▾')+'</small></button><div id="tecCorpo"'+(st.tecAb?'':' hidden')+'><div class="tec" id="tec" role="group" aria-label="Análise técnica"><span class="tl">No gráfico do preço:</span>'+tecBotoes()+'</div><div id="gTec"></div></div></div><p class="note">Clique no gráfico e arraste para o lado para ver quanto o preço subiu ou caiu entre duas datas (só o preço, sem proventos). Preço de fechamento na B3, corrigido por desdobramentos e grupamentos. Indicadores técnicos descrevem o comportamento passado do preço; não são recomendação de compra ou venda.</p>')}
   ${sec('sobre','Informações sobre a empresa','',`<div class="inf" id="inf"></div>`)}
   ${sec('indicadores','Indicadores fundamentalistas '+A.ticker,'',`<p style="font-size:14px;color:var(--mu);margin-bottom:14px">Toque num indicador para ver o gráfico do histórico.${bdr?` Indicadores calculados com os balanços da ${A.razao} (em dólar) e a cotação de ${A.info.ticker_eua} nos EUA.`:''}</p><div class="gs">${IND.map(([g,l])=>{const ls=l.filter(([k])=>!(k.startsWith('divliq')||k.includes('ebitda'))||isNum(I[k]));return ls.length?`<div class="grp"><h3>${g}</h3><div class="cards">${ls.map(([k,t,f,h])=>`<button class="cd" data-ind="${k}"><div class="k">${t}${aj(k)}</div><div class="v num">${F[f](I[k])}<small>▦</small></div></button>`).join('')}</div></div>`:''}).join('')}</div>`,'p')}
   ${sec('hist','Histórico de indicadores fundamentalistas',seg('hi',[[5,'5A'],[10,'10A']],'hi'),'<div class="tw" id="tHi"></div>','l6')}
@@ -445,13 +468,14 @@ function desenhar(k){
     // paineis de baixo, um por indicador
     const P=[];if(st.tecAb){
     if(on('vol'))P.push(['Volume negociado por dia',[{nome:'Volume',tipo:'barra',cor:'var(--ac2)',vals:s.map(r=>r[5]),fmt:v=>grande(v,'R$')}],{fmtE:v=>v>=1e9?N1.format(v/1e9)+' bi':v>=1e6?N0.format(v/1e6)+' mi':N0.format(v/1e3)+' mil',legenda:false}]);
-    if(on('rsi'))P.push(['RSI (14 dias)',[{nome:'RSI',tipo:'linha',cor:'var(--c5)',vals:cut(T.rsi),fmt:v=>isNum(v)?N1.format(v):'-',w:1.6},{nome:'70',tipo:'linha',cor:'var(--mu)',vals:s.map(()=>70),fmt:()=>'70',w:1},{nome:'30',tipo:'linha',cor:'var(--mu)',vals:s.map(()=>30),fmt:()=>'30',w:1}],{fmtE:v=>N0.format(v),legenda:false,fixo:[0,100]}]);
+    if(on('rsi'))P.push(['RSI ('+st.rsi+' dias)',[{nome:'RSI',tipo:'linha',cor:'var(--c5)',vals:cut(T.rsiN[st.rsi]),fmt:v=>isNum(v)?N1.format(v):'-',w:1.6},{nome:'70',tipo:'linha',cor:'var(--mu)',vals:s.map(()=>70),fmt:()=>'70',w:1},{nome:'30',tipo:'linha',cor:'var(--mu)',vals:s.map(()=>30),fmt:()=>'30',w:1}],{fmtE:v=>N0.format(v),legenda:false,fixo:[0,100]}]);
     if(on('macd'))P.push(['MACD (12, 26, 9)',[{nome:'Histograma',tipo:'barra',cor:v=>v<0?'var(--up)':'var(--down)',vals:cut(T.hist),fmt:v=>isNum(v)?N2.format(v):'-'},{nome:'MACD',tipo:'linha',cor:'var(--c1)',vals:cut(T.macd),fmt:v=>isNum(v)?N2.format(v):'-',w:1.6},{nome:'Sinal',tipo:'linha',cor:'var(--c3)',vals:cut(T.sinal),fmt:v=>isNum(v)?N2.format(v):'-',w:1.4}],{fmtE:v=>N2.format(v),legenda:true}]);
     }
     $('#gTec').innerHTML=P.map((x,i)=>`<h4 class="tech">${x[0]}</h4><div id="gTec${i}"></div>`).join('');
     P.forEach((x,i)=>chart($('#gTec'+i),lb,x[1],{...x[2],h:$('#gCot').clientWidth<600?150:170,rotTip:j=>dBR(s[j][0]),ticks:8}));
     const tg=$('#tecTg');if(tg)tg.onclick=()=>{st.tecAb=!st.tecAb;tg.setAttribute('aria-expanded',st.tecAb);tg.querySelector('small').textContent=st.tecAb?'Ver menos ▴':'Ver mais ▾';$('#tecCorpo').hidden=!st.tecAb;desenhar('cot')};
-    $$('#tec [data-tec]').forEach(b=>b.onclick=()=>{const k=b.dataset.tec;st.tec.has(k)?st.tec.delete(k):st.tec.add(k);b.classList.toggle('on',st.tec.has(k));desenhar('cot')});
+    $$('#tec [data-tec]').forEach(b=>b.onclick=()=>{const k=b.dataset.tec;st.tec.has(k)?st.tec.delete(k):st.tec.add(k);b.classList.toggle('on',st.tec.has(k));if(k==='rsi'&&$('#rsiOp'))$('#rsiOp').hidden=!st.tec.has('rsi');desenhar('cot')});
+    $$('#tec [data-rsi]').forEach(b=>b.onclick=()=>{st.rsi=+b.dataset.rsi;$$('#tec [data-rsi]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)});desenhar('cot')});
   }
   if(k==='ind'){const it=IND.flatMap(g=>g[1]).find(x=>x[0]===st.ind),h=A.hist_indicadores,yy=ys.slice(-10);
     const f=it[2]==='p'?v=>N2.format(v)+'%':v=>N2.format(v);
@@ -506,7 +530,7 @@ function renderFii(){
   $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${A.setor} · ${A.segmento}${A.tipo_fundo?' · '+A.tipo_fundo:''} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
   <div class="kp"><div><span>Cotação</span><b class="num">${brl(A.preco)}</b><small class="num ${u[4]>=ant[4]?'pos':'neg'}">${(u[4]>=ant[4]?'+':'')+N2.format((u[4]/ant[4]-1)*100)}% no dia</small></div>
   <div><span>Variação (12M)</span><b class="num ${u[4]>=v12[4]?'pos':'neg'}">${N2.format((u[4]/v12[4]-1)*100)}%</b></div><div><span>Dividend Yield</span><b class="num">${F.p(I.dy)}</b></div><div><span>P/VP</span><b class="num">${F.x(I.pvp)}</b></div><div><span>Último rendimento</span><b class="num">${brl3(I.ultimo_rendimento)}</b></div></div>
-  ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><div class="tecbox"><button class="techead" id="tecTg" aria-expanded="'+(st.tecAb?'true':'false')+'"><span>Análise técnica</span><small>'+(st.tecAb?'Ver menos ▴':'Ver mais ▾')+'</small></button><div id="tecCorpo"'+(st.tecAb?'':' hidden')+'><div class="tec" id="tec" role="group" aria-label="Análise técnica"><span class="tl">No gráfico do preço:</span>'+[['mm20','Média 20'],['mm50','Média 50'],['mm100','Média 100'],['mm200','Média 200'],['m52','Máx. e mín. 52 sem.'],['|',''],['vol','Volume'],['rsi','RSI'],['macd','MACD']].map(([k,t])=>k==='|'?'<span class="tl tl2">Gráficos abaixo:</span>':`<button data-tec="${k}" class="${st.tec.has(k)?'on':''}">${t}${k==='mm20'||!k.startsWith('mm')?aj('t_'+k.replace(/\d+/,'')):''}</button>`).join('')+'</div><div id="gTec"></div></div></div><p class="note">Clique no gráfico e arraste para o lado para ver quanto o preço subiu ou caiu entre duas datas (só o preço, sem proventos). Preço de fechamento na B3, corrigido por desdobramentos e grupamentos. Indicadores técnicos descrevem o comportamento passado do preço; não são recomendação de compra ou venda.</p>')}
+  ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><div class="tecbox"><button class="techead" id="tecTg" aria-expanded="'+(st.tecAb?'true':'false')+'"><span>Análise técnica</span><small>'+(st.tecAb?'Ver menos ▴':'Ver mais ▾')+'</small></button><div id="tecCorpo"'+(st.tecAb?'':' hidden')+'><div class="tec" id="tec" role="group" aria-label="Análise técnica"><span class="tl">No gráfico do preço:</span>'+tecBotoes()+'</div><div id="gTec"></div></div></div><p class="note">Clique no gráfico e arraste para o lado para ver quanto o preço subiu ou caiu entre duas datas (só o preço, sem proventos). Preço de fechamento na B3, corrigido por desdobramentos e grupamentos. Indicadores técnicos descrevem o comportamento passado do preço; não são recomendação de compra ou venda.</p>')}
   ${sec('sobre','Informações sobre o fundo','',`<div class="inf">${infHTML([['Razão social',f.razao],['CNPJ',f.cnpj],['Público-alvo',f.publico_alvo],['Mandato',f.mandato],['Segmento',A.segmento],['Segmento (cadastro na CVM)',f.segmento_cvm],['Tipo de fundo',A.tipo_fundo],['Tipo de gestão',f.tipo_gestao],['Prazo de duração',f.prazo],['Administrador',f.administrador],['Início do fundo',f.inicio?dBR(f.inicio):'-'],['Valor patrimonial',grande(I.pl,'R$')],['Valor patrimonial por cota',brl(I.vp_cota)],['Cotas emitidas',FF.n(I.cotas)],['Nº de cotistas',FF.n(I.cotistas)],['Taxa de adm. (12M)',F.p(I.taxa_adm_12m)+' do PL'],['Último rendimento',`${brl3(I.ultimo_rendimento)} (data com ${dBR(I.ultimo_rend_data)})`],['Código ISIN',f.isin]])}</div>`)}
   ${sec('indicadores','Indicadores '+A.ticker,'',`<p style="font-size:14px;color:var(--mu);margin-bottom:14px">Toque num indicador para ver o gráfico do histórico.</p><div class="gs">${FIND.map(([g,l])=>`<div class="grp"><h3>${g}</h3><div class="cards">${l.map(([k,t,fm,h])=>`<button class="cd" data-ind="${k}"><div class="k">${t}${aj(k)}</div><div class="v num">${FF[fm](I[k])}<small>▦</small></div></button>`).join('')}</div></div>`).join('')}</div>`,'p')}
   ${sec('rentab','Rentabilidade '+A.ticker,'',`<div class="tw"><table class="t num"><thead><tr><th>Período</th><th class="r">${A.ticker}</th><th class="r">CDI</th><th class="r">IPCA</th></tr></thead><tbody>${P.map(([k,t])=>`<tr><td>${t}</td><td class="r ${R[k].fii>=0?'pos':'neg'}">${F.p(R[k].fii)}</td><td class="r">${F.p(R[k].cdi)}</td><td class="r">${F.p(R[k].ipca)}</td></tr>`).join('')}</tbody></table></div><p class="note">Rentabilidade = variação da cota + rendimentos recebidos no período (sem reinvestir).</p>`,'l4')}
@@ -614,6 +638,13 @@ const secCom=()=>{const fii=A.tipo==='fii',bdr=A.tipo==='bdr';
   <div><h3>📊 ${fii?'Relatórios gerenciais':bdr?'Resultados trimestrais':'Apresentações de resultados'}</h3><p class="note">${fii?'O relatório mensal do gestor, com gráficos da carteira, dos rendimentos e do mercado (B3 Fundos.NET).':bdr?'O release de resultado de cada trimestre, entregue à SEC (em inglês). Abre a página do envio: o release é o anexo 99.1.':'Apresentações de resultado, releases e relatórios de desempenho que a empresa entrega à CVM.'}</p><div id="relLista"></div><div class="pg" id="relPg"></div></div></div>`)};
 
 // ---------- termometro do proprio historico ----------
+// A pessoa escolhe quais indicadores comparar (tira e poe linhas). A escolha fica guardada neste navegador.
+const TRM_PAD={emp:['pl','pvp','dy','ev_ebit','roe','margem_liquida'],fii:['pvp','dy','ultimo_rendimento']};
+const TRM_ANUAL=['roe','roa','roic','margem_bruta','margem_ebit','margem_ebitda','margem_liquida','giro_ativos','divliq_pl','divliq_ebitda','liquidez_corrente'];
+const trmChave=()=>A.tipo==='fii'?'fii':'emp';
+function trmSel(){if(!st.trmSel){try{st.trmSel=JSON.parse(localStorage.getItem('ci_termometro')||'{}')||{}}catch(e){st.trmSel={}}}
+  const s=st.trmSel[trmChave()];return Array.isArray(s)?s:TRM_PAD[trmChave()]}
+function trmGuardar(sel){st.trmSel[trmChave()]=sel;try{localStorage.setItem('ci_termometro',JSON.stringify(st.trmSel))}catch(e){}desenharTerm()}
 function termDados(){
   const anos=+st.trm,out=[];
   const linha=(nome,k,atual,vals,fmt,un)=>{vals=vals.filter(isNum);if(!isNum(atual)||vals.length<3)return;const mn=Math.min(...vals,atual),mx=Math.max(...vals,atual),md=vals.reduce((s,x)=>s+x,0)/vals.length;out.push({nome,k,atual,mn,mx,md,pct:Math.round(100*vals.filter(x=>x<atual).length/vals.length),n:vals.length,fmt,un})};
@@ -632,24 +663,36 @@ function termDados(){
     const ttm=(m,k)=>{const q=qk.filter(d=>pub(d)<=m).slice(-4);if(q.length<4||(new Date(q[3])-new Date(q[0]))/864e5>290||!q.every(d=>isNum(Q[d][k])))return null;return q.reduce((s,d)=>s+Q[d][k],0)};
     const LK=qk.length&&isNum(Q[qk[qk.length-1]].lucro_ctrl)?'lucro_ctrl':'lucro_liquido';
     const fator=(m,k)=>{const an=(A.anual||{})[String(+m.slice(0,4)-1)],t=ttm(m,k);return an&&isNum(an[k])&&an[k]>0&&isNum(t)&&t>0?an[k]/t:1}; // >1 quando o lucro dos 12 meses cresceu
-    const esc=k=>mm.map(m=>{const b=base(m),p=px[m];return b&&isNum(b[k])&&b[k]>0&&isNum(p)?b[k]*p/b.preco*(k==='pl'?fator(m,LK):1):null});
+    const esc=(k,fk)=>mm.map(m=>{const b=base(m),p=px[m];return b&&isNum(b[k])&&b[k]>0&&isNum(p)?b[k]*p/b.preco*(fk?fator(m,fk):1):null});
     const evE=mm.map(m=>{const b=base(m),p=px[m];if(!b||!isNum(b.ev_ebit)||b.ev_ebit<=0||!isNum(p)||!isNum(b.valor_firma)||!isNum(b.valor_mercado))return null;return b.ev_ebit*(b.valor_firma+(p/b.preco-1)*b.valor_mercado)/b.valor_firma*fator(m,'ebit')});
     const ok=v=>isNum(v)&&v>0?v:null,I=A.indicadores;
-    linha('P/L','pl',ok(I.pl),esc('pl'),F.x,'meses');
+    linha('P/L','pl',ok(I.pl),esc('pl',LK),F.x,'meses');
     linha('P/VP','pvp',ok(I.pvp),esc('pvp'),F.x,'meses');
+    linha('P/Receita (PSR)','psr',ok(I.psr),esc('psr','receita'),F.x,'meses');
+    linha('P/EBIT','p_ebit',ok(I.p_ebit),esc('p_ebit','ebit'),F.x,'meses');
+    linha('P/Ativo','p_ativo',ok(I.p_ativo),esc('p_ativo'),F.x,'meses');
     const dmE={};if(bdr)(A.proventos_empresa||[]).forEach(p=>{const k=mesK(p.data_com);dmE[k]=(dmE[k]||0)+p.valor});
     linha('Dividend Yield','dy',isNum(I.dy)?I.dy:null,bdr?dy12(dmE,pu,null):dy12(provMes(),pm,null),F.p,'meses');
     linha('EV/EBIT','ev_ebit',ok(I.ev_ebit),evE,F.x,'meses');
-    if(anos>=5){const ys=Object.keys(h).sort().slice(-anos);[['ROE','roe'],['Margem líquida','margem_liquida']].forEach(([n,k])=>linha(n,k,I[k],ys.map(y=>h[y][k]),F.p,'anos'))}}
+    if(anos>=5){const ys=Object.keys(h).sort().slice(-anos),it=IND.flatMap(g=>g[1]);TRM_ANUAL.forEach(k=>{const x=it.find(y=>y[0]===k);if(x)linha(x[1],k,I[k],ys.map(y=>h[y][k]),x[2]==='p'?F.p:F.x,'anos')})}}
   return out;
 }
 function desenharTerm(){
-  const el=$('#gTerm');if(!el)return;const L=termDados();
-  if(!L.length){el.innerHTML='<p class="note">Ainda não há histórico suficiente.</p>';return}
+  const el=$('#gTerm');if(!el)return;const todos=termDados();
+  if(!todos.length){el.innerHTML='<p class="note">Ainda não há histórico suficiente.</p>';return}
+  const sel=trmSel(),L=sel.map(k=>todos.find(r=>r.k===k)).filter(Boolean),resto=todos.filter(r=>!sel.includes(r.k)),pad=TRM_PAD[trmChave()];
+  const anual=A.tipo!=='fii'&&+st.trm<5&&sel.some(k=>TRM_ANUAL.includes(k));
   const pos=(x,r)=>r.mx===r.mn?50:(x-r.mn)/(r.mx-r.mn)*100;
-  el.innerHTML=L.map(r=>`<div class="trm"><div class="nm"><b>${r.nome}${aj(r.k)}</b><small>${r.n} ${r.un} de histórico</small></div><div class="tx num">${r.fmt(r.atual)}</div>
+  el.innerHTML=`<div class="trmAdd"><label><span>+ Adicionar indicador</span><select id="trmAdd"${resto.length?'':' disabled'}><option value="">${resto.length?'Escolha':'Todos já estão na lista'}</option>${resto.map(r=>`<option value="${r.k}">${r.nome}</option>`).join('')}</select></label>${sel.join()!==pad.join()?'<button type="button" id="trmPad">Voltar ao padrão</button>':''}</div>`
+  +(L.length?'':'<p class="note">Nenhum indicador na lista. Escolha um acima para comparar.</p>')
+  +'<div id="trmRows">'+L.map(r=>`<div class="trm trmE"><div class="nm"><b>${r.nome}${aj(r.k)}</b><small>${r.n} ${r.un} de histórico</small></div><div class="tx num">${r.fmt(r.atual)}</div>
     <div class="rgw"><div class="rg"><em style="left:${pos(r.md,r)}%"></em><i style="left:${pos(r.atual,r)}%"></i></div><div class="rgl num"><span>mín. ${r.fmt(r.mn)}</span><span>média ${r.fmt(r.md)}</span><span>máx. ${r.fmt(r.mx)}</span></div></div>
-    <div class="ds">${r.atual<=r.mn?'<b>No menor valor</b> do período':r.atual>=r.mx?'<b>No maior valor</b> do período':`<b>${r.pct>=67?'Parte alta':r.pct<=33?'Parte baixa':'No meio'}</b> do histórico: acima de ${r.pct}% ${r.un==='meses'?'dos meses':'dos anos'}`}</div></div>`).join('')+(A.tipo!=='fii'&&+st.trm<5?'<p class="note">ROE e margem líquida só mudam a cada balanço anual: aparecem em 5A e 10A.</p>':'');
+    <div class="ds">${r.atual<=r.mn?'<b>No menor valor</b> do período':r.atual>=r.mx?'<b>No maior valor</b> do período':`<b>${r.pct>=67?'Parte alta':r.pct<=33?'Parte baixa':'No meio'}</b> do histórico: acima de ${r.pct}% ${r.un==='meses'?'dos meses':'dos anos'}`}</div><button type="button" class="trmX" data-trmx="${r.k}" aria-label="Tirar ${r.nome} da comparação" title="Tirar da comparação">×</button></div>`).join('')+'</div>'
+  +(anual?'<p class="note">ROE, margens e endividamento só mudam a cada balanço anual: aparecem em 5A e 10A.</p>':'');
+  const abrir=()=>{if(st.ab.gterm)return;st.ab.gterm=true;const s=$('#gterm');if(!s)return;s.classList.remove('fechado');const b=s.querySelector('[data-mais]');if(b)b.textContent='Ver menos ▴'};
+  const ad=$('#trmAdd');if(ad)ad.onchange=()=>{if(!ad.value)return;const n=[...sel,ad.value];if(n.length>3)abrir();trmGuardar(n)};
+  $$('#gTerm [data-trmx]').forEach(b=>b.onclick=()=>trmGuardar(sel.filter(k=>k!==b.dataset.trmx)));
+  const pd=$('#trmPad');if(pd)pd.onclick=()=>trmGuardar(pad.slice());
 }
 
 // ---------- quedas e tempo de recuperacao ----------
@@ -714,7 +757,7 @@ function desenharSg(){
   $$('#gseg [data-seg="sg"] button').forEach(b=>{b.disabled=!ok.includes(+b.dataset.v);b.classList.toggle('on',b.dataset.v===String(st.sg))});
   const N=+st.sg,o=caminhos(N),lab=[...Array(N*12+1).keys()].map(k=>k===0?'compra':k%12===0?(k/12)+(k>12?' anos':' ano'):k+(k>1?' meses':' mês'));
   $('#sgTit').textContent=`R$ 1.000 investidos em ${A.ticker}, mês a mês, por ${N} ${N>1?'anos':'ano'}`;
-  chart(el,lab,[{nome:'Quando foi bem',tipo:'linha',cor:'var(--down)',vals:o.bem,fmt:brl,w:1.6},{nome:'Média',tipo:'linha',cor:'var(--c1)',vals:o.med,fmt:brl,w:3},{nome:'Quando foi mal',tipo:'linha',cor:'var(--up)',vals:o.mal,fmt:brl,w:1.6},{nome:'CDI',tipo:'linha',cor:'var(--c3)',vals:o.cdi,fmt:brl,w:2.4}],
+  chart(el,lab,[{nome:'Quando foi bem',tipo:'linha',cor:'var(--down)',vals:o.bem,fmt:brl,w:1.6},{nome:'Média',tipo:'linha',cor:'var(--azul)',vals:o.med,fmt:brl,w:3},{nome:'Quando foi mal',tipo:'linha',cor:'var(--up)',vals:o.mal,fmt:brl,w:1.6},{nome:'CDI',tipo:'linha',cor:'var(--c3)',vals:o.cdi,fmt:brl,w:2.4}],
     {fmtE:v=>'R$ '+N0.format(v),rotTip:i=>i?`depois de ${i<12?i+(i>1?' meses':' mês'):N1.format(i/12).replace(',0','')+(i>=24?' anos':' ano')}`:'no dia da compra',passo:N===1?3:(el.clientWidth<600&&N>5?24:12)});
   $('#sgNota').textContent=`Como R$ 1.000 evoluíram mês a mês depois da compra (preço + ${pv} reinvestidos), considerando todas as datas de compra desde ${dBR(J.desde)}${A.tipo==='fii'?' (início do histórico confiável de rendimentos)':''}. "Média" é a média de todas essas compras. "Quando foi bem" e "quando foi mal": 8 em cada 10 compras ficaram entre essas duas linhas. O CDI só sobe porque não oscila de preço (aproximado pelo mês). É o que aconteceu no passado, não uma previsão.`;
 }
@@ -805,7 +848,9 @@ async function desenharSetor(){
   const pc=(x,r)=>{const mn=r.ord[0][1],mx=r.ord[r.ord.length-1][1];return mx===mn?50:(x-mn)/(mx-mn)*100};
   const desc=r=>{const n=r.vs.length,d=r.md?Math.abs(r.v/r.md-1):0,lugar=r.pos===n-1?'<b>O maior</b> do grupo':r.pos===0?'<b>O menor</b> do grupo':`<b>${n-r.pos}º maior</b> de ${n}`;return`${lugar}, ${d<0.05?'perto da média':r.v>r.md?'acima da média':'abaixo da média'}`};
   const outros=G.slice(1).map(x=>x.ticker);
-  el.innerHTML=`<p class="note" style="margin:0 0 4px">${A.ticker} comparado com ${outros.slice(0,-1).join(', ')}${outros.length>1?' e ':''}${outros[outros.length-1]}, que são ${por} entre os ativos que o site acompanha. Traço grande = ${A.ticker}, bolinhas = os outros, traço pequeno = média do grupo. Um número diferente da média não quer dizer que o ativo está melhor ou pior: cada ${fii?'fundo':'empresa'} tem seu momento e seus motivos.</p>
+  const quem=fii?'fundos':bdr?'BDRs':'empresas',de={'o mesmo segmento':'do mesmo segmento','o mesmo setor':'do mesmo setor','o mesmo tipo de fundo':'do mesmo tipo de fundo'}[por];
+  el.innerHTML=`<details class="cmpQuem"><summary><span>Quais ${quem} entraram na comparação</span><b>${outros.length}</b></summary><div class="cmpQuemC"><p>${A.ticker} foi comparado com ${outros.length} ${quem} ${de} entre os ativos que o site acompanha. Toque num código para abrir a página dele.</p><ul>${G.slice(1).map(x=>`<li><a href="?t=${x.ticker}" data-abrir="${x.ticker}" title="${x.ticker} · ${x.nome||''}"><b>${x.ticker}</b> ${x.nome||''}</a></li>`).join('')}</ul></div></details>
+  <p class="note" style="margin:8px 0 4px">Traço grande = ${A.ticker}, bolinhas = os outros, traço pequeno = média do grupo. Um número diferente da média não quer dizer que o ativo está melhor ou pior: cada ${fii?'fundo':'empresa'} tem seu momento e seus motivos.</p>
   <div id="stRg">${L.map(r=>`<div class="trm"><div class="nm"><b>${r.nome}${aj(r.ak)}</b><small>${r.vs.length} ${fii?'fundos':bdr?'BDRs':'empresas'}</small></div><div class="tx num">${r.fmt(r.v)}</div>
     <div class="rgw"><div class="rg">${r.vs.filter(x=>x[0]!==eu.ticker).map(x=>`<u class="pp" style="left:${pc(x[1],r)}%" title="${x[0]}: ${r.fmt(x[1])}"></u>`).join('')}<em style="left:${pc(r.md,r)}%"></em><i style="left:${pc(r.v,r)}%"></i></div><div class="rgl num"><span>${r.ord[0][0]} ${r.fmt(r.ord[0][1])}</span><span>média ${r.fmt(r.md)}</span><span>${r.ord[r.ord.length-1][0]} ${r.fmt(r.ord[r.ord.length-1][1])}</span></div></div>
     <div class="ds">${desc(r)}</div></div>`).join('')}</div>
@@ -822,7 +867,7 @@ function secExtrasGraf(){
   +sec('gdd','Quanto caiu e quanto demorou para voltar',seg('dd',[['1','1A'],['2','2A'],['5','5A'],['10','10A'],['max','MAX']],'dd'),`<div class="box2 b3" id="ddBox" style="margin:0 0 12px"></div><div id="gDd"></div><div class="tw" id="ddTab" style="margin-top:12px"></div><p class="note" id="ddNota"></p>`)
   +(A.tipo!=='fii'?'':sec('grenda','Renda x inflação',``,`<p class="note" style="margin:0 0 6px">${A.tipo==='fii'?'Rendimentos':'Proventos'} pagos por ${A.tipo==='fii'?'cota':'ação'} em cada ano, no valor da época e corrigidos pela inflação até hoje. Quando a barra corrigida diminui com o tempo, a renda não acompanhou a inflação.</p><div id="gRenda"></div><h3 style="font-size:16px;margin:18px 0 4px">Quem comprou em cada ano recebe hoje</h3><div class="tw" id="yocTab"></div><p class="note" id="rendaNota"></p>`,'l4'))
   +'<h2 class="divisor" id="assinantes">Para assinantes</h2>'
-  +sec('gterm','Termômetro: hoje comparado ao próprio histórico',seg('trm',[['1','1A'],['2','2A'],['5','5A'],['10','10A']],'trm'),`<p class="note" style="margin:0 0 4px">Traço grande = hoje. Traço pequeno = média. A barra vai do menor ao maior valor do próprio ${A.tipo==='fii'?'fundo':'ativo'} no período${A.tipo==='fii'?'':' (P/L, P/VP, DY e EV/EBIT no fim de cada mês, com o preço do mês e o último balanço publicado)'}. Mostra se o número está alto ou baixo para o padrão dele, não se é hora de comprar ou vender.</p><div id="gTerm"></div>`,'tm')
+  +sec('gterm','Termômetro: hoje comparado ao próprio histórico',seg('trm',[['1','1A'],['2','2A'],['5','5A'],['10','10A']],'trm'),`<p class="note" style="margin:0 0 4px">Traço grande = hoje. Traço pequeno = média. A barra vai do menor ao maior valor do próprio ${A.tipo==='fii'?'fundo':'ativo'} no período${A.tipo==='fii'?'':' (os múltiplos de preço no fim de cada mês, com o preço do mês e o último balanço publicado; ROE, margens e endividamento ano a ano)'}. Mostra se o número está alto ou baixo para o padrão dele, não se é hora de comprar ou vender.</p><div id="gTerm"></div>`,'tm')
   +sec('gseg','Quanto tempo segurar',seg('sg',[['1','1A'],['2','2A'],['5','5A'],['10','10A']],'sg'),`<p class="note" style="margin:0 0 8px">Se alguém tivesse comprado ${A.ticker} em qualquer dia do histórico, como estaria depois de 1, 2, 5 ou 10 anos? Conta o preço e os ${A.tipo==='fii'?'rendimentos':'proventos'}. "Média" é a média de todas as datas de compra. Toque num prazo para ver o gráfico.</p><div class="sgc" id="sgTab"></div><h3 style="font-size:15px;margin:16px 0 2px" id="sgTit"></h3><div id="gSg"></div><p class="note" id="sgNota"></p>`)
   +sec('gsetor','Lado a lado com o setor','','<div id="gSetor"></div>','tm')
   +sec('gdonos',A.tipo==='fii'?'Quem são os cotistas':A.tipo==='bdr'?'Número de ações':'Quem são os donos e o número de ações',(A.tipo==='fii'?seg('dn',[['cotistas','Cotistas'],['cotas','Cotas emitidas']],'dn'):'')+seg('na',[['2','2A'],['5','5A'],['10','10A']],'na'),'<div id="gDonos"></div>');
