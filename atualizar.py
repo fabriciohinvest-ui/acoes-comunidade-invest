@@ -422,15 +422,23 @@ def fin_brasil(e):
                 'pl_consolidado': pl, 'pl': (pl or 0) - nc, 'disponibilidade': disp, 'divida_bruta': div,
                 'divida_liquida': (div - disp) if div is not None else -disp}
 
+    # ano fiscal: quase todas fecham em dezembro; Sao Martinho, Raizen e Jalles em marco, Camil em fevereiro, BrasilAgro em junho.
+    # O ano leva o numero do ano em que fecha (Sao Martinho 2026 = abr/2025 a mar/2026).
+    meses = defaultdict(int)
+    for (doc, ref, o, i, f) in R:
+        if doc == 'dfp':
+            meses[ref[5:7]] += 1
+    mes_fy = max(meses, key=lambda m: (meses[m], m == '12')) if meses else '12'
     anual = {}
     for (doc, ref, ordem, ini, fim), cs in R.items():
-        if doc != 'dfp' or not ref.endswith('12-31'):
+        if doc != 'dfp' or ref[5:7] != mes_fy or fim[5:7] != mes_fy:
             continue
         ano = int(fim[:4])
         if ordem == 'P' and ano in anual:
             continue  # prefere o numero do proprio ano; o penultimo so preenche anos sem DFP proprio
         if '3.01' in cs:
             anual.setdefault(ano, {}).update(dre(cs))
+            anual[ano]['fim'], anual[ano]['ini'] = fim, ini
     # balancos: pareia BPA e BPP do mesmo documento
     bpa, bpp = {}, {}
     for (doc, ref, ordem, ini, fim), cs in R.items():
@@ -445,23 +453,26 @@ def fin_brasil(e):
         if k in bpp:
             balancos[(k[0], k[1], k[2], k[3])] = bal(bpa[k], bpp[k])
     for (doc, ref, ordem, fim), b in balancos.items():
-        if doc == 'dfp' and fim.endswith('12-31'):
+        if doc == 'dfp' and fim[5:7] == mes_fy:
             ano = int(fim[:4])
             if ano in anual and ('ativo_total' not in anual[ano] or ordem == 'U'):
                 anual[ano].update(b)
     for ano, a in anual.items():
-        a['acoes'] = cap.get(f'{ano}-12-31')
+        a['acoes'] = cap.get(a['fim'])
 
     # ultimos 12 meses = ultimo ano + acumulado do ano atual - mesmo periodo do ano anterior
     itr = sorted({ref for (doc, ref, o, i, f) in R if doc == 'itr'})
+    if not anual:
+        raise ValueError('sem balanco anual na CVM')
     ult_ano = max(anual)
-    ttm = dict(anual[ult_ano]); ttm_ref = f'{ult_ano}-12-31'
+    ttm = dict(anual[ult_ano]); ttm_ref = anual[ult_ano]['fim']
     if itr and itr[-1] > ttm_ref:
         ref = itr[-1]
-        ref_ant = f'{int(ref[:4]) - 1}{ref[4:]}'
-        ytd = next((cs for (doc, r, o, i, f), cs in R.items() if doc == 'itr' and r == ref and o == 'U' and i[5:] == '01-01' and '3.01' in cs), None)
-        ytd_ant = next((cs for (doc, r, o, i, f), cs in R.items() if doc == 'itr' and r == ref and o == 'P' and i[5:] == '01-01' and '3.01' in cs), None)
-        if ytd and ytd_ant and int(ref[:4]) - 1 == ult_ano:
+        ini = (dt.date.fromisoformat(ttm_ref) + dt.timedelta(days=1)).isoformat()  # comeco do ano fiscal seguinte ao ultimo DFP
+        ini_ant = f'{int(ini[:4]) - 1}{ini[4:]}'
+        ytd = next((cs for (doc, r, o, i, f), cs in R.items() if doc == 'itr' and r == ref and o == 'U' and i == ini and '3.01' in cs), None)
+        ytd_ant = next((cs for (doc, r, o, i, f), cs in R.items() if doc == 'itr' and r == ref and o == 'P' and i == ini_ant and '3.01' in cs), None)
+        if ytd and ytd_ant:
             a, b = dre(ytd), dre(ytd_ant)
             for k in a:
                 if a[k] is not None and b[k] is not None and ttm.get(k) is not None:
@@ -478,11 +489,13 @@ def fin_brasil(e):
             di, df = dt.date.fromisoformat(i), dt.date.fromisoformat(f)
             if 80 < (df - di).days < 100:
                 trim[f] = dre(cs)
-    for ano, a in anual.items():  # 4o trimestre = ano - 9 meses
-        nove = next((cs for (doc, r, o, i, f), cs in R.items() if doc == 'itr' and o == 'U' and r == f'{ano}-09-30' and i == f'{ano}-01-01' and '3.01' in cs), None)
+    for ano, a in anual.items():  # 4o trimestre = ano fiscal - 9 meses
+        f9 = dt.date.fromisoformat(a['fim'])
+        nove = next((cs for (doc, r, o, i, f), cs in R.items() if doc == 'itr' and o == 'U' and i == a['ini'] and '3.01' in cs
+                     and 80 < (f9 - dt.date.fromisoformat(r)).days < 100), None)
         if nove:
             n = dre(nove)
-            trim[f'{ano}-12-31'] = {k: (a[k] - n[k]) if a.get(k) is not None and n.get(k) is not None else None for k in n}
+            trim[a['fim']] = {k: (a[k] - n[k]) if a.get(k) is not None and n.get(k) is not None else None for k in n}
     return anual, ttm, ttm_ref, trim, max(cap) if cap else None, cap
 
 
@@ -503,8 +516,19 @@ def sec_json(caminho, horas):
     return em_cache('sec/' + caminho.replace('/', '_').replace('.json', ''), horas, lambda: sec_baixar(caminho))
 
 
+# empresa que virou holding nova (CIK novo) e ainda nao tem o historico no cadastro novo: o antigo completa
+CIK_ANTERIOR = {'0002115436': '0000034088'}  # ExxonMobil Holdings (2026) <- Exxon Mobil Corp
+
+
 def sec_fatos(cik):
-    return sec_baixar(f'api/xbrl/companyfacts/CIK{cik}.json')['facts']['us-gaap']
+    F = sec_baixar(f'api/xbrl/companyfacts/CIK{cik}.json')['facts'].get('us-gaap', {})
+    if cik in CIK_ANTERIOR:
+        velho = sec_fatos(CIK_ANTERIOR[cik])
+        for tag, v in velho.items():
+            un = F.setdefault(tag, {'units': {}})['units']
+            for u, fatos in v['units'].items():
+                un[u] = fatos + un.get(u, [])  # em data repetida vence o arquivo mais novo (serie)
+    return F
 
 
 def fin_eua_guardado(cik):
@@ -514,7 +538,7 @@ def fin_eua_guardado(cik):
     rec = sub['filings']['recent']
     ult = max((d for f, d in zip(rec['form'], rec['filingDate']) if f in ('10-K', '10-Q', '10-K/A', '10-Q/A')), default='')
     pasta = os.path.join(CACHE, 'rede', 'sec')
-    arq = os.path.join(pasta, f'fin_{cik}_{ult}_v3.json')  # v3: ano fiscal fora de dezembro, receita de banco, campo mais atualizado
+    arq = os.path.join(pasta, f'fin_{cik}_{ult}_v5.json')  # v5: mais campos de receita, receita parcial, empresa sem receita, holding nova
     if os.path.exists(arq):
         a, t, r, tr = json.load(open(arq, encoding='utf-8'))
         return {int(k): v for k, v in a.items()}, t, r, tr
@@ -536,11 +560,13 @@ def fin_eua_guardado(cik):
 def fin_eua(cik):
     F = sec_fatos(cik)
 
-    def serie(tags, duracao, primeiro=False, inicios=None):
+    def serie(tags, duracao, primeiro=False, inicios=None, parte=False):
         """duracao: 'ano', 'trim', 'ytd' ou 'saldo'. Retorna {fim: valor} (ultimo arquivo vence;
         primeiro=True: vale o arquivo original, usado no n. de acoes para nao contar desdobramento duas vezes).
-        ytd = do inicio do ano fiscal ate o fim do trimestre (inicios: datas em que comeca um ano fiscal da empresa)"""
-        final = {}
+        ytd = do inicio do ano fiscal ate o fim do trimestre (inicios: datas em que comeca um ano fiscal da empresa)
+        parte=True (receita): se um campo anterior tem o dobro ou mais na mesma data, o campo de cima trouxe so uma parte
+        (P&G 2012-2014: Revenues = 28 bi, SalesRevenueNet = 82 bi) e fica o anterior"""
+        final, fonte = {}, {}
         for tag in tags:  # o ultimo campo da lista vence; os anteriores so completam datas que faltam
             out = {}
             for un in F.get(tag, {}).get('units', {}).values():
@@ -563,11 +589,18 @@ def fin_eua(cik):
                     k = x['end']
                     if k not in out or (x['filed'] < out[k][1] if primeiro else x['filed'] >= out[k][1]):
                         out[k] = (x['val'], x['filed'])
-            final.update({k: v for k, (v, f) in out.items()})
+            for k, (v, f) in out.items():
+                # a receita com impostos sobre venda nao conta como "total": no cigarro (Philip Morris) ela e 2,5x a liquida
+                if (parte and final.get(k) and v is not None and abs(final[k]) >= 2 * abs(v)
+                        and fonte[k] != 'RevenueFromContractWithCustomerIncludingAssessedTax'):
+                    continue
+                final[k], fonte[k] = v, tag
         return final
 
     T = {
-        'receita': ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenuesNetOfInterestExpense'],
+        'receita': ['RealEstateRevenueNet', 'SalesRevenueNet',  # nao usar SalesRevenueGoodsNet/ServicesNet: sao partes, nao o total
+                    'RevenueFromContractWithCustomerIncludingAssessedTax', 'Revenues',
+                    'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenuesNetOfInterestExpense'],
         'custos': ['CostOfRevenue'], 'ebit': ['OperatingIncomeLoss'], 'lucro_liquido': ['ProfitLoss', 'NetIncomeLossAvailableToCommonStockholdersBasic', 'NetIncomeLoss'],
         'imposto': ['IncomeTaxExpenseBenefit'], 'depreciacao': ['Depreciation', 'DepreciationAndAmortization'],
         'dividendos_pagos': ['PaymentsOfDividends', 'PaymentsOfDividendsCommonStock'],
@@ -584,11 +617,16 @@ def fin_eua(cik):
     for k, tags in T.items():
         principal = max(reversed(tags), key=ultimo_fim)
         T[k] = [t for t in tags if t != principal] + [principal]
-    anoS = {k: serie(v, 'ano') for k, v in T.items()}
+    parte = lambda k: k == 'receita' and T[k][-1] != 'RevenuesNetOfInterestExpense'  # banco: receita liquida e menor que a bruta
+    anoS = {k: serie(v, 'ano', parte=parte(k)) for k, v in T.items()}
+    # os anos fiscais saem da receita; sem receita na SEC (empresa sem vendas ainda, alguns bancos), do lucro
+    bk = 'receita' if anoS['receita'] else 'lucro_liquido'
+    if not anoS[bk]:
+        raise ValueError('sem balanco anual (10-K) na SEC ainda')
     # ano fiscal: Apple fecha em setembro, Microsoft em junho, Nvidia em janeiro (semanas de 52/53: tolerancia de 3 dias)
-    inicios = {(dt.date.fromisoformat(f) + dt.timedelta(days=1 + d)).isoformat() for f in anoS['receita'] for d in range(-3, 4)}
-    ytdS = {k: serie(v, 'ytd', inicios=inicios) for k, v in T.items()}
-    triS = {k: serie(v, 'trim') for k, v in T.items()}
+    inicios = {(dt.date.fromisoformat(f) + dt.timedelta(days=1 + d)).isoformat() for f in anoS[bk] for d in range(-3, 4)}
+    ytdS = {k: serie(v, 'ytd', inicios=inicios, parte=parte(k)) for k, v in T.items()}
+    triS = {k: serie(v, 'trim', parte=parte(k)) for k, v in T.items()}
     salS = {k: serie(v, 'saldo', primeiro=(k == 'acoes')) for k, v in S.items()}
     # empresa com mais de uma classe de acao (ex.: Meta) nao informa CommonStockSharesOutstanding:
     # usa a media ponderada de acoes do periodo (a do trimestre vale mais que a do ano)
@@ -613,7 +651,7 @@ def fin_eua(cik):
         return out
 
     anual = {}
-    for fim in sorted(anoS['receita']):
+    for fim in sorted(anoS[bk]):
         ano = int(fim[:4])
         a = {k: anoS[k].get(fim) for k in T}
         a['fim'] = fim  # fechamento do ano fiscal
@@ -626,11 +664,11 @@ def fin_eua(cik):
         anual[ano] = a
     ult = max(anual)
     ttm = dict(anual[ult]); ttm_ref = anual[ult]['fim']
-    ytd_ult = max(ytdS['receita']) if ytdS['receita'] else None
+    ytd_ult = max(ytdS[bk]) if ytdS[bk] else None
     ant = None
     if ytd_ult and ytd_ult > ttm_ref:  # mesmo periodo do ano fiscal anterior (52/53 semanas: ate 7 dias de diferenca)
         alvo = dt.date.fromisoformat(ytd_ult) - dt.timedelta(days=365)
-        ant = min(ytdS['receita'], key=lambda k: abs((dt.date.fromisoformat(k) - alvo).days))
+        ant = min(ytdS[bk], key=lambda k: abs((dt.date.fromisoformat(k) - alvo).days))
         if abs((dt.date.fromisoformat(ant) - alvo).days) > 7:
             ant = None
     if ant:
@@ -641,22 +679,22 @@ def fin_eua(cik):
             if a is not None and b is not None and base is not None:
                 ttm[k] = base + a - b
         # Q1: o "ytd" do 1o tri e o proprio tri
-        ttm['lucro_bruto'] = ttm['receita'] - ttm['custos'] if ttm['custos'] else None
+        ttm['lucro_bruto'] = ttm['receita'] - ttm['custos'] if ttm['custos'] and ttm['receita'] is not None else None
         ttm['custos'] = -ttm['custos'] if ttm['custos'] else None
         ttm['lucro_ctrl'] = ttm['lucro_liquido']
         ttm['ebitda'] = ttm['ebit'] + ttm['depreciacao'] if ttm.get('ebit') is not None and ttm.get('depreciacao') else None
         ttm.update(balanco(ytd_ult))
         ttm_ref = ytd_ult
     trim = {}
-    for fim in triS['receita']:
+    for fim in triS[bk]:
         trim[fim] = {'receita': triS['receita'].get(fim), 'lucro_liquido': triS['lucro_liquido'].get(fim), 'lucro_ctrl': triS['lucro_liquido'].get(fim)}
     for ano, a in anual.items():  # 4o trimestre fiscal = ano fiscal - 9 meses
         f = dt.date.fromisoformat(a['fim'])
-        nove = next((k for k in ytdS['receita'] if 80 < (f - dt.date.fromisoformat(k)).days < 100), None)
+        nove = next((k for k in ytdS[bk] if 80 < (f - dt.date.fromisoformat(k)).days < 100), None)
         if a['fim'] not in trim and nove:
-            ll, ll9 = a.get('lucro_liquido'), ytdS['lucro_liquido'].get(nove)
-            q4 = ll - ll9 if ll is not None and ll9 is not None else None
-            trim[a['fim']] = {'receita': a['receita'] - ytdS['receita'][nove], 'lucro_liquido': q4, 'lucro_ctrl': q4}
+            menos = lambda x, y: x - y if x is not None and y is not None else None
+            q4 = menos(a.get('lucro_liquido'), ytdS['lucro_liquido'].get(nove))
+            trim[a['fim']] = {'receita': menos(a.get('receita'), ytdS['receita'].get(nove)), 'lucro_liquido': q4, 'lucro_ctrl': q4}
     return anual, ttm, ttm_ref, trim
 
 
@@ -1035,8 +1073,12 @@ def montar_fii(e, historico=False):
         raise ValueError('sem cotacao na B3')
     par = {'cnpj': re.sub(r'\D', '', e['cnpj']), 'identifierFund': e['b3'], 'typeFund': 7}
     q = base64.b64encode(json.dumps(par).encode()).decode()
-    sup = em_cache(f'b3/GetListedSupplementFunds/{chave_arquivo(par)}', 20,
-                   lambda: json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/fundsProxy/fundsCall/GetListedSupplementFunds/{q}', timeout=60)))
+    try:
+        sup = em_cache(f'b3/GetListedSupplementFunds/{chave_arquivo(par)}', 20,
+                       lambda: json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/fundsProxy/fundsCall/GetListedSupplementFunds/{q}', timeout=60)))
+    except ValueError:  # a B3 responde vazio para alguns fundos (ex.: JPPA11, APXM11): sem eventos da B3, rendimentos pelo Yahoo
+        print('  aviso: B3 sem dados complementares de', e['ticker'])
+        sup = {}
     fat = []
     for s in sup.get('stockDividends') or []:
         if s['isinCode'] == e['isin'] and s.get('lastDatePrior') and s['label'] in EVENTOS_PRECO:
@@ -1214,11 +1256,13 @@ def montar(e, historico=False):
         prov12 = prov_entre(um_ano, hoje_d)
         ind = indicadores(ttm, preco, n, prov12, banco=e.get('banco'))
         hist = {}
+        fim_ano = lambda a: anual[a].get('fim') or f'{a}-12-31'  # fechamento do ano fiscal (Sao Martinho: marco)
+        fech = {d: cot[d][3] for d in dias}
         for ano in sorted(anual):
-            a = anual[ano]
-            pa = preco_em({d: cot[d][3] for d in dias}, f'{ano}-12-31')
-            na = (a.get('acoes') or n) * fatk(f'{ano}-12-31')  # acoes do ano no criterio de hoje
-            hist[ano] = indicadores(a, pa, na, prov_entre(f'{ano - 1}-12-31', f'{ano}-12-31'), banco=e.get('banco')) if pa else {}
+            a, fa = anual[ano], fim_ano(ano)
+            pa = preco_em(fech, fa)
+            na = (a.get('acoes') or n) * fatk(fa)  # acoes do ano no criterio de hoje
+            hist[ano] = indicadores(a, pa, na, prov_entre(f'{int(fa[:4]) - 1}{fa[4:]}', fa), banco=e.get('banco')) if pa else {}
             hist[ano]['preco'] = pa
         ff = fre_free_float([e['cnpj']]).get(e['cnpj'], {})
         try:
@@ -1228,7 +1272,7 @@ def montar(e, historico=False):
         if dn:
             dn.update({k: ff.get(k) for k in ('pf', 'pj', 'inst')})
             out['donos'] = dn
-        out['acoes_hist'] = {str(a): round((anual[a].get('acoes') or 0) * fatk(f'{a}-12-31')) or None for a in sorted(anual)}
+        out['acoes_hist'] = {str(a): round((anual[a].get('acoes') or 0) * fatk(fim_ano(a))) or None for a in sorted(anual)}
         out['acoes_hist']['hoje'] = n
         vol60 = [cot[d][4] for d in dias[-21:]]  # liquidez media do ultimo mes
         info = {'valor_mercado': ind['valor_mercado'], 'valor_firma': ind['valor_firma'], 'pl': ttm.get('pl'), 'n_papeis': n,
@@ -1255,7 +1299,8 @@ def montar(e, historico=False):
             pa = preco_em(px_us, fa)
             fa0 = (dt.date.fromisoformat(fa) - dt.timedelta(days=365)).isoformat()
             dps = sum(v for d, v in divs_us if fa0 < d <= fa)
-            na = (anual[ano].get('acoes') or n) * splits_depois(fa)
+            na = anual[ano].get('acoes') or n
+            na = na * splits_depois(fa) if na else None  # sem n. de acoes na SEC (ex.: mais de uma classe): indicadores por acao ficam "-"
             hist[ano] = indicadores(anual[ano], pa, na, dps) if pa else {}
             hist[ano]['preco'] = pa
         dolar = preco_em(px, hoje_d)
@@ -1504,8 +1549,8 @@ def main():
     pasta_cvm = lambda c: os.path.join(CACHE, 'cvm', re.sub(r'\D', '', c))
     novos = [c for c in cnpjs if not os.path.isdir(pasta_cvm(c))]  # empresa nova: busca os balancos desde 2010
     if cnpjs:
-        for ano in range(2010, hoje.year):
-            alvo = cnpjs if (historico or ano == hoje.year - 1) else novos
+        for ano in range(2010, hoje.year + 1):  # o do ano corrente traz quem fecha o ano fiscal antes de dezembro
+            alvo = cnpjs if (historico or ano >= hoje.year - 1) else novos
             if alvo:
                 print(' CVM DFP', ano, f'({len(alvo)} empresas)'); cvm_baixar('dfp', ano, alvo)
         for ano in (hoje.year - 1, hoje.year):

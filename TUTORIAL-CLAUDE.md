@@ -50,7 +50,24 @@ O plano da seção 9 foi feito para ações, FIIs e BDRs. Falta o tipo `eua` (S&
   - **Cada item vem do campo XBRL mais atualizado da empresa.** Os outros campos só completam datas que faltam. Exemplos: bancos (JPMorgan & cia.) informam a receita em `RevenuesNetOfInterestExpense` desde 2015, e a Broadcom informa o lucro em `ProfitLoss` desde 2025.
   - **Proteções para banco**, que não tem lucro operacional (o EBITDA fica "-"), e para ano sem lucro informado.
   - Em empresas de ano fiscal em dezembro, os números não mudaram (Google, Amazon, Meta e Tesla foram comparados antes e depois).
-  - O resultado guardado tem versão no nome (`fin_{cik}_{data}_v3.json`). Se mudar o cálculo de novo, suba a versão para refazer os guardados.
+  - O resultado guardado tem versão no nome (`fin_{cik}_{data}_v5.json`). Se mudar o cálculo de novo, suba a versão para refazer os guardados.
+- **Correções da 1ª rodada no GitHub (08/11/2026)**: saíram 1.217 de 1.259 ativos. Os 42 que deram erro foram corrigidos assim:
+  - **Ano fiscal fora de dezembro na CVM** (São Martinho, Raízen e Jalles em março, Camil em fevereiro, BrasilAgro em junho): o mês de fechamento sai dos DFP da empresa (`mes_fy` em `fin_brasil`). O ano leva o número do ano em que fecha. TTM, 4º trimestre, preço e proventos do histórico usam o fechamento real. O DFP do ano corrente também é baixado, porque traz quem fecha antes de dezembro.
+  - **Mais campos de receita na SEC**:
+    - `RevenueFromContractWithCustomerIncludingAssessedTax` (CrowdStrike, Hormel, Kraft Heinz, Valero);
+    - os de antes de 2018, que só completam anos que faltam (`SalesRevenueNet`, `RealEstateRevenueNet`). Não use `SalesRevenueGoodsNet`/`ServicesNet`: são partes da receita, não o total.
+  - **Receita parcial**: às vezes o campo principal traz só uma parte da receita (P&G 2012-2014 em `Revenues`; REITs, seguradoras e bancos em `RevenueFromContractWithCustomerExcludingAssessedTax`, que deixa de fora aluguel, prêmio e juros). Se outro campo de receita tem o dobro ou mais na mesma data, vale o outro (`parte` em `serie`). Exceções:
+    - banco com `RevenuesNetOfInterestExpense` (a receita líquida é menor que a bruta, e é a líquida que queremos);
+    - a receita com impostos sobre venda, que nunca substitui a líquida (na Philip Morris ela é 2,5 vezes maior).
+  - **Antes dessas correções, uns 40 BDRs publicados tinham o balanço parado em anos antigos** (NextEra e Duke em 2013, Halliburton em 2011, TJX em 2015), porque a empresa tinha trocado o campo da receita. A comparação com o publicado está em "Testes".
+  - **Empresa americana sem receita na SEC** (sem vendas ainda, como QuantumScape e Biohaven, ou banco regional que não informa receita): os anos fiscais saem do lucro e a receita fica "-". Não usamos receita de juros bruta no lugar, para não misturar critérios.
+  - **Sem nº de ações na SEC** (mais de uma classe: Berkshire, Visa...): os indicadores por ação do histórico ficam "-" em vez de quebrar.
+  - **Holding nova com CIK novo** (ExxonMobil Holdings, 2026): `CIK_ANTERIOR` junta o histórico do cadastro antigo.
+  - **Nome do BDR**: a ligação com a SEC também aceita as mesmas palavras em outra ordem ("T ROWE PRICE" × "PRICE T ROWE") e não liga empresa a fundo/ETF de nome parecido. Com isso, a Charles Schwab entrou.
+  - **FII que a B3 não detalha** (JPPA11, APXM11): fica sem eventos da B3, e os rendimentos vêm pelo Yahoo.
+  - **Ficam de fora até entregar o 1º 10-K**: SpaceX e Cerebras, que só têm 10-Q.
+  - **Lista refeita quando a regra muda**: `universo.json` guarda `versao`. Se mudar a regra da lista, suba `VERSAO` no `universo.py`, e a próxima rodada refaz a lista sem esperar a semana.
+  - **CNPJ de filial**: quando a B3 traz o CNPJ de uma filial (Tupy), a lista usa o da matriz no cadastro da CVM, desde que só exista uma companhia com aquela raiz.
 - **Log**: com 8 ativos ao mesmo tempo, cada linha sai inteira e, durante um ativo, com `[TICKER]` na frente.
 - **Ficaram de fora**:
   - units;
@@ -207,7 +224,7 @@ Todas sem login e sem chave. O que cada uma dá:
 - **Desdobramentos**: ajuste a cotação e os proventos antigos pelo fator dos eventos da B3. O MXRF11 teve desdobramento de 1 para 10 em 16/05/2017, e o VP por cota e o nº de cotas antigos também precisam desse ajuste.
 - **Lucro de banco**: na DRE consolidada da CVM, até 2019 o lucro do banco está na conta **3.09**, não na 3.11. O robô procura pela descrição (`^lucro.*consolidado do per[íi]odo`, nível 1) e só usa a 3.11 se não achar.
 - **Nº de ações na SEC**: use o número do **arquivo original** de cada período. O 10-K seguinte já vem corrigido pelo desdobramento, então aplicar o split por cima dá P/L 10 ou 20 vezes errado (o Google 2021 deu P/L 504). Esse número original é multiplicado pelos splits posteriores. O código faz isso em `serie(..., primeiro=True)`.
-- **Ano fiscal na SEC**: não suponha que o ano termina em 31/12. O ano fiscal acaba no fim do período de 350 a 380 dias do 10-K (semanas de 52/53 variam uns dias). O ytd começa no dia seguinte ao fim do ano fiscal anterior (`inicios` em `fin_eua`).
+- **Ano fiscal na SEC e na CVM**: não suponha que o ano termina em 31/12 (na CVM: `mes_fy` em `fin_brasil`). O ano fiscal acaba no fim do período de 350 a 380 dias do 10-K (semanas de 52/53 variam uns dias). O ytd começa no dia seguinte ao fim do ano fiscal anterior (`inicios` em `fin_eua`).
 - **Proventos de BDR**: a B3 só mostra 12 meses. O robô acumula o que vê em `cache/proventos/{T}.json`, então o histórico cresce sozinho. Para trás, estima assim: dividendo em US$ × PTAX da data com × 0,7 (imposto de 30% retido nos EUA) ÷ k, sendo k a paridade calibrada com os pagamentos reais. Na tabela aparece como **"Dividendo (estimado)"**.
 - **Rendimentos de FII**:
   - A B3 só mostra 12 meses (acumulados em `cache/proventos/`).

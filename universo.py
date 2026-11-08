@@ -20,6 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 import atualizar as A
 
 ARQ = os.path.join(A.CACHE, 'universo.json')
+VERSAO = 2  # suba quando mudar a regra da lista: a lista guardada e refeita na hora, sem esperar a semana
 DIAS = 30  # negociado nesse periodo
 
 
@@ -139,9 +140,15 @@ def acoes(neg):
             return c, {}
     with ThreadPoolExecutor(max_workers=6) as ex:
         detalhes = dict(ex.map(det, codigos))
+    # a B3 as vezes traz o CNPJ de uma filial (Tupy: /0003-00); os balancos da CVM estao no da matriz (/0001-49)
+    por_raiz = defaultdict(list)
+    for c in cad:
+        por_raiz[c[:10]].append(c)
     out = []
     for t, p, em in candidatos:
         cnpj = fmt_cnpj(em['cnpj'])
+        if cnpj not in cad and len(por_raiz.get(cnpj[:10], [])) == 1:
+            cnpj = por_raiz[cnpj[:10]][0]
         social, comercial, setor_cvm = cad.get(cnpj, [em['companyName'], '', ''])
         classe = re.sub(r'\s*\.\s+', ', ', detalhes.get(em['codeCVM'], {}).get('industryClassification') or '')  # a B3 troca a virgula por ponto
         partes = [x.strip() for x in classe.split('/') if x.strip()]
@@ -272,21 +279,25 @@ def tickers_sec():
 def bdrs(neg):
     lista = {r['issuingCompany']: r for r in b3_paginas('GetCompaniesBDR') if r.get('codeCategoryBVMF') == '6'}
     sec = list(tickers_sec().values())
-    por_nome, por_ticker = defaultdict(list), {}
+    por_nome, por_palavras, por_ticker = defaultdict(list), defaultdict(list), {}
     for v in sec:
         por_nome[norm(v['title'])].append(v)
+        por_palavras[frozenset(norm(v['title']).split())].append(v)
         por_ticker[v['ticker']] = v
 
     def achar(em):
         """empresa americana do BDR: pelo nome; se nao achar, pelo codigo da B3 sem os numeros (VRTX, SCHW, ORLY...)"""
         n = norm(em['companyName'])
         cands = por_nome.get(n) or []
+        if not cands:  # mesmas palavras em outra ordem: "T ROWE PRICE" na B3, "PRICE T ROWE" na SEC
+            cands = por_palavras.get(frozenset(n.split())) or []
         if not cands:
             v = por_ticker.get(re.sub(r'\d', '', em['issuingCompany']))
             if v and norm(v['title']).split()[:1] == n.split()[:1]:
                 cands = [v]
         if not cands:
-            pre = [k for k in por_nome if n and (k.startswith(n + ' ') or n.startswith(k + ' ')) and len(k.split()) >= 2]
+            pre = [k for k in por_nome if n and (k.startswith(n + ' ') or n.startswith(k + ' ')) and len(k.split()) >= 2
+                   and not re.search(r'\b(ETF|FUND|TRUST)\b', k)]  # nao confundir a empresa com um fundo de nome parecido
             if len(pre) == 1:
                 cands = por_nome[pre[0]]
         if not cands:
@@ -325,8 +336,9 @@ def bdrs(neg):
 
 def main():
     if os.path.exists(ARQ) and '--forcar' not in sys.argv:
-        idade = (time.time() - json.load(open(ARQ, encoding='utf-8')).get('_em', 0)) / 86400
-        if idade < 7:
+        guardada = json.load(open(ARQ, encoding='utf-8'))
+        idade = (time.time() - guardada.get('_em', 0)) / 86400
+        if idade < 7 and guardada.get('versao') == VERSAO:
             print(f'universo.json tem {idade:.1f} dia(s): fica como esta (use --forcar para refazer)')
             return
     inicio = time.time()
@@ -350,7 +362,8 @@ def main():
     ativos = [e for v in partes.values() for e in (v or [])]
     # os mais negociados primeiro (a primeira carga do robo comeca por eles)
     ativos.sort(key=lambda e: -neg.get(e['ticker'], {}).get('volume', 0))
-    A.gravar_atomico(ARQ, json.dumps({'_em': time.time(), 'gerado': dt.date.today().isoformat(), 'ativos': ativos}, ensure_ascii=False, indent=0))
+    A.gravar_atomico(ARQ, json.dumps({'_em': time.time(), 'versao': VERSAO, 'gerado': dt.date.today().isoformat(), 'ativos': ativos},
+                                     ensure_ascii=False, indent=0))
     print(f'universo.json: {len(ativos)} ativos em {round(time.time() - inicio)} s')
 
 
