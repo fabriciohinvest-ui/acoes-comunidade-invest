@@ -59,7 +59,7 @@ Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Co
 
 | Arquivo | O que é |
 |---|---|
-| `atualizar.py` | O robô (cerca de 1.250 linhas). Baixa, calcula e grava `dados/<TICKER>.json` + `dados/indice.json` + `dados/indices.json` (índices para a comparação) |
+| `atualizar.py` | O robô (cerca de 1.100 linhas). Baixa, calcula e grava `dados/<TICKER>.json` + `dados/indice.json` + `dados/indices.json` (índices para a comparação) |
 | `index.html` | A pesquisa. Lê `indice.json` e manda para `acao.html?t=TICKER`. Lê `?q=` e `?tipo=` da URL |
 | `acao.html` | A página de qualquer ativo (`?t=TICKER`). `render()` faz ação e BDR, `renderFii()` faz FII |
 | `tesouro.html` + `tesouro.py` | Página do Tesouro Direto (veio da área de investimentos da Comunidade; CSS e JS embutidos) e o robô dela, que grava `dados/tesouro.json`. A página busca esse JSON ao abrir e, se falhar, usa os dados embutidos. Pegadinha: a API do Banco Central responde 304 para `ultimos/1`; use `ultimos/10` |
