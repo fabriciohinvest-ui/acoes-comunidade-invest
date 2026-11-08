@@ -1,0 +1,97 @@
+CNPJ_CIA;DT_REFER;VERSAO;DENOM_CIA;CD_CVM;GRUPO_DFP;MOEDA;ESCALA_MOEDA;ORDEM_EXERC;DT_FIM_EXERC;CD_CONTA;DS_CONTA;VL_CONTA;ST_CONTA_FIXA
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2;Passivo Total;1378527685.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2;Passivo Total;1604653790.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.01;Passivos Financeiros Avaliados ao Valor Justo através do Resultado;14244083.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.01;Passivos Financeiros Avaliados ao Valor Justo através do Resultado;18697682.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02;Passivos Financeiros ao Custo Amortizado;893209350.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02;Passivos Financeiros ao Custo Amortizado;1086251014.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.01;Depósitos;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.01;Depósitos;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.01.01;Recursos de Instituições Financeiras;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.01.01;Recursos de Instituições Financeiras;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.01.02;Recursos de Emissão de Títulos;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.01.02;Recursos de Emissão de Títulos;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.01.03;Dívidas Subordinadas;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.01.03;Dívidas Subordinadas;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.01.04;Recursos de Clientes;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.01.04;Recursos de Clientes;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.01.05;Outros Passivos Financeiros;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.01.05;Outros Passivos Financeiros;0.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.02;Captações no Mercado Aberto;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.02;Captações no Mercado Aberto;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.03;Recursos Mercado Interfinanceiro;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.03;Recursos Mercado Interfinanceiro;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.02.04;Outras Captações;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.02.04;Outras Captações;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.03;Provisões;297831345.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.03;Provisões;311226553.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.03.01;Provisão para Perda Esperada;4288725.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.03.01;Provisão para Perda Esperada;6178246.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.03.02;Provisões Técnicas de Seguros e Previdências;268302691.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.03.02;Provisões Técnicas de Seguros e Previdências;279465384.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.03.03;Outras Provisões;25239929.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.03.03;Outras Provisões;25582923.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.04;Passivos Fiscais;3675880.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.04;Passivos Fiscais;2845934.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.04.01;Impostos Correntes;2595277.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.04.01;Impostos Correntes;1596284.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.04.02;Impostos Diferidos;1080603.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.04.02;Impostos Diferidos;1249650.0000000000;N
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.05;Outros Passivos;34023453.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.05;Outros Passivos;39515233.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.06;Passivos sobre Ativos Não Correntes a Venda e Descontinuados;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.06;Passivos sobre Ativos Não Correntes a Venda e Descontinuados;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.06.01;Passivos sobre Ativos Não Correntes a Venda;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.06.01;Passivos sobre Ativos Não Correntes a Venda;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.06.02;Passivos sobre Ativos de Operações Descontinuadas;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.06.02;Passivos sobre Ativos de Operações Descontinuadas;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07;Patrimônio Líquido Consolidado;135543574.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07;Patrimônio Líquido Consolidado;146117374.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01;Patrimônio Líquido Atribuído ao Controlador;135099466.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01;Patrimônio Líquido Atribuído ao Controlador;145620218.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.01;Capital Social Realizado;75100000.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.01;Capital Social Realizado;79100000.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.02;Reservas de Capital;-334045.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.02;Reservas de Capital;-334045.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.02.01;Ágio na Emissão de Ações;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.02.01;Ágio na Emissão de Ações;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.02.02;Reserva Especial de Ágio na Incorporação;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.02.02;Reserva Especial de Ágio na Incorporação;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.02.03;Alienação de Bônus de Subscrição;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.02.03;Alienação de Bônus de Subscrição;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.02.04;Opções Outorgadas;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.02.04;Opções Outorgadas;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.02.05;Ações em Tesouraria;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.02.05;Ações em Tesouraria;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.03;Reservas de Reavaliação;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.03;Reservas de Reavaliação;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04;Reservas de Lucros;51986423.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04;Reservas de Lucros;58985029.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.01;Reserva Legal;9623394.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.01;Reserva Legal;10450722.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.02;Reserva Estatutária;42363029.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.02;Reserva Estatutária;48534307.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.03;Reserva para Contingências;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.03;Reserva para Contingências;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.04;Reserva de Lucros a Realizar;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.04;Reserva de Lucros a Realizar;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.05;Reserva de Retenção de Lucros;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.05;Reserva de Retenção de Lucros;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.06;Reserva Especial para Dividendos Não Distribuídos;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.06;Reserva Especial para Dividendos Não Distribuídos;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.07;Reserva de Incentivos Fiscais;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.07;Reserva de Incentivos Fiscais;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.08;Dividendo Adicional Proposto;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.08;Dividendo Adicional Proposto;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.04.09;Ações em Tesouraria;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.04.09;Ações em Tesouraria;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.05;Lucros/Prejuízos Acumulados;475606.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.05;Lucros/Prejuízos Acumulados;-234109.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.06;Ajustes de Avaliação Patrimonial;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.06;Ajustes de Avaliação Patrimonial;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.07;Ajustes Acumulados de Conversão;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.07;Ajustes Acumulados de Conversão;0.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.01.08;Outros Resultados Abrangentes;7871482.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.01.08;Outros Resultados Abrangentes;8103343.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2019-12-31;2.07.02;Patrimônio Líquido Atribuído aos Não Controladores;444108.0000000000;S
+60.746.948/0001-12;2020-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2020-12-31;2.07.02;Patrimônio Líquido Atribuído aos Não Controladores;497156.0000000000;S

@@ -1,0 +1,74 @@
+[
+{
+"tipo": "Rendimento",
+"data_com": "2025-11-28",
+"pagamento": "2025-12-11",
+"valor": 0.72
+},
+{
+"tipo": "Rendimento",
+"data_com": "2025-12-30",
+"pagamento": "2026-01-14",
+"valor": 0.7
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-01-30",
+"pagamento": "2026-02-12",
+"valor": 0.7
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-02-27",
+"pagamento": "2026-03-12",
+"valor": 0.65
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-03-31",
+"pagamento": "2026-04-14",
+"valor": 1.05
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-04-30",
+"pagamento": "2026-05-14",
+"valor": 1.1
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-05-29",
+"pagamento": "2026-06-12",
+"valor": 1.25
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-06-30",
+"pagamento": "2026-07-13",
+"valor": 1.12
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-07-31",
+"pagamento": "2026-08-13",
+"valor": 0.95
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-08-31",
+"pagamento": "2026-09-14",
+"valor": 0.65
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-09-30",
+"pagamento": "2026-10-14",
+"valor": 0.6
+},
+{
+"tipo": "Rendimento",
+"data_com": "2026-10-30",
+"pagamento": "2026-11-13",
+"valor": 0.71
+}
+]

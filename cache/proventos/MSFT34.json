@@ -1,0 +1,26 @@
+[
+{
+"tipo": "Dividendo",
+"data_com": "2026-08-18",
+"pagamento": "2026-09-16",
+"valor": 0.130576981
+},
+{
+"tipo": "Dividendo",
+"data_com": "2026-05-19",
+"pagamento": "2026-06-17",
+"valor": 0.130343587
+},
+{
+"tipo": "Dividendo",
+"data_com": "2026-02-13",
+"pagamento": "2026-03-18",
+"valor": 0.134739582
+},
+{
+"tipo": "Dividendo",
+"data_com": "2025-11-17",
+"pagamento": "2025-12-17",
+"valor": 0.138509778
+}
+]

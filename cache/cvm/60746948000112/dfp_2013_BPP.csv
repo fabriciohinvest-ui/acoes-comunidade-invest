@@ -1,0 +1,93 @@
+CNPJ_CIA;DT_REFER;VERSAO;DENOM_CIA;CD_CVM;GRUPO_DFP;MOEDA;ESCALA_MOEDA;ORDEM_EXERC;DT_FIM_EXERC;CD_CONTA;DS_CONTA;VL_CONTA;ST_CONTA_FIXA
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2;Passivo Total;799540624.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2;Passivo Total;838301614.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.01;Passivos Financeiros para Negociação;4049982.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.01;Passivos Financeiros para Negociação;1826382.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.02;Outros Passivos Financeiros ao Valor Justo no Resultado;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.02;Outros Passivos Financeiros ao Valor Justo no Resultado;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.03;Passivos Financeiros ao Custo Amortizado;636890144.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.03;Passivos Financeiros ao Custo Amortizado;683415524.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.03.01;Recursos de Instituições Financeiras;220943354.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.03.01;Recursos de Instituições Financeiras;243100373.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.03.02;Recursos de Emissão de Títulos;51552093.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.03.02;Recursos de Emissão de Títulos;57883068.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.03.03;Dívidas Subordinadas;34851714.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.03.03;Dívidas Subordinadas;35885003.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.03.04;Recursos de Clientes;210774263.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.03.04;Recursos de Clientes;216218057.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.03.05;Provisões Técnicas de Seguros e Previdência;118768720.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.03.05;Provisões Técnicas de Seguros e Previdência;130329023.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.04;Provisões;21021109.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.04;Provisões;13752577.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.04.01;Outras Provisões;21021109.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.04.01;Outras Provisões;13752577.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.05;Passivos Fiscais;6380355.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.05;Passivos Fiscais;3882800.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.05.01;Impostos Correntes;3288688.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.05.01;Impostos Correntes;3082976.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.05.02;Impostos Diferidos;3091667.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.05.02;Impostos Diferidos;799824.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.06;Outros Passivos;59852644.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.06;Outros Passivos;63321405.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.06.01;Outros Passivos;59852644.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.06.01;Outros Passivos;63321405.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.07;Passivos sobre Ativos Não Correntes a Venda e Descontinuados;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.07;Passivos sobre Ativos Não Correntes a Venda e Descontinuados;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.07.01;Passivos sobre Ativos Não Correntes a Venda;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.07.01;Passivos sobre Ativos Não Correntes a Venda;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.07.02;Passivos sobre Ativos de Operações Descontinuadas;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.07.02;Passivos sobre Ativos de Operações Descontinuadas;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08;Patrimônio Líquido Consolidado;71346390.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08;Patrimônio Líquido Consolidado;72102926.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.01;Capital Social Realizado;30100000.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.01;Capital Social Realizado;38100000.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02;Reservas de Capital;-90832.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02;Reservas de Capital;-162624.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02.01;Ágio na Emissão de Ações;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02.01;Ágio na Emissão de Ações;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02.02;Reserva Especial de Ágio na Incorporação;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02.02;Reserva Especial de Ágio na Incorporação;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02.03;Alienação de Bônus de Subscrição;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02.03;Alienação de Bônus de Subscrição;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02.04;Opções Outorgadas;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02.04;Opções Outorgadas;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02.05;Ações em Tesouraria;-197301.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02.05;Ações em Tesouraria;-269093.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02.06;Reservas de Capital;35973.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02.06;Reservas de Capital;35973.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.02.07;Capital Integralizado Adicional;70496.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.02.07;Capital Integralizado Adicional;70496.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.03;Reservas de Reavaliação;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.03;Reservas de Reavaliação;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04;Reservas de Lucros;34189383.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04;Reservas de Lucros;34122503.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.01;Reserva Legal;3838474.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.01;Reserva Legal;4439025.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.02;Reserva Estatutária;30350909.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.02;Reserva Estatutária;29683478.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.03;Reserva para Contingências;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.03;Reserva para Contingências;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.04;Reserva de Lucros a Realizar;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.04;Reserva de Lucros a Realizar;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.05;Reserva de Retenção de Lucros;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.05;Reserva de Retenção de Lucros;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.06;Reserva Especial para Dividendos Não Distribuídos;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.06;Reserva Especial para Dividendos Não Distribuídos;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.07;Reserva de Incentivos Fiscais;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.07;Reserva de Incentivos Fiscais;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.08;Dividendo Adicional Proposto;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.08;Dividendo Adicional Proposto;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.04.09;Ações em Tesouraria;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.04.09;Ações em Tesouraria;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.05;Lucros/Prejuízos Acumulados;542422.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.05;Lucros/Prejuízos Acumulados;927314.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.06;Ajustes de Avaliação Patrimonial;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.06;Ajustes de Avaliação Patrimonial;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.07;Ajustes Acumulados de Conversão;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.07;Ajustes Acumulados de Conversão;0.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.08;Outros Resultados Abrangentes;6396736.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.08;Outros Resultados Abrangentes;-1102887.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.08.01;Lucro  / (Prejuízo) Abrangente Acumulado;6396736.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.08.01;Lucro  / (Prejuízo) Abrangente Acumulado;-1102887.0000000000;N
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2012-12-31;2.08.09;Participação dos Acionistas Não Controladores;208681.0000000000;S
+60.746.948/0001-12;2013-12-31;2;BCO BRADESCO S.A.;000906;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2013-12-31;2.08.09;Participação dos Acionistas Não Controladores;218620.0000000000;S

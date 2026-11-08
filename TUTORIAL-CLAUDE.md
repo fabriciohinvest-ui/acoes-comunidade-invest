@@ -41,6 +41,8 @@ Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Co
 - **Medir no gráfico da cotação**: clicar (ou tocar) num ponto e arrastar para o lado mostra "De X a Y: ±Z% (R$ a → R$ b)", só preço, sem proventos. É a opção `medir:true` da função `chart()` (retângulo `#msel` + `<div class="med">`, `touch-action:pan-y` para não travar a rolagem no celular). Usa a primeira série do gráfico.
 - **Análise técnica** (logo abaixo da cotação): a cotação abre lisa e, embaixo, um bloco recolhido com o título grande "Análise técnica" e "Ver mais" (`#tecTg`, estado `st.tecAb`, começa fechado). Aberto, mostra de padrão os 3 gráficos de baixo (Volume, RSI 14 com linhas 70/30, MACD 12/26/9 com histograma) e **nenhuma** linha no preço; a pessoa liga Média 20/50/100/200 e Máx./mín. de 52 semanas (a Bollinger foi tirada a pedido do Fabricio) pelos botões (`st.tec`, um `Set`). Os indicadores saem de `tecCalc()` (guardado em `_tec`), calculados no histórico inteiro de fechamento e depois cortados no período escolhido, para a média de 200 já começar certa. Volume vem de `cotacao[i][5]`. Textos ⓘ em `EXP` (`t_mm`, `t_m`, `t_vol`, `t_rsi`, `t_macd`). A nota avisa que não é recomendação.
 - Opções da `chart()` além das antigas: `passo` (de quantos em quantos rótulos no eixo X), `fixo:[min,max]` (eixo Y fixo, usado no RSI) e `medir`.
+- **Informações sobre a empresa (ou o fundo) logo depois da cotação e da análise técnica** (pedido do Fabricio), com ⓘ em cada informação (textos no dicionário `EXPI`, chave = o nome que aparece no cartão; no `data-aj` vai com o prefixo `i:`). Informação nova precisa de texto lá.
+- **Só para assinantes** (pedido do Fabricio): *Termômetro*, *Quanto tempo segurar*, *Lado a lado com o setor* e *Quem são os donos e o número de ações* (FII: *Quem são os cotistas*; BDR: *Número de ações*). Ficam juntas no fim, depois do divisor "Para assinantes" (item "Assinantes" no menu), e logo depois vêm os comunicados e relatórios, que são grátis. A página lê `window.CI_ASSINANTE` (`false` = cadeado com botão para `window.CI_LINK_ASSINAR`; sem definir = tudo aparece) e a lista fica em `SO_ASSINANTE` no `acao.html`. Como ligar no login do site e o limite de esconder só na tela: `CLAUDE.md` do pacote do sócio, seção "Seções para assinantes".
 - Depois, **os dados escritos**, cada seção com uma **prévia** e o botão **"Ver mais"**. As seções são: indicadores fundamentalistas, histórico de indicadores, histórico de dividendos, resultados e balanço patrimonial. Isso vale para todos os ativos.
 - **Todos os outros gráficos juntos, embaixo dos dados escritos, um abaixo do outro**, depois do divisor "Gráficos". Ficam lá: histórico de um indicador, dividendos, payout, receitas e lucros, lucro × cotação e patrimônio.
 - **Menu do topo funcionando**: usa `data-go` + `scrollIntoView`. Não use link com `#secao`, porque isso quebrou a prévia e o hash é lido como ticker.
@@ -58,6 +60,8 @@ Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Co
   - *Quanto caiu e quanto demorou para voltar* (1A, 2A, 5A, 10A, MAX): queda desde o topo do período escolhido (com proventos reinvestidos), a maior queda, o tempo de recuperação e a tabela das quedas de 10% ou mais.
   - *Quanto tempo segurar*: para cada pregão do histórico como data de compra, o resultado depois de 1, 2, 5 e 10 anos (preço + proventos reinvestidos, `trIndex()`): % de vezes no positivo, % que bateu o CDI (CDI aproximado pelo mês), pior, **média** (média simples, com % ao ano; o Fabricio pediu "média" no lugar de "típico") e melhor. Prazo com menos de 120 datas de compra aparece como "histórico curto". O gráfico (`caminhos(N)`) mostra R$ 1.000 mês a mês desde a compra até N anos: linha "Média", "Quando foi bem" (percentil 90), "Quando foi mal" (percentil 10) e o CDI médio, que só sobe. Não volte ao gráfico antigo por data de compra: as linhas se cruzavam e o CDI parecia cair, e o Fabricio não entendeu.
   - *Renda x inflação* (**só FII**, pedido do Fabricio): rendimentos por ano no valor da época e corrigidos pelo IPCA, e a tabela de *yield on cost* (quem comprou em janeiro de cada ano recebe hoje X% sobre o que pagou), com 4 linhas e "Ver mais".
+  - *Quem são os donos e o número de ações* (ação), *Número de ações* (BDR) ou *Quem são os cotistas* (FII): rosca dos maiores acionistas (controlador marcado, ON e PN quando a empresa tem as duas) e barras do nº de ações por ano em 2A, 5A ou 10A (`st.na`) com o texto "emitiu ações novas" ou "recomprou e cancelou". FII: rosca dos tipos de cotista e a linha de cotistas ou de cotas emitidas (botões), 10 anos.
+  - *Lado a lado com o setor* (assinantes): lê o `indice.json` (o mesmo da pesquisa) e compara com os ativos do mesmo `segmento` (FII: mesmo `tipo_fundo`); se o grupo tiver menos de 3, usa o mesmo `setor`. Régua igual à do termômetro (traço grande = o ativo, bolinhas = os outros, traço pequeno = média) e a tabela com todos os números no "Ver mais". Banco não mostra margem nem dívida/EBITDA. Fica melhor sozinho conforme o site ganha ativos; para a prévia entraram ITUB4, BBDC4, ABCB4, MSFT34, AAPL34, M1TA34, KNCR11, KNIP11 e CPTS11. Texto neutro, nunca "melhor" ou "pior".
   - FII: a *Distribuição da carteira* virou rosca (SVG). Saiu o gráfico antigo "Rentabilidade acumulada x CDI e IPCA", que a comparação substitui.
 - Cores dos gráficos: `--c1` a `--c8` no `:root` (`--c6` a `--c8` são da comparação e da rosca).
 
@@ -83,7 +87,7 @@ Como o robô funciona:
 
 - `python atualizar.py` faz a atualização do dia.
 - `python atualizar.py --historico` refaz tudo do zero, desde 2009 (uns 1,5 GB de download).
-- Ticker novo em `EMPRESAS` baixa o próprio histórico sozinho na primeira vez.
+- Ticker novo em `EMPRESAS` baixa o próprio histórico sozinho na primeira vez. Vários tickers novos de uma vez baixam o histórico de cotações juntos, numa passada só pelos arquivos anuais da B3 (`novos_t` no `main`), e não um por um.
 
 ## 5. Formato dos dados
 
@@ -103,7 +107,8 @@ Regras do índice:
 - Percentuais já vêm em % (4.03 = 4,03%).
 - `pl` e `roe` são `null` para FII.
 - `moeda_vm` é `USD` para BDR, porque o valor de mercado é o da empresa nos EUA.
-- Em escala, mantenha o índice enxuto: cerca de 300 bytes por linha, 2.000 ativos ≈ 600 KB.
+- Para o "Lado a lado com o setor", cada linha também tem `tipo_fundo, margem_liquida, divliq_ebitda, cagr_lucros_5a, cagr_receitas_5a, taxa_adm, rent_12m, cotistas`.
+- Em escala, mantenha o índice enxuto: cerca de 400 bytes por linha, 2.000 ativos ≈ 800 KB.
 
 ### `dados/<TICKER>.json`
 
@@ -123,6 +128,8 @@ Regras do índice:
 - `ttm`: soma dos últimos 4 trimestres.
 - `hist_indicadores`: os indicadores calculados ano a ano.
 - Só BDR: `proventos_empresa` (dividendo em US$ por ação nos EUA), `preco_eua_anual` e `preco_eua_mensal` (último pregão de cada mês nos EUA, usado no termômetro).
+- `acoes_hist`: `{ano: nº de ações no fim do ano, "hoje": nº atual}`, já corrigido por desdobramentos, grupamentos e bonificações (BDR: desdobramentos nos EUA), para mostrar emissão ou recompra de verdade.
+- Só ação: `donos`: `{data, lista: [{nome, pct, on, pn, controlador, pessoa}], pf, pj, inst}`. Vem do Formulário de Referência da CVM (`fre_cia_aberta_posicao_acionaria_AAAA.csv`, só as linhas sem `ID_Acionista_Relacionado`, que são os acionistas diretos, na última versão) e as contagens de `fre_cia_aberta_distribuicao_capital`. O FRE é baixado uma vez por execução (`fre_zip`, ~8 MB) e serve para todas as empresas. A SEC não tem lista de acionistas em formato aberto, então o BDR fica sem `donos`.
 
 **Campos de FII (`fii`):**
 
@@ -133,6 +140,7 @@ Regras do índice:
 - `rentab`: `1m, 3m, 6m, 12m, 24m...`, cada um com fii, cdi e ipca.
 - `serie_rent`: datas e as séries acumuladas fii, cdi e ipca.
 - `composicao`: `{data, itens}`, a carteira por categoria.
+- `cotistas`: `{data, total, grupos: [[tipo, quantidade]]}` do último informe mensal (pessoas físicas, empresas, bancos, fundos, previdência, de fora do Brasil). A CVM dá quantos cotistas há de cada tipo, não quanto cada um tem.
 
 ### `dados/indices.json` (um arquivo só, para todos os ativos)
 
@@ -172,6 +180,13 @@ Todas sem login e sem chave. O que cada uma dá:
   - Use só o trecho contínuo mais recente: um buraco de mais de 50 dias corta o histórico.
   - A **data com** é o pregão anterior à data ex; use o dia útil anterior para não cair em feriado (deu duplicado no Finados).
   - Junte duplicados com tolerância de ±8 dias.
+- **Nº de ações na CVM sem escala**: o arquivo `composicao_capital` do DFP/ITR não diz se está em unidades ou em milhares, e varia por empresa e por ano (Itaú sempre em milhares, Bradesco até 2023 em milhares). O robô escolhe x1 ou x1000, o que ficar mais perto do `totalNumberShares` da B3 de hoje. Sem isso o P/L do Itaú dava 0,01. Esse arquivo só existe desde 2020, então o gráfico de nº de ações de empresa brasileira começa em 2020.
+- **Empresa só com balanço individual**: o ABC Brasil (ABCB4) parou de entregar o consolidado depois de 2023, e o robô só lê o consolidado. Ficou fora; o Banrisul (BRSR6) entrou no lugar.
+- **Eventos da B3 que não mexem no preço**: a lista `stockDividends` traz "CIS RED CAP" (cisão com redução de capital, como a saída da XP do Itaú em 2021) e até um grupamento de 100 para 1 do Itaú em 2011 que não aconteceu no preço. O robô só usa DESDOBRAMENTO, BONIFICACAO e GRUPAMENTO, junta os do mesmo dia (o Bradesco teve um de 50 e um de 0,02 no mesmo dia, que se anulam) e descarta o que não aparece na cotação (`validar_eventos`: fechamento antes ÷ depois tem que bater com o fator, folga de 60%; bonificação pequena passa sempre). A cisão não é ajustada: a cotação antiga do Itaú fica sem o desconto da XP.
+- **Fator do nº de ações de anos antigos** (`fatk`) é o produto de **todos** os eventos depois da data, não só o mais recente.
+- **Ação PNA ou PNB**: o tipo do provento na B3 segue o final do código (3 = ON, 5 = PNA, 6 = PNB, o resto PN).
+- **Meta e outras com mais de uma classe na SEC** não informam `CommonStockSharesOutstanding`: o robô usa a média ponderada de ações do trimestre ou do ano (`WeightedAverageNumberOfSharesOutstandingBasic`).
+- **Unit (SANB11, BPAC11...)**: o nº de ações da CVM conta ON e PN separadas, e a unit junta várias. Ainda não está tratado: antes de incluir uma unit, divida o nº de ações pelo tamanho da unit e confira o provento da unit.
 - **DY_mes da CVM** de anos antigos tem lixo (negativo, repetido). Não use para estimar rendimento.
 - **Coluna de CNPJ do informe de FII** muda de nome: é `CNPJ_Fundo_Classe` nos anos novos e `CNPJ_Fundo` nos antigos.
 - **www.sec.gov** (onde fica `company_tickers.json`) deu **403** a partir do ambiente do Claude. Já `data.sec.gov` funciona. No GitHub Actions, com um User-Agent de contato correto, deve funcionar; senão use a lista do S&P 500 da Wikipédia, que já traz o CIK.

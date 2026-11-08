@@ -30,6 +30,25 @@ EMPRESAS = [
      'isin': 'BRGOGLBDR001', 'setor': 'Tecnologia', 'segmento': 'Serviços de internet'},
     {'ticker': 'MXRF11', 'tipo': 'fii', 'nome': 'Maxi Renda', 'cnpj': '97.521.225/0001-25', 'b3': 'MXRF', 'isin': 'BRMXRFCTF008',
      'setor': 'Fundo imobiliário', 'segmento': 'Híbrido', 'tipo_fundo': 'Fundo de papel (recebíveis)'},
+    # mesmo setor dos tres acima, para o "Lado a lado com o setor"
+    {'ticker': 'ITUB4', 'tipo': 'acao', 'nome': 'Itaú Unibanco', 'razao': 'ITAÚ UNIBANCO HOLDING S.A.', 'cnpj': '60.872.504/0001-23', 'b3': 'ITUB',
+     'pregao': 'ITAUUNIBANCO', 'isin': 'BRITUBACNPR1', 'setor': 'Financeiro', 'segmento': 'Bancos', 'banco': True},
+    {'ticker': 'BBDC4', 'tipo': 'acao', 'nome': 'Bradesco', 'razao': 'BANCO BRADESCO S.A.', 'cnpj': '60.746.948/0001-12', 'b3': 'BBDC',
+     'pregao': 'BRADESCO', 'isin': 'BRBBDCACNPR8', 'setor': 'Financeiro', 'segmento': 'Bancos', 'banco': True},
+    {'ticker': 'BRSR6', 'tipo': 'acao', 'nome': 'Banrisul', 'razao': 'BANCO DO ESTADO DO RIO GRANDE DO SUL S.A.', 'cnpj': '92.702.067/0001-96', 'b3': 'BRSR',
+     'pregao': 'BANRISUL', 'isin': 'BRBRSRACNPB4', 'setor': 'Financeiro', 'segmento': 'Bancos', 'banco': True},
+    {'ticker': 'MSFT34', 'tipo': 'bdr', 'nome': 'Microsoft', 'razao': 'MICROSOFT CORP.', 'b3': 'MSFT', 'cik': '0000789019', 'us': 'MSFT',
+     'isin': 'BRMSFTBDR005', 'setor': 'Tecnologia', 'segmento': 'Software e nuvem'},
+    {'ticker': 'AAPL34', 'tipo': 'bdr', 'nome': 'Apple', 'razao': 'APPLE INC.', 'b3': 'AAPL', 'cik': '0000320193', 'us': 'AAPL',
+     'isin': 'BRAAPLBDR004', 'setor': 'Tecnologia', 'segmento': 'Equipamentos e software'},
+    {'ticker': 'M1TA34', 'tipo': 'bdr', 'nome': 'Meta (Facebook)', 'razao': 'META PLATFORMS INC.', 'b3': 'M1TA', 'cik': '0001326801', 'us': 'META',
+     'isin': 'BRM1TABDR009', 'setor': 'Tecnologia', 'segmento': 'Serviços de internet'},
+    {'ticker': 'KNCR11', 'tipo': 'fii', 'nome': 'Kinea Rendimentos', 'cnpj': '16.706.958/0001-32', 'b3': 'KNCR', 'isin': 'BRKNCRCTF000',
+     'setor': 'Fundo imobiliário', 'segmento': 'Papel', 'tipo_fundo': 'Fundo de papel (recebíveis)'},
+    {'ticker': 'KNIP11', 'tipo': 'fii', 'nome': 'Kinea Índices de Preços', 'cnpj': '24.960.430/0001-13', 'b3': 'KNIP', 'isin': 'BRKNIPCTF001',
+     'setor': 'Fundo imobiliário', 'segmento': 'Papel', 'tipo_fundo': 'Fundo de papel (recebíveis)'},
+    {'ticker': 'CPTS11', 'tipo': 'fii', 'nome': 'Capitânia Securities II', 'cnpj': '18.979.895/0001-13', 'b3': 'CPTS', 'isin': 'BRCPTSCTF004',
+     'setor': 'Fundo imobiliário', 'segmento': 'Papel', 'tipo_fundo': 'Fundo de papel (recebíveis)'},
 ]
 
 
@@ -148,23 +167,58 @@ def cvm_baixar(doc, ano, cnpjs):
                 open(os.path.join(pasta, f'{doc}_{ano}_{dem}.csv'), 'w', encoding='utf-8').write('\n'.join(linhas))
 
 
+_FRE = {}
+
+
+def fre_zip(ano):
+    """Formulario de Referencia da CVM (um zip por ano, para todas as companhias)"""
+    if ano not in _FRE:
+        z = baixar(f'{CVM}/FRE/DADOS/fre_cia_aberta_{ano}.zip')
+        _FRE[ano] = zipfile.ZipFile(io.BytesIO(z)) if z else None
+    return _FRE[ano]
+
+
+def fre_csv(ano, parte, cnpj):
+    zf = fre_zip(ano)
+    if not zf:
+        return []
+    return [r for r in csv.DictReader(io.TextIOWrapper(zf.open(f'fre_cia_aberta_{parte}_{ano}.csv'), encoding='latin-1'), delimiter=';')
+            if r['CNPJ_Companhia'] == cnpj]
+
+
 def fre_free_float(cnpjs):
     ano = dt.date.today().year
     out = {}
     for a in (ano, ano - 1):
-        z = baixar(f'{CVM}/FRE/DADOS/fre_cia_aberta_{a}.zip')
-        if not z:
-            continue
-        with zipfile.ZipFile(io.BytesIO(z)) as zf:
-            n = f'fre_cia_aberta_distribuicao_capital_{a}.csv'
-            for r in csv.DictReader(io.StringIO(zf.read(n).decode('latin-1')), delimiter=';'):
-                c = r['CNPJ_Companhia']
-                if c in cnpjs and (c not in out or r['Data_Referencia'] >= out[c]['data']):
-                    out[c] = {'data': r['Data_Referencia'], 'free_float': float(r['Percentual_Total_Acoes_Circulacao']),
-                              'acionistas': int(r['Quantidade_Acionistas_PF'] or 0) + int(r['Quantidade_Acionistas_PJ'] or 0) + int(r['Quantidade_Acionistas_Investidores_Institucionais'] or 0)}
+        for c in cnpjs:
+            for r in fre_csv(a, 'distribuicao_capital', c):
+                if c not in out or (r['Data_Referencia'], int(r['Versao'] or 0)) >= (out[c]['data'], out[c]['_v']):
+                    q = lambda k: int(r.get(k) or 0)
+                    out[c] = {'data': r['Data_Referencia'], '_v': int(r['Versao'] or 0), 'free_float': float(r['Percentual_Total_Acoes_Circulacao']),
+                              'acionistas': q('Quantidade_Acionistas_PF') + q('Quantidade_Acionistas_PJ') + q('Quantidade_Acionistas_Investidores_Institucionais'),
+                              'pf': q('Quantidade_Acionistas_PF'), 'pj': q('Quantidade_Acionistas_PJ'), 'inst': q('Quantidade_Acionistas_Investidores_Institucionais')}
         if len(out) == len(cnpjs):
             break
     return out
+
+
+def donos(cnpj):
+    """maiores acionistas (5% ou mais, controladores, acoes em tesouraria e "outros") da ultima versao do FRE"""
+    ano = dt.date.today().year
+    for a in (ano, ano - 1):
+        rs = [r for r in fre_csv(a, 'posicao_acionaria', cnpj) if not r.get('ID_Acionista_Relacionado')]
+        if not rs:
+            continue
+        ult = max((r['Data_Referencia'], int(r['Versao'] or 0)) for r in rs)
+        rs = [r for r in rs if (r['Data_Referencia'], int(r['Versao'] or 0)) == ult]
+        f = lambda r, k: float(r.get(k) or 0)
+        lista = [{'nome': r['Acionista'].strip(), 'pct': f(r, 'Percentual_Total_Acoes_Circulacao'), 'on': f(r, 'Percentual_Acao_Ordinaria_Circulacao'),
+                  'pn': f(r, 'Percentual_Acao_Preferencial_Circulacao'), 'controlador': r.get('Acionista_Controlador') == 'S',
+                  'pessoa': r.get('Tipo_Pessoa_Acionista') or None} for r in rs]
+        lista = [x for x in lista if x['pct'] > 0]
+        lista.sort(key=lambda x: (x['nome'].lower() == 'outros', x['nome'].lower().startswith('a') and 'tesouraria' in x['nome'].lower(), -x['pct']))
+        return {'data': ult[0], 'lista': lista}
+    return None
 
 
 def cvm_ler(cnpj):
@@ -348,9 +402,15 @@ def fin_eua(cik):
     ytdS = {k: serie(v, 'ytd') for k, v in T.items()}
     triS = {k: serie(v, 'trim') for k, v in T.items()}
     salS = {k: serie(v, 'saldo', primeiro=(k == 'acoes')) for k, v in S.items()}
+    # empresa com mais de uma classe de acao (ex.: Meta) nao informa CommonStockSharesOutstanding:
+    # usa a media ponderada de acoes do periodo (a do trimestre vale mais que a do ano)
+    media = ['WeightedAverageNumberOfSharesOutstandingBasic']
+    medS = {**serie(media, 'ano', primeiro=True), **serie(media, 'trim', primeiro=True)}
 
     def balanco(fim):
         b = {k: salS[k].get(fim) for k in S}
+        if not b['acoes']:
+            b['acoes'] = medS.get(fim)
         div = (b['div_lp'] or 0) + (b['div_cp'] or 0) + (b['cp'] or 0)
         out = {k: b[k] for k in ('ativo_total', 'ativo_circ', 'passivo_total', 'passivo_circ', 'pl', 'disponibilidade', 'acoes')}
         if out['ativo_total'] and out['ativo_circ']:
@@ -431,16 +491,46 @@ def yahoo(sym):
     return precos, divs, spl
 
 
-def eventos_b3(e):
-    """desdobramentos/grupamentos + proventos da B3"""
+EVENTOS_PRECO = ('DESDOBRAMENTO', 'BONIFICACAO', 'GRUPAMENTO')
+
+
+def validar_eventos(fat, cot):
+    """Junta os eventos do mesmo dia e so aceita os que aparecem no preco. A B3 lista alguns que nao mexeram
+    na cotacao (ex.: um grupamento de 100 para 1 do Itau em 31/10/2011, sem salto nenhum no preco)."""
+    por = {}
+    for d, k in fat:
+        por[d] = por.get(d, 1) * k
+    dias = sorted(cot)
+    out = []
+    for d, k in sorted(por.items(), reverse=True):
+        if abs(k - 1) < 1e-9:
+            continue
+        antes = [x for x in dias if x <= d]
+        depois = [x for x in dias if x > d]
+        if not antes or not depois or abs(k - 1) < 0.35:  # fora do historico de precos, ou bonificacao pequena: mantem
+            out.append((d, k))
+            continue
+        r = cot[antes[-1]][3] / cot[depois[0]][3]
+        if abs(__import__('math').log(r / k)) < __import__('math').log(1.6):
+            out.append((d, k))
+        else:
+            print('   evento ignorado (o preco nao mudou):', d, k, 'antes/depois', round(r, 3))
+    return out
+
+
+def eventos_b3(e, cot=None):
+    """desdobramentos/grupamentos/bonificacoes + proventos da B3"""
     sup = b3api('GetListedSupplementCompany', {'issuingCompany': e['b3'], 'language': 'pt-br'})[0]
     fat = []
     for s in sup.get('stockDividends', []):
-        if s['isinCode'] != e['isin'] or not s.get('lastDatePrior'):
-            continue
+        if s['isinCode'] != e['isin'] or not s.get('lastDatePrior') or s['label'] not in EVENTOS_PRECO:
+            continue  # "CIS RED CAP" (cisao com reducao de capital) nao e desdobramento
         f = num_br(s['factor'])
         k = f if s['label'] == 'GRUPAMENTO' else 1 + f / 100
         fat.append((data_br(s['lastDatePrior']), k))
+    fat = sorted(set(fat), reverse=True)  # a B3 repete linhas
+    if cot:
+        fat = validar_eventos(fat, cot)
     pagto = {}
     for c in sup.get('cashDividends', []):
         if c['isinCode'] == e['isin']:
@@ -451,7 +541,7 @@ def eventos_b3(e):
         while True:
             d = b3api('GetListedCashDividends', {'language': 'pt-br', 'pageNumber': p, 'pageSize': 120, 'tradingName': e['pregao']})
             for r in d['results']:
-                tipo_ok = (r['typeStock'] == 'ON') if e['ticker'].endswith('3') else (r['typeStock'] == 'PN')
+                tipo_ok = r['typeStock'] == {'3': 'ON', '5': 'PNA', '6': 'PNB'}.get(e['ticker'][-1], 'PN')
                 if not tipo_ok:
                     continue
                 v = num_br(r['valueCash']) / (num_br(r['quotedPerShares']) or 1)
@@ -712,9 +802,10 @@ def montar_fii(e, historico=False):
     sup = json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/fundsProxy/fundsCall/GetListedSupplementFunds/{q}', timeout=60))
     fat = []
     for s in sup.get('stockDividends') or []:
-        if s['isinCode'] == e['isin'] and s.get('lastDatePrior'):
+        if s['isinCode'] == e['isin'] and s.get('lastDatePrior') and s['label'] in EVENTOS_PRECO:
             f = num_br(s['factor'])
             fat.append((data_br(s['lastDatePrior']), f if s['label'] == 'GRUPAMENTO' else 1 + f / 100))
+    fat = validar_eventos(sorted(set(fat), reverse=True), cot_raw)
     cot = ajustar(cot_raw, fat)
     dias = sorted(cot)
     hoje_d = dias[-1]
@@ -820,6 +911,15 @@ def montar_fii(e, historico=False):
            'vp_cota': vp, 'pl': fnum(ult.get('Patrimonio_Liquido')), 'valor_mercado': preco * cotas if cotas else None, 'liquidez_diaria': statistics.mean(vol),
            'cotistas': fnum(ult.get('Total_Numero_Cotistas')), 'cotas': cotas, 'taxa_adm_12m': taxa12,
            'rent_12m': (rentab.get('12m') or {}).get('fii'), 'dy_medio_5a': None}
+    cg = lambda *ks: int(sum(fnum(ult.get(k)) or 0 for k in ks))
+    cotistas = {'data': ult.get('Data_Informacao_Numero_Cotistas') or max(cvm), 'total': cg('Total_Numero_Cotistas'),
+                'grupos': [x for x in [['Pessoas físicas', cg('Numero_Cotistas_Pessoa_Fisica')],
+                                       ['Empresas', cg('Numero_Cotistas_Pessoa_Juridica_Nao_Financeira')],
+                                       ['Bancos, corretoras e financeiras', cg('Numero_Cotistas_Banco_Comercial', 'Numero_Cotistas_Corretora_Distribuidora', 'Numero_Cotistas_Outras_Pessoas_Juridicas_Financeira', 'Numero_Cotistas_Distribuidores_Fundo')],
+                                       ['Fundos (FII e outros)', cg('Numero_Cotistas_FII', 'Numero_Cotistas_Outros_Fundos')],
+                                       ['Previdência e seguradoras', cg('Numero_Cotistas_Entidade_Aberta_Previdencia_Complementar', 'Numero_Cotistas_Entidade_Fechada_Previdência_Complementar', 'Numero_Cotistas_Regime_Proprio_Previdencia_Servidores_Publicos', 'Numero_Cotistas_Sociedade_Seguradora_Resseguradora', 'Numero_Cotistas_Sociedade_Capitalizacao_Arrendamento_Mercantil')],
+                                       ['Investidores de fora do Brasil', cg('Numero_Cotistas_Investidores_Nao_Residentes')],
+                                       ['Outros', cg('Numero_Cotistas_Outros_Tipos')]] if x[1] > 0]}
     a5 = [anual[a]['dy'] for a in list(anual)[-6:-1] if anual[a]['dy']]
     ind['dy_medio_5a'] = statistics.mean(a5) if a5 else None
     info = {'razao': ult.get('Nome_Fundo_Classe') or ult.get('Nome_Fundo'), 'cnpj': e['cnpj'], 'publico_alvo': (ult.get('Publico_Alvo') or '').title(),
@@ -830,7 +930,7 @@ def montar_fii(e, historico=False):
             'tipo_fundo': e.get('tipo_fundo'), 'atualizado': dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).strftime('%Y-%m-%d %H:%M'),
             'fechamento': hoje_d, 'preco': preco, 'cotacao': [[d] + cot[d] for d in dias], 'moeda_balanco': 'BRL', 'balanco_ref': max(cvm) + '-01',
             'indicadores': ind, 'info': info, 'mensal': mensal, 'anual': anual, 'rentab': rentab, 'serie_rent': serie,
-            'composicao': {'data': max(cvm), 'itens': itens}, 'proventos': prov, 'eventos': [{'data': d, 'fator': k} for d, k in fat]}
+            'composicao': {'data': max(cvm), 'itens': itens}, 'cotistas': cotistas, 'proventos': prov, 'eventos': [{'data': d, 'fator': k} for d, k in fat]}
 
 
 def montar(e, historico=False):
@@ -838,7 +938,7 @@ def montar(e, historico=False):
         return montar_fii(e, historico)
     print('==', e['ticker'])
     cot_raw = atualizar_cotacoes([e['ticker']], historico)[e['ticker']]
-    fat, prov, sup, det = eventos_b3(e)
+    fat, prov, sup, det = eventos_b3(e, cot_raw)
     if e['tipo'] == 'bdr':
         yh, px = yahoo(e['us']), ptax()
         extra = trocas_paridade(cot_raw, fat, yh[0], px)
@@ -861,8 +961,16 @@ def montar(e, historico=False):
            'preco': preco, 'cotacao': [[d] + cot[d] for d in dias]}
     if e['tipo'] == 'acao':
         anual, ttm, ref, trim, cap_ref, caps = fin_brasil(e)
+        # a CVM nao diz a escala da composicao do capital: algumas empresas informam em milhares (Itau sempre,
+        # Bradesco ate 2023). Fica a escala (x1 ou x1000) mais perto do total de acoes que a B3 mostra hoje.
+        ref_n = num_br(sup.get('totalNumberShares'))
+        if ref_n:
+            esc = lambda v: min((v, v * 1000), key=lambda x: abs(__import__('math').log(x / ref_n))) if v else v
+            for a_ in anual.values():
+                a_['acoes'] = esc(a_.get('acoes'))
+            ttm['acoes'] = esc(ttm.get('acoes'))
         n = ttm['acoes']
-        fatk = lambda d: next((k for dd, k in fat if d <= dd), 1)
+        fatk = lambda d: __import__('math').prod(k for dd, k in fat if d <= dd)  # todos os eventos depois da data
         prov12 = prov_entre(um_ano, hoje_d)
         ind = indicadores(ttm, preco, n, prov12, banco=e.get('banco'))
         hist = {}
@@ -873,6 +981,15 @@ def montar(e, historico=False):
             hist[ano] = indicadores(a, pa, na, prov_entre(f'{ano - 1}-12-31', f'{ano}-12-31'), banco=e.get('banco')) if pa else {}
             hist[ano]['preco'] = pa
         ff = fre_free_float([e['cnpj']]).get(e['cnpj'], {})
+        try:
+            dn = donos(e['cnpj'])
+        except Exception as ex:
+            print('  aviso: donos de', e['ticker'], repr(ex)); dn = None
+        if dn:
+            dn.update({k: ff.get(k) for k in ('pf', 'pj', 'inst')})
+            out['donos'] = dn
+        out['acoes_hist'] = {str(a): round((anual[a].get('acoes') or 0) * fatk(f'{a}-12-31')) or None for a in sorted(anual)}
+        out['acoes_hist']['hoje'] = n
         vol60 = [cot[d][4] for d in dias[-21:]]  # liquidez media do ultimo mes
         info = {'valor_mercado': ind['valor_mercado'], 'valor_firma': ind['valor_firma'], 'pl': ttm.get('pl'), 'n_papeis': n,
                 'ativos': ttm.get('ativo_total'), 'ativo_circ': ttm.get('ativo_circ'), 'disponibilidade': ttm.get('disponibilidade'),
@@ -908,6 +1025,8 @@ def montar(e, historico=False):
                 'n_bdrs': num_br(sup.get('totalNumberShares')), 'depositario': sup.get('hasPreferred'), 'codigo_cvm': sup.get('codeCVM'),
                 'site': det.get('website'), 'atividade': det.get('activity'), 'ticker_eua': e['us']}
         out['proventos_empresa'] = [{'data_com': d, 'valor': v} for d, v in reversed(divs_us)]
+        out['acoes_hist'] = {str(a): round((anual[a].get('acoes') or 0) * splits_depois(f'{a}-12-31')) or None for a in sorted(anual)}
+        out['acoes_hist']['hoje'] = n
         out['preco_eua_anual'] = {str(a): preco_em(px_us, f'{a}-12-31') for a in anual}
         out['preco_eua_mensal'] = {d[:7]: px_us[d] for d in sorted(px_us)}  # ultimo pregao de cada mes (termometro do BDR)
         moeda = 'USD'
@@ -942,7 +1061,12 @@ def resumo(d):
             'fechamento': d['fechamento'], 'preco': d['preco'], 'var_dia': (ult[4] / ant[4] - 1) * 100, 'var_12m': (ult[4] / base[4] - 1) * 100,
             'dy': I.get('dy'), 'pvp': I.get('pvp'), 'pl': None if fii else I.get('pl'), 'roe': None if fii else I.get('roe'),
             'liquidez': I.get('liquidez_diaria') if fii else inf.get('liquidez_diaria'),
-            'valor_mercado': I.get('valor_mercado') if fii else inf.get('valor_mercado'), 'moeda_vm': 'USD' if d['tipo'] == 'bdr' else 'BRL'}
+            'valor_mercado': I.get('valor_mercado') if fii else inf.get('valor_mercado'), 'moeda_vm': 'USD' if d['tipo'] == 'bdr' else 'BRL',
+            # para o "Lado a lado com o setor"
+            'tipo_fundo': d.get('tipo_fundo'), 'margem_liquida': None if fii else I.get('margem_liquida'),
+            'divliq_ebitda': None if fii else I.get('divliq_ebitda'), 'cagr_lucros_5a': None if fii else I.get('cagr_lucros_5a'),
+            'cagr_receitas_5a': None if fii else I.get('cagr_receitas_5a'), 'taxa_adm': I.get('taxa_adm_12m') if fii else None,
+            'rent_12m': I.get('rent_12m') if fii else None, 'cotistas': I.get('cotistas') if fii else inf.get('acionistas')}
 
 
 # ---------------------------------------------------------------- indices de comparacao
@@ -1111,6 +1235,10 @@ def main():
                 print(' CVM DFP', ano); cvm_baixar('dfp', ano, alvo)
         for ano in (hoje.year - 1, hoje.year):
             print(' CVM ITR', ano); cvm_baixar('itr', ano, cnpjs)
+    novos_t = [e['ticker'] for e in EMPRESAS if not os.path.exists(cot_arquivo(e['ticker']))]
+    if novos_t and not historico:
+        print(' cotacoes desde', ANO_INICIO, 'para', ', '.join(novos_t))
+        atualizar_cotacoes(novos_t, True)
     indice, erros = [], []
     arq_ind = os.path.join(SAIDA, 'indice.json')
     antigo = {x['ticker']: x for x in json.load(open(arq_ind)).get('acoes', [])} if os.path.exists(arq_ind) else {}
