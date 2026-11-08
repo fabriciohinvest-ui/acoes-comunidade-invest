@@ -11,17 +11,43 @@ Gera dados/<TICKER>.json com cotacao, indicadores, proventos e balancos, so com 
 
 Uso:
   python atualizar.py              atualizacao do dia (o GitHub Actions roda isto todo dia)
-  python atualizar.py --historico  primeira carga: baixa as cotacoes anuais da B3 desde 2009 e os DFP desde 2010
+  python atualizar.py --historico  refaz tudo do zero: cotacoes anuais da B3 desde 2009 e os DFP desde 2010
+  python atualizar.py --so BBAS3,MXRF11   so esses ativos (para testar)
+  python atualizar.py --limite 30         so os 30 primeiros da lista (para testar)
 Precisa so de Python 3.9+, sem instalar nada.
+
+A lista de ativos e a de cache/universo.json (feita pelo universo.py: todas as acoes e FIIs da B3 e os BDRs de
+empresas americanas) mais as EMPRESAS abaixo, que valem por cima (nome e segmento escritos a mao).
+Em escala, cada arquivo grande (cotacoes do dia, balancos da CVM, informe dos FIIs, comunicados) e baixado uma vez
+para todos os ativos, e as respostas da B3, da SEC e do Yahoo ficam guardadas em cache/rede/ por algumas horas ou dias.
 """
-import csv, io, json, os, re, sys, time, zipfile, base64, statistics, urllib.request, datetime as dt
+import csv, io, json, os, re, sys, time, zipfile, base64, statistics, threading, urllib.request, datetime as dt
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+import builtins
+
+# varios ativos sao processados ao mesmo tempo: cada linha do log sai inteira e, durante um ativo, com o ticker na frente
+_log_trava, _log_ativo = threading.Lock(), threading.local()
+
+
+def print(*args, sep=' ', end='\n', **kw):
+    texto = sep.join(str(a) for a in args)
+    t = getattr(_log_ativo, 'ticker', None)
+    if t and texto.strip() and not texto.lstrip().startswith(('ok ', 'ERRO', 'aviso', '==')):
+        texto = f'  [{t}] {texto.strip()}'
+    with _log_trava:
+        builtins.print(texto, end=end, **kw)
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(AQUI, 'cache')
 SAIDA = os.path.join(AQUI, 'dados')
 UA = 'ComunidadeInvest dados-publicos'
+# A SEC pede um contato no User-Agent (sem ele, www.sec.gov responde 403). Vem da variavel CONTATO_SEC do workflow:
+# um e-mail de contato do site, nunca o pessoal do dono.
+CONTATO_SEC = os.environ.get('CONTATO_SEC', '').strip()
+UA_SEC = f'ComunidadeInvest {CONTATO_SEC}' if CONTATO_SEC else UA
 ANO_INICIO = 2009
+TRABALHADORES = int(os.environ.get('TRABALHADORES', '8'))  # ativos montados ao mesmo tempo
 
 EMPRESAS = [
     {'ticker': 'BBAS3', 'tipo': 'acao', 'nome': 'Banco do Brasil', 'razao': 'BCO BRASIL S.A.', 'cnpj': '00.000.000/0001-91', 'b3': 'BBAS',
@@ -70,9 +96,60 @@ def baixar(url, tentativas=4, timeout=300, headers=None):
     raise erro
 
 
-def b3api(metodo, params):
+def gravar_atomico(p, texto):
+    """grava sem deixar arquivo pela metade (varios ativos rodam ao mesmo tempo)"""
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    tmp = f'{p}.{threading.get_ident()}.tmp'
+    with open(tmp, 'w', encoding='utf-8') as f:
+        f.write(texto)
+    os.replace(tmp, p)
+
+
+def em_cache(rel, horas, func):
+    """Resposta de uma fonte guardada em cache/rede/<rel>.json por <horas>. Se a fonte falhar, usa a guardada,
+    mesmo velha (falha nao apaga dado). Sem copia guardada, o erro sobe."""
+    p = os.path.join(CACHE, 'rede', rel + '.json')
+    guardado = None
+    if os.path.exists(p):
+        try:
+            guardado = json.load(open(p, encoding='utf-8'))
+            if time.time() - guardado['_em'] < horas * 3600:
+                return guardado['v']
+        except (ValueError, KeyError, TypeError):
+            guardado = None
+    try:
+        v = func()
+    except Exception as ex:
+        if guardado is not None:
+            print(f'   {rel}: fonte indisponivel ({ex!r}), usando a copia guardada')
+            return guardado['v']
+        raise
+    gravar_atomico(p, json.dumps({'_em': time.time(), 'v': v}, ensure_ascii=False, separators=(',', ':')))
+    return v
+
+
+_memo, _memo_travas, _memo_trava = {}, {}, threading.Lock()
+
+
+def memo(chave, func):
+    """calcula uma vez por rodada (dolar, CDI, IPCA, zips da CVM...), mesmo com varios ativos ao mesmo tempo"""
+    # uma trava por chave: um calculo guardado pode chamar outro (ptax -> sgs, indice do FRE -> zip do FRE)
+    with _memo_trava:
+        trava = _memo_travas.setdefault(chave, threading.Lock())
+    with trava:
+        if chave not in _memo:
+            _memo[chave] = func()
+        return _memo[chave]
+
+
+def chave_arquivo(params):
+    return re.sub(r'[^\w.-]+', '_', '_'.join(str(v) for v in params.values() if v not in ('pt-br',)))[:120]
+
+
+def b3api(metodo, params, horas=None):
     q = base64.b64encode(json.dumps(params).encode()).decode()
-    return json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/{metodo}/{q}', timeout=60))
+    busca = lambda: json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/{metodo}/{q}', timeout=60))
+    return em_cache(f'b3/{metodo}/{chave_arquivo(params)}', horas, busca) if horas else busca()
 
 
 num_br = lambda s: float(str(s).replace('.', '').replace(',', '.')) if str(s).strip() not in ('', 'None') else None
@@ -80,8 +157,9 @@ data_br = lambda s: dt.datetime.strptime(s, '%d/%m/%Y').date().isoformat() if s 
 
 
 # ---------------------------------------------------------------- cotacoes B3 (COTAHIST)
-def ler_cotahist(texto, tickers, destino):
-    for l in texto.splitlines():
+def ler_cotahist(linhas, tickers, destino):
+    """linhas: texto inteiro ou um arquivo aberto (o anual tem centenas de MB: le linha a linha)"""
+    for l in (linhas.splitlines() if isinstance(linhas, str) else linhas):
         if not l.startswith('01'):
             continue
         t = l[12:24].strip()
@@ -111,37 +189,83 @@ def cot_gravar(t, d):
             w.writerow([k] + d[k])
 
 
-def atualizar_cotacoes(tickers, historico=False):
-    dados = {t: cot_ler(t) for t in tickers}
+def cot_ultimo_dia(t):
+    """ultimo pregao guardado de um ativo ('' se nao ha nada)"""
+    try:
+        with open(cot_arquivo(t), 'rb') as f:
+            f.seek(0, 2)
+            f.seek(max(0, f.tell() - 400))
+            linhas = f.read().decode().strip().splitlines()
+        return linhas[-1].split(',')[0] if linhas else ''
+    except OSError:
+        return ''
+
+
+def cot_acrescentar(novas, ultimos):
+    """acrescenta ao fim de cada cache/cotacoes/<T>.csv os pregoes depois do ultimo guardado"""
+    for t, dias in novas.items():
+        linhas = [[d] + v for d, v in sorted(dias.items()) if d > ultimos.get(t, '')]
+        if not linhas:
+            continue
+        os.makedirs(os.path.dirname(cot_arquivo(t)), exist_ok=True)
+        with open(cot_arquivo(t), 'a', newline='') as f:
+            csv.writer(f).writerows(linhas)
+        ultimos[t] = linhas[-1][0]
+
+
+def cotahist(url, tickers, timeout=900, tentativas=4):
+    z = baixar(url, tentativas=tentativas, timeout=timeout)
+    if not z or z[:2] != b'PK':
+        return None
+    dados = defaultdict(dict)
+    with zipfile.ZipFile(io.BytesIO(z)) as zf, zf.open(zf.namelist()[0]) as f:
+        ler_cotahist(io.TextIOWrapper(f, encoding='latin-1'), tickers, dados)
+    return dados
+
+
+def atualizar_cotacoes_todas(tickers, historico=False):
+    """Cotacoes de todos os ativos numa passada so: cada arquivo da B3 (o do dia ou o do ano) traz todos os ativos.
+    Ativo novo (sem nada guardado) ganha o historico desde 2009 lendo os arquivos anuais uma vez para todos os novos."""
+    tickers = set(tickers)
     hoje = dt.date.today()
-    if not any(dados.values()):  # ticker novo, sem nada guardado: baixa o historico completo
-        historico = True
     if historico:
-        for ano in range(ANO_INICIO, hoje.year):
-            print(' B3 cotacoes', ano)
-            z = baixar(f'https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{ano}.ZIP', timeout=900)
-            if z:
-                with zipfile.ZipFile(io.BytesIO(z)) as zf:
-                    ler_cotahist(zf.read(zf.namelist()[0]).decode('latin-1'), tickers, dados)
-    # dias que faltam: do ultimo dia salvo ate hoje (arquivo diario da B3)
-    ult = max((max(d) for d in dados.values() if d), default=f'{hoje.year}-01-01')
-    d = dt.date.fromisoformat(ult) + dt.timedelta(days=1)
+        for t in tickers:
+            if os.path.exists(cot_arquivo(t)):
+                os.remove(cot_arquivo(t))
+    ultimos = {t: cot_ultimo_dia(t) for t in tickers}
+    novos = {t for t in tickers if not ultimos[t]}
+    if novos:
+        print(f' B3 cotacoes desde {ANO_INICIO} para {len(novos)} ativo(s) novo(s)')
+        for ano in range(ANO_INICIO, hoje.year + 1):
+            dados = cotahist(f'https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{ano}.ZIP', novos)
+            if dados:
+                cot_acrescentar(dados, ultimos)
+                print('  ano', ano, 'ok')
+    # dias que faltam: desde o ultimo pregao lido (cache/cotacoes/_ultimo.txt) ou, se um ativo novo parou antes
+    # (o arquivo do ano pode estar uns dias atrasado), desde o ultimo dia dele
+    marca = os.path.join(CACHE, 'cotacoes', '_ultimo.txt')
+    ult_geral = open(marca).read().strip() if os.path.exists(marca) else max((u for u in ultimos.values() if u), default='')
+    dos_novos = [ultimos[t] for t in novos if ultimos[t]]
+    inicio = min([ult_geral] + dos_novos) if ult_geral else f'{hoje.year}-01-01'
+    d = dt.date.fromisoformat(inicio) + dt.timedelta(days=1)
+    ultimo_lido = ult_geral
     if (hoje - d).days > 40:  # muito atrasado: usa o arquivo do ano
-        z = baixar(f'https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{hoje.year}.ZIP', timeout=900)
-        with zipfile.ZipFile(io.BytesIO(z)) as zf:
-            ler_cotahist(zf.read(zf.namelist()[0]).decode('latin-1'), tickers, dados)
+        dados = cotahist(f'https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{hoje.year}.ZIP', tickers)
+        if dados:
+            cot_acrescentar(dados, ultimos)
+            ultimo_lido = max((max(v) for v in dados.values() if v), default=ultimo_lido)
     else:
         while d <= hoje:
             if d.weekday() < 5:
-                z = baixar(f'https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D{d:%d%m%Y}.ZIP', tentativas=2, timeout=120)
-                if z and z[:2] == b'PK':
-                    with zipfile.ZipFile(io.BytesIO(z)) as zf:
-                        ler_cotahist(zf.read(zf.namelist()[0]).decode('latin-1'), tickers, dados)
+                dados = cotahist(f'https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D{d:%d%m%Y}.ZIP', tickers, timeout=120, tentativas=2)
+                if dados is not None:
+                    cot_acrescentar(dados, ultimos)
+                    ultimo_lido = max(ultimo_lido or '', d.isoformat())
                     print(' B3 cotacoes', d)
             d += dt.timedelta(days=1)
-    for t in tickers:
-        cot_gravar(t, dados[t])
-    return dados
+    if ultimo_lido:
+        os.makedirs(os.path.dirname(marca), exist_ok=True)
+        open(marca, 'w').write(ultimo_lido)
 
 
 # ---------------------------------------------------------------- CVM
@@ -150,40 +274,52 @@ DEMS = ['DRE', 'BPA', 'BPP', 'DFC_MI', 'composicao_capital']
 
 
 def cvm_baixar(doc, ano, cnpjs):
-    """Baixa o zip do ano (DFP ou ITR) e guarda so as linhas das empresas acompanhadas."""
+    """Baixa o zip do ano (DFP ou ITR) e guarda so as linhas das empresas acompanhadas, numa leitura so do arquivo.
+    Guarda o consolidado e o individual (_ind): empresa que so entrega o individual usa ele (veja cvm_ler)."""
     z = baixar(f'{CVM}/{doc.upper()}/DADOS/{doc}_cia_aberta_{ano}.zip')
     if not z:
         return
+    alvo = set(cnpjs)
+    for c in alvo:
+        os.makedirs(os.path.join(CACHE, 'cvm', re.sub(r'\D', '', c)), exist_ok=True)
     with zipfile.ZipFile(io.BytesIO(z)) as zf:
         for nome in zf.namelist():
             dem = next((x for x in DEMS if f'_{x}_' in nome), None)
-            if not dem or ('_ind_' in nome):
+            if not dem:
                 continue
+            ind = '_ind_' in nome
             txt = zf.read(nome).decode('latin-1').splitlines()
-            for c in cnpjs:
-                pasta = os.path.join(CACHE, 'cvm', c.replace('.', '').replace('/', '').replace('-', ''))
-                os.makedirs(pasta, exist_ok=True)
-                linhas = [txt[0]] + [l for l in txt[1:] if l.startswith(c)]
-                open(os.path.join(pasta, f'{doc}_{ano}_{dem}.csv'), 'w', encoding='utf-8').write('\n'.join(linhas))
-
-
-_FRE = {}
+            por = defaultdict(list)
+            for l in txt[1:]:
+                c = l.split(';', 1)[0]
+                if c in alvo:
+                    por[c].append(l)
+            for c in alvo:
+                arq = os.path.join(CACHE, 'cvm', re.sub(r'\D', '', c), f'{doc}_{ano}_{dem}{"_ind" if ind else ""}.csv')
+                if por.get(c):
+                    open(arq, 'w', encoding='utf-8').write('\n'.join([txt[0]] + por[c]))
+                elif os.path.exists(arq):
+                    os.remove(arq)  # a empresa saiu desse arquivo (reapresentacao)
 
 
 def fre_zip(ano):
     """Formulario de Referencia da CVM (um zip por ano, para todas as companhias)"""
-    if ano not in _FRE:
+    def busca():
         z = baixar(f'{CVM}/FRE/DADOS/fre_cia_aberta_{ano}.zip')
-        _FRE[ano] = zipfile.ZipFile(io.BytesIO(z)) if z else None
-    return _FRE[ano]
+        return zipfile.ZipFile(io.BytesIO(z)) if z else None
+    return memo(('fre', ano), busca)
 
 
 def fre_csv(ano, parte, cnpj):
-    zf = fre_zip(ano)
-    if not zf:
-        return []
-    return [r for r in csv.DictReader(io.TextIOWrapper(zf.open(f'fre_cia_aberta_{parte}_{ano}.csv'), encoding='latin-1'), delimiter=';')
-            if r['CNPJ_Companhia'] == cnpj]
+    """linhas de uma parte do FRE para uma companhia (o arquivo e lido uma vez e separado por CNPJ)"""
+    def indexar():
+        zf = fre_zip(ano)
+        idx = defaultdict(list)
+        if zf:
+            for r in csv.DictReader(io.TextIOWrapper(zf.open(f'fre_cia_aberta_{parte}_{ano}.csv'), encoding='latin-1'), delimiter=';'):
+                idx[r['CNPJ_Companhia']].append(r)
+        return idx
+    return memo(('fre_idx', ano, parte), indexar).get(cnpj, [])
 
 
 def fre_free_float(cnpjs):
@@ -226,7 +362,11 @@ def cvm_ler(cnpj):
     pasta = os.path.join(CACHE, 'cvm', cnpj.replace('.', '').replace('/', '').replace('-', ''))
     R = defaultdict(dict)
     cap = {}
-    for nome in sorted(os.listdir(pasta)):
+    nomes = sorted(os.listdir(pasta))
+    # consolidado quando a empresa entregou o consolidado naquele documento e ano; senao, o individual
+    com_con = {tuple(n.split('_')[:2]) for n in nomes if n.endswith('_DRE.csv')}
+    usar = [n for n in nomes if not n.endswith('_ind.csv') or tuple(n.split('_')[:2]) not in com_con]
+    for nome in usar:
         doc = nome.split('_')[0]
         for r in csv.DictReader(open(os.path.join(pasta, nome), encoding='utf-8'), delimiter=';'):
             if 'composicao' in nome:
@@ -347,24 +487,62 @@ def fin_brasil(e):
 
 
 # ---------------------------------------------------------------- SEC (EUA)
+_sec_vez = threading.Semaphore(4)  # a SEC aceita ate 10 pedidos por segundo
+
+
+def sec_baixar(caminho, timeout=120):
+    with _sec_vez:
+        try:
+            return json.loads(baixar(f'https://data.sec.gov/{caminho}', headers={'User-Agent': UA_SEC}, timeout=timeout))
+        finally:
+            time.sleep(0.15)
+
+
+def sec_json(caminho, horas):
+    """data.sec.gov guardado por <horas> (submissions: documentos entregues, setor SIC)"""
+    return em_cache('sec/' + caminho.replace('/', '_').replace('.json', ''), horas, lambda: sec_baixar(caminho))
+
+
 def sec_fatos(cik):
-    p = os.path.join(CACHE, f'sec_{cik}.json')
+    return sec_baixar(f'api/xbrl/companyfacts/CIK{cik}.json')['facts']['us-gaap']
+
+
+def fin_eua_guardado(cik):
+    """fin_eua so e recalculado quando a empresa entrega um 10-K ou 10-Q novo (o companyfacts tem de 5 a 20 MB).
+    Fica guardado o resultado ja calculado, nao o arquivo da SEC."""
+    sub = sec_json(f'submissions/CIK{cik}.json', 72)
+    rec = sub['filings']['recent']
+    ult = max((d for f, d in zip(rec['form'], rec['filingDate']) if f in ('10-K', '10-Q', '10-K/A', '10-Q/A')), default='')
+    pasta = os.path.join(CACHE, 'rede', 'sec')
+    arq = os.path.join(pasta, f'fin_{cik}_{ult}_v3.json')  # v3: ano fiscal fora de dezembro, receita de banco, campo mais atualizado
+    if os.path.exists(arq):
+        a, t, r, tr = json.load(open(arq, encoding='utf-8'))
+        return {int(k): v for k, v in a.items()}, t, r, tr
+    antigos = sorted(n for n in os.listdir(pasta) if n.startswith(f'fin_{cik}_') and n != os.path.basename(arq)) if os.path.isdir(pasta) else []
     try:
-        raw = baixar(f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json', headers={'User-Agent': UA}, timeout=120)
-        open(p, 'wb').write(raw)
+        a, t, r, tr = fin_eua(cik)
     except Exception as ex:
-        print('  SEC indisponivel, usando cache:', ex)
-    return json.load(open(p))['facts']['us-gaap']
+        if not antigos:
+            raise
+        print('  SEC indisponivel, usando o ultimo balanco calculado:', repr(ex))
+        a, t, r, tr = json.load(open(os.path.join(pasta, antigos[-1]), encoding='utf-8'))
+        return {int(k): v for k, v in a.items()}, t, r, tr
+    gravar_atomico(arq, json.dumps([{str(k): v for k, v in a.items()}, t, r, tr], ensure_ascii=False, separators=(',', ':')))
+    for n in antigos:
+        os.remove(os.path.join(pasta, n))
+    return a, t, r, tr
 
 
 def fin_eua(cik):
     F = sec_fatos(cik)
 
-    def serie(tags, duracao, primeiro=False):
+    def serie(tags, duracao, primeiro=False, inicios=None):
         """duracao: 'ano', 'trim', 'ytd' ou 'saldo'. Retorna {fim: valor} (ultimo arquivo vence;
-        primeiro=True: vale o arquivo original, usado no n. de acoes para nao contar desdobramento duas vezes)"""
-        out = {}
-        for tag in tags:
+        primeiro=True: vale o arquivo original, usado no n. de acoes para nao contar desdobramento duas vezes).
+        ytd = do inicio do ano fiscal ate o fim do trimestre (inicios: datas em que comeca um ano fiscal da empresa)"""
+        final = {}
+        for tag in tags:  # o ultimo campo da lista vence; os anteriores so completam datas que faltam
+            out = {}
             for un in F.get(tag, {}).get('units', {}).values():
                 for x in un:
                     if x['form'] not in ('10-K', '10-Q', '10-K/A', '10-Q/A'):
@@ -380,16 +558,17 @@ def fin_eua(cik):
                             continue
                         if duracao == 'trim' and not 80 < dias < 100:
                             continue
-                        if duracao == 'ytd' and not (x['start'][5:] == '01-01' and dias < 300):
+                        if duracao == 'ytd' and not ((x['start'] in inicios if inicios else x['start'][5:] == '01-01') and dias < 300):
                             continue
                     k = x['end']
                     if k not in out or (x['filed'] < out[k][1] if primeiro else x['filed'] >= out[k][1]):
                         out[k] = (x['val'], x['filed'])
-        return {k: v for k, (v, f) in out.items()}
+            final.update({k: v for k, (v, f) in out.items()})
+        return final
 
     T = {
-        'receita': ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax'],
-        'custos': ['CostOfRevenue'], 'ebit': ['OperatingIncomeLoss'], 'lucro_liquido': ['NetIncomeLoss'],
+        'receita': ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenuesNetOfInterestExpense'],
+        'custos': ['CostOfRevenue'], 'ebit': ['OperatingIncomeLoss'], 'lucro_liquido': ['ProfitLoss', 'NetIncomeLossAvailableToCommonStockholdersBasic', 'NetIncomeLoss'],
         'imposto': ['IncomeTaxExpenseBenefit'], 'depreciacao': ['Depreciation', 'DepreciationAndAmortization'],
         'dividendos_pagos': ['PaymentsOfDividends', 'PaymentsOfDividendsCommonStock'],
         'dps': ['CommonStockDividendsPerShareDeclared'], 'lpa': ['EarningsPerShareDiluted'],
@@ -398,8 +577,17 @@ def fin_eua(cik):
          'pl': ['StockholdersEquity'], 'disponibilidade': ['CashCashEquivalentsAndShortTermInvestments'],
          'div_lp': ['LongTermDebtNoncurrent', 'LongTermDebt'], 'div_cp': ['LongTermDebtCurrent'], 'cp': ['CommercialPaper'],
          'acoes': ['CommonStockSharesOutstanding']}
+    # cada item vem do campo mais atualizado da empresa (os outros so completam anos que faltam); empate: o ultimo da lista
+    formas = ('10-K', '10-Q', '10-K/A', '10-Q/A')
+    ultimo_fim = lambda tag: max((x['end'] for un in F.get(tag, {}).get('units', {}).values() for x in un
+                                  if 'start' in x and x['form'] in formas), default='')
+    for k, tags in T.items():
+        principal = max(reversed(tags), key=ultimo_fim)
+        T[k] = [t for t in tags if t != principal] + [principal]
     anoS = {k: serie(v, 'ano') for k, v in T.items()}
-    ytdS = {k: serie(v, 'ytd') for k, v in T.items()}
+    # ano fiscal: Apple fecha em setembro, Microsoft em junho, Nvidia em janeiro (semanas de 52/53: tolerancia de 3 dias)
+    inicios = {(dt.date.fromisoformat(f) + dt.timedelta(days=1 + d)).isoformat() for f in anoS['receita'] for d in range(-3, 4)}
+    ytdS = {k: serie(v, 'ytd', inicios=inicios) for k, v in T.items()}
     triS = {k: serie(v, 'trim') for k, v in T.items()}
     salS = {k: serie(v, 'saldo', primeiro=(k == 'acoes')) for k, v in S.items()}
     # empresa com mais de uma classe de acao (ex.: Meta) nao informa CommonStockSharesOutstanding:
@@ -425,9 +613,10 @@ def fin_eua(cik):
         return out
 
     anual = {}
-    for fim in anoS['receita']:
+    for fim in sorted(anoS['receita']):
         ano = int(fim[:4])
         a = {k: anoS[k].get(fim) for k in T}
+        a['fim'] = fim  # fechamento do ano fiscal
         a['lucro_bruto'] = a['receita'] - a['custos'] if a['receita'] and a['custos'] else None
         a['custo_pos'] = a['custos']
         a['custos'] = -a['custos'] if a['custos'] else None
@@ -436,10 +625,16 @@ def fin_eua(cik):
         a.update(balanco(fim))
         anual[ano] = a
     ult = max(anual)
-    ttm = dict(anual[ult]); ttm_ref = f'{ult}-12-31'
+    ttm = dict(anual[ult]); ttm_ref = anual[ult]['fim']
     ytd_ult = max(ytdS['receita']) if ytdS['receita'] else None
-    if ytd_ult and ytd_ult > ttm_ref:
-        ant = f'{int(ytd_ult[:4]) - 1}{ytd_ult[4:]}'
+    ant = None
+    if ytd_ult and ytd_ult > ttm_ref:  # mesmo periodo do ano fiscal anterior (52/53 semanas: ate 7 dias de diferenca)
+        alvo = dt.date.fromisoformat(ytd_ult) - dt.timedelta(days=365)
+        ant = min(ytdS['receita'], key=lambda k: abs((dt.date.fromisoformat(k) - alvo).days))
+        if abs((dt.date.fromisoformat(ant) - alvo).days) > 7:
+            ant = None
+    if ant:
+        ttm['custos'] = anual[ult].get('custo_pos')  # positivo durante a conta (no anual ja esta com sinal trocado)
         for k in T:
             a, b = ytdS[k].get(ytd_ult), ytdS[k].get(ant)
             base = anual[ult].get('custo_pos') if k == 'custos' else anual[ult].get(k)
@@ -449,46 +644,58 @@ def fin_eua(cik):
         ttm['lucro_bruto'] = ttm['receita'] - ttm['custos'] if ttm['custos'] else None
         ttm['custos'] = -ttm['custos'] if ttm['custos'] else None
         ttm['lucro_ctrl'] = ttm['lucro_liquido']
-        ttm['ebitda'] = ttm['ebit'] + ttm['depreciacao'] if ttm.get('depreciacao') else None
+        ttm['ebitda'] = ttm['ebit'] + ttm['depreciacao'] if ttm.get('ebit') is not None and ttm.get('depreciacao') else None
         ttm.update(balanco(ytd_ult))
         ttm_ref = ytd_ult
     trim = {}
     for fim in triS['receita']:
         trim[fim] = {'receita': triS['receita'].get(fim), 'lucro_liquido': triS['lucro_liquido'].get(fim), 'lucro_ctrl': triS['lucro_liquido'].get(fim)}
-    for ano, a in anual.items():
-        nove = f'{ano}-09-30'
-        if f'{ano}-12-31' not in trim and nove in ytdS['receita']:
-            trim[f'{ano}-12-31'] = {'receita': a['receita'] - ytdS['receita'][nove],
-                                    'lucro_liquido': a['lucro_liquido'] - ytdS['lucro_liquido'].get(nove, 0),
-                                    'lucro_ctrl': a['lucro_liquido'] - ytdS['lucro_liquido'].get(nove, 0)}
+    for ano, a in anual.items():  # 4o trimestre fiscal = ano fiscal - 9 meses
+        f = dt.date.fromisoformat(a['fim'])
+        nove = next((k for k in ytdS['receita'] if 80 < (f - dt.date.fromisoformat(k)).days < 100), None)
+        if a['fim'] not in trim and nove:
+            ll, ll9 = a.get('lucro_liquido'), ytdS['lucro_liquido'].get(nove)
+            q4 = ll - ll9 if ll is not None and ll9 is not None else None
+            trim[a['fim']] = {'receita': a['receita'] - ytdS['receita'][nove], 'lucro_liquido': q4, 'lucro_ctrl': q4}
     return anual, ttm, ttm_ref, trim
 
 
 # ---------------------------------------------------------------- outros
 def ptax():
-    """dolar PTAX venda diario desde 2009 (SGS 1), em blocos de 10 anos"""
-    out = {}
-    hoje = dt.date.today()
-    for ini in range(ANO_INICIO, hoje.year + 1, 9):
-        fim = min(ini + 8, hoje.year)
-        raw = baixar(f'https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados?formato=json&dataInicial=01/01/{ini}&dataFinal=31/12/{fim}', timeout=60)
-        for x in json.loads(raw):
-            out[data_br(x['data'])] = float(x['valor'])
-    return out
+    """dolar PTAX venda diario desde 2009 (SGS 1): baixado uma vez por rodada, para todos os BDRs"""
+    return memo('ptax', lambda: sgs(1, ANO_INICIO))
 
 
-def yahoo(sym):
-    raw = baixar(f'https://query1.finance.yahoo.com/v8/finance/chart/{sym}?period1=1230768000&period2={int(time.time())}&interval=1d&events=div%7Csplit',
-                 headers={'User-Agent': 'Mozilla/5.0'}, timeout=60)
+_yahoo_vez = threading.Semaphore(4)
+
+
+def yahoo_baixar(sym, inicio):
+    with _yahoo_vez:
+        raw = baixar(f'https://query1.finance.yahoo.com/v8/finance/chart/{sym}?period1={inicio}&period2={int(time.time())}&interval=1d&events=div%7Csplit',
+                     headers={'User-Agent': 'Mozilla/5.0'}, timeout=60)
     d = json.loads(raw)['chart']['result'][0]
     q = d['indicators']['quote'][0]
     precos = {}
-    for t, c in zip(d['timestamp'], q['close']):
+    for t, c in zip(d.get('timestamp') or [], q.get('close') or []):
         if c is not None:
             precos[dt.datetime.fromtimestamp(t, dt.timezone.utc).date().isoformat()] = round(c, 4)
-    divs = sorted((dt.datetime.fromtimestamp(x['date'], dt.timezone.utc).date().isoformat(), x['amount']) for x in d.get('events', {}).get('dividends', {}).values())
-    spl = sorted((dt.datetime.fromtimestamp(x['date'], dt.timezone.utc).date().isoformat(), x['numerator'] / x['denominator']) for x in d.get('events', {}).get('splits', {}).values())
-    return precos, divs, spl
+    ev = d.get('events', {})
+    divs = sorted([dt.datetime.fromtimestamp(x['date'], dt.timezone.utc).date().isoformat(), x['amount']] for x in ev.get('dividends', {}).values())
+    spl = sorted([dt.datetime.fromtimestamp(x['date'], dt.timezone.utc).date().isoformat(), x['numerator'] / x['denominator']] for x in ev.get('splits', {}).values())
+    return {'precos': precos, 'divs': divs, 'spl': spl}
+
+
+def yahoo(sym, diario=True):
+    """Cotacao, dividendos e desdobramentos desde 2009. O historico inteiro fica guardado por uma semana; com diario=True,
+    os ultimos 10 dias sao buscados todo dia e entram por cima (a cotacao de hoje do papel nos EUA)."""
+    h = em_cache(f'yahoo/{sym}', 24 * 7, lambda: yahoo_baixar(sym, 1230768000))
+    precos, divs, spl = dict(h['precos']), {d: v for d, v in h['divs']}, {d: k for d, k in h['spl']}
+    if diario:
+        r = em_cache(f'yahoo/{sym}_dias', 20, lambda: yahoo_baixar(sym, int(time.time()) - 10 * 86400))
+        precos.update(r['precos'])
+        divs.update({d: v for d, v in r['divs']})
+        spl.update({d: k for d, k in r['spl']})
+    return precos, sorted(divs.items()), sorted(spl.items())
 
 
 EVENTOS_PRECO = ('DESDOBRAMENTO', 'BONIFICACAO', 'GRUPAMENTO')
@@ -519,8 +726,9 @@ def validar_eventos(fat, cot):
 
 
 def eventos_b3(e, cot=None):
-    """desdobramentos/grupamentos/bonificacoes + proventos da B3"""
-    sup = b3api('GetListedSupplementCompany', {'issuingCompany': e['b3'], 'language': 'pt-br'})[0]
+    """desdobramentos/grupamentos/bonificacoes + proventos da B3. O complemento (proventos dos ultimos 12 meses) e
+    buscado todo dia; o historico completo de proventos, uma vez por semana; o detalhe da empresa, uma vez por mes."""
+    sup = b3api('GetListedSupplementCompany', {'issuingCompany': e['b3'], 'language': 'pt-br'}, horas=20)[0]
     fat = []
     for s in sup.get('stockDividends', []):
         if s['isinCode'] != e['isin'] or not s.get('lastDatePrior') or s['label'] not in EVENTOS_PRECO:
@@ -536,22 +744,31 @@ def eventos_b3(e, cot=None):
         if c['isinCode'] == e['isin']:
             pagto[(data_br(c['lastDatePrior']), round(num_br(c['rate']), 8))] = {'pagamento': data_br(c['paymentDate']), 'ref': c.get('relatedTo')}
     prov = []
+    TIPOS = {'JRS CAP PROPRIO': 'JSCP', 'DIVIDENDO': 'Dividendos', 'RENDIMENTO': 'Rend. Trib.'}
     if e.get('pregao'):
-        p = 1
-        while True:
-            d = b3api('GetListedCashDividends', {'language': 'pt-br', 'pageNumber': p, 'pageSize': 120, 'tradingName': e['pregao']})
-            for r in d['results']:
-                tipo_ok = r['typeStock'] == {'3': 'ON', '5': 'PNA', '6': 'PNB'}.get(e['ticker'][-1], 'PN')
-                if not tipo_ok:
-                    continue
-                v = num_br(r['valueCash']) / (num_br(r['quotedPerShares']) or 1)
-                dc = data_br(r['lastDatePriorEx'])
-                info = pagto.get((dc, round(num_br(r['valueCash']), 8)), {})
-                prov.append({'tipo': {'JRS CAP PROPRIO': 'JSCP', 'DIVIDENDO': 'Dividendos', 'RENDIMENTO': 'Rend. Trib.'}.get(r['corporateAction'], r['corporateAction']),
-                             'data_com': dc, 'pagamento': info.get('pagamento'), 'valor': v})
-            if p >= d['page']['totalPages']:
-                break
-            p += 1
+        def historico_proventos():
+            res, p = [], 1
+            while True:
+                d = b3api('GetListedCashDividends', {'language': 'pt-br', 'pageNumber': p, 'pageSize': 120, 'tradingName': e['pregao']})
+                res += d['results']
+                if p >= d['page']['totalPages']:
+                    return res
+                p += 1
+        for r in em_cache(f'b3/GetListedCashDividends/{chave_arquivo({"p": e["pregao"]})}', 24 * 7, historico_proventos):
+            tipo_ok = r['typeStock'] == {'3': 'ON', '5': 'PNA', '6': 'PNB'}.get(e['ticker'][-1], 'PN')
+            if not tipo_ok:
+                continue
+            v = num_br(r['valueCash']) / (num_br(r['quotedPerShares']) or 1)
+            dc = data_br(r['lastDatePriorEx'])
+            info = pagto.get((dc, round(num_br(r['valueCash']), 8)), {})
+            prov.append({'tipo': TIPOS.get(r['corporateAction'], r['corporateAction']), 'data_com': dc, 'pagamento': info.get('pagamento'), 'valor': v})
+        # o historico fica guardado uma semana: o que o complemento (de hoje) traz e ainda nao esta nele entra aqui
+        for c in sup.get('cashDividends', []):
+            if c['isinCode'] != e['isin'] or not c.get('lastDatePrior'):
+                continue
+            dc, v = data_br(c['lastDatePrior']), num_br(c['rate'])
+            if v and not any(p_['data_com'] == dc and abs(p_['valor'] - v) < 1e-6 for p_ in prov):
+                prov.append({'tipo': TIPOS.get(c['label'], c['label'].title()), 'data_com': dc, 'pagamento': data_br(c.get('paymentDate')), 'valor': v})
     else:  # BDR: so o complemento traz os proventos
         for c in sup.get('cashDividends', []):
             if c['isinCode'] == e['isin']:
@@ -561,7 +778,7 @@ def eventos_b3(e, cot=None):
         for d, k in fat:
             if p_['data_com'] <= d:
                 p_['valor'] /= k
-    det = b3api('GetDetail', {'codeCVM': sup['codeCVM'], 'language': 'pt-br'})
+    det = b3api('GetDetail', {'codeCVM': sup['codeCVM'], 'language': 'pt-br'}, horas=24 * 30)
     return fat, sorted(prov, key=lambda x: x['data_com'], reverse=True), sup, det
 
 
@@ -694,45 +911,61 @@ FII_CVM = 'https://dados.cvm.gov.br/dados/FII/DOC/INF_MENSAL/DADOS'
 
 
 def sgs(serie, inicio):
-    """serie do Banco Central {data ISO: valor}, em blocos de ate 9 anos"""
-    out, hoje = {}, dt.date.today()
-    for ini in range(inicio, hoje.year + 1, 9):
-        fim = min(ini + 8, hoje.year)
-        raw = baixar(f'https://api.bcb.gov.br/dados/serie/bcdata.sgs.{serie}/dados?formato=json&dataInicial=01/01/{ini}&dataFinal=31/12/{fim}', timeout=90)
-        for x in json.loads(raw):
-            d = data_br(x['data'])
-            if d <= hoje.isoformat():
-                out[d] = float(x['valor'])
-    return out
+    """serie do Banco Central {data ISO: valor} desde <inicio>. Baixada uma vez por rodada (desde 2009) e cortada."""
+    def busca():
+        out, hoje = {}, dt.date.today()
+        for ini in range(ANO_INICIO, hoje.year + 1, 9):
+            fim = min(ini + 8, hoje.year)
+            raw = baixar(f'https://api.bcb.gov.br/dados/serie/bcdata.sgs.{serie}/dados?formato=json&dataInicial=01/01/{ini}&dataFinal=31/12/{fim}', timeout=90)
+            for x in json.loads(raw):
+                d = data_br(x['data'])
+                if d <= hoje.isoformat():
+                    out[d] = float(x['valor'])
+        return out
+    tudo = memo(('sgs', serie), busca)
+    corte = f'{inicio}-01-01'
+    return {d: v for d, v in tudo.items() if d >= corte} if inicio > ANO_INICIO else dict(tudo)
 
 
-def fii_cvm(e):
-    """Informe mensal do fundo na CVM (patrimonio, cotas, cotistas, DY do mes, carteira). Guarda por ano em cache/fii/."""
-    pasta = os.path.join(CACHE, 'fii', re.sub(r'\D', '', e['cnpj']))
-    novo = not os.path.isdir(pasta)
-    os.makedirs(pasta, exist_ok=True)
+def fii_cvm_baixar(cnpjs):
+    """Informe mensal de todos os FIIs acompanhados, numa leitura so de cada zip anual da CVM. Fundo novo ganha os anos
+    desde 2016; os outros, so o ano atual (e o anterior nos primeiros 45 dias do ano). Guarda por fundo e ano em cache/fii/."""
+    pasta = lambda c: os.path.join(CACHE, 'fii', re.sub(r'\D', '', c))
+    novos = {c for c in cnpjs if not os.path.isdir(pasta(c))}
     hoje = dt.date.today()
-    anos = range(2016, hoje.year + 1) if novo else sorted({hoje.year, (hoje - dt.timedelta(days=45)).year})
-    for ano in anos:
-        print(' CVM FII', ano)
+    recentes = {hoje.year, (hoje - dt.timedelta(days=45)).year}
+    for ano in range(2016, hoje.year + 1):
+        alvo = set(cnpjs) if ano in recentes else novos
+        if not alvo:
+            continue
+        print(' CVM FII', ano, f'({len(alvo)} fundos)')
         z = baixar(f'{FII_CVM}/inf_mensal_fii_{ano}.zip', timeout=300)
         if not z:
             continue
-        meses = {}
+        meses = defaultdict(dict)
         with zipfile.ZipFile(io.BytesIO(z)) as zf:
             for nome in zf.namelist():
                 parte = next((p for p in ('geral', 'complemento', 'ativo_passivo') if f'_{p}_' in nome), None)
                 if not parte:
                     continue
-                rd = csv.DictReader(io.StringIO(zf.read(nome).decode('latin-1')), delimiter=';')
-                for r in rd:
-                    if (r.get('CNPJ_Fundo_Classe') or r.get('CNPJ_Fundo')) != e['cnpj']:
+                for r in csv.DictReader(io.StringIO(zf.read(nome).decode('latin-1')), delimiter=';'):
+                    c = r.get('CNPJ_Fundo_Classe') or r.get('CNPJ_Fundo')
+                    if c not in alvo:
                         continue
-                    m = meses.setdefault(r['Data_Referencia'][:7], {})
+                    m = meses[c].setdefault(r['Data_Referencia'][:7], {})
                     if int(r.get('Versao') or 0) >= int(m.get('_v_' + parte, 0)):
                         m['_v_' + parte] = int(r.get('Versao') or 0)
                         m.update({k: v for k, v in r.items() if k})
-        json.dump(meses, open(os.path.join(pasta, f'{ano}.json'), 'w'), ensure_ascii=False)
+        for c in alvo:
+            os.makedirs(pasta(c), exist_ok=True)
+            json.dump(meses.get(c, {}), open(os.path.join(pasta(c), f'{ano}.json'), 'w'), ensure_ascii=False)
+
+
+def fii_cvm(e):
+    """Informe mensal do fundo na CVM (patrimonio, cotas, cotistas, DY do mes, carteira), ja baixado por fii_cvm_baixar."""
+    pasta = os.path.join(CACHE, 'fii', re.sub(r'\D', '', e['cnpj']))
+    if not os.path.isdir(pasta):
+        fii_cvm_baixar([e['cnpj']])
     tudo = {}
     for f in sorted(os.listdir(pasta)):
         tudo.update(json.load(open(os.path.join(pasta, f))))
@@ -771,7 +1004,7 @@ def fii_rendimentos(e, sup, cvm, dias):
     dpg = round(statistics.median(dif_pg)) if dif_pg else 15
     out = list(reais)
     try:
-        _, divs, _ = yahoo(e['ticker'] + '.SA')
+        _, divs, _ = yahoo(e['ticker'] + '.SA', diario=False)  # so os rendimentos antigos: o historico da semana basta
     except Exception as ex:
         print('  Yahoo indisponivel:', ex)
         divs = []
@@ -797,9 +1030,13 @@ def fii_rendimentos(e, sup, cvm, dias):
 
 def montar_fii(e, historico=False):
     print('==', e['ticker'])
-    cot_raw = atualizar_cotacoes([e['ticker']], historico)[e['ticker']]
-    q = base64.b64encode(json.dumps({'cnpj': re.sub(r'\D', '', e['cnpj']), 'identifierFund': e['b3'], 'typeFund': 7}).encode()).decode()
-    sup = json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/fundsProxy/fundsCall/GetListedSupplementFunds/{q}', timeout=60))
+    cot_raw = cot_ler(e['ticker'])
+    if not cot_raw:
+        raise ValueError('sem cotacao na B3')
+    par = {'cnpj': re.sub(r'\D', '', e['cnpj']), 'identifierFund': e['b3'], 'typeFund': 7}
+    q = base64.b64encode(json.dumps(par).encode()).decode()
+    sup = em_cache(f'b3/GetListedSupplementFunds/{chave_arquivo(par)}', 20,
+                   lambda: json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/fundsProxy/fundsCall/GetListedSupplementFunds/{q}', timeout=60)))
     fat = []
     for s in sup.get('stockDividends') or []:
         if s['isinCode'] == e['isin'] and s.get('lastDatePrior') and s['label'] in EVENTOS_PRECO:
@@ -815,7 +1052,8 @@ def montar_fii(e, historico=False):
     prov = fii_rendimentos(e, sup, cvm, dias)
     um_ano = (dt.date.fromisoformat(hoje_d) - dt.timedelta(days=365)).isoformat()
     rend12 = [p['valor'] for p in prov if um_ano < p['data_com'] <= hoje_d]
-    ini_rend = min(p['data_com'] for p in prov)  # antes disso nao ha rendimentos confiaveis: rentabilidades ficam de fora
+    # antes disso nao ha rendimentos confiaveis: rentabilidades ficam de fora (fundo novo, sem rendimento ainda: nenhuma)
+    ini_rend = min((p['data_com'] for p in prov), default=hoje_d)
     ult = cvm[max(cvm)]
     vp = fnum(ult.get('Valor_Patrimonial_Cotas'))
     cotas = fnum(ult.get('Cotas_Emitidas')) or fnum(ult.get('Quantidade_Cotas_Emitidas'))
@@ -937,7 +1175,9 @@ def montar(e, historico=False):
     if e['tipo'] == 'fii':
         return montar_fii(e, historico)
     print('==', e['ticker'])
-    cot_raw = atualizar_cotacoes([e['ticker']], historico)[e['ticker']]
+    cot_raw = cot_ler(e['ticker'])
+    if not cot_raw:
+        raise ValueError('sem cotacao na B3')
     fat, prov, sup, det = eventos_b3(e, cot_raw)
     if e['tipo'] == 'bdr':
         yh, px = yahoo(e['us']), ptax()
@@ -1000,19 +1240,22 @@ def montar(e, historico=False):
                 'setor_b3': det.get('industryClassification'), 'cnpj': e['cnpj'], 'site': det.get('website'), 'atividade': det.get('activity')}
         moeda = 'BRL'
     else:
-        anual, ttm, ref, trim = fin_eua(e['cik'])
+        anual, ttm, ref, trim = fin_eua_guardado(e['cik'])
         px_us, divs_us, splits = yh
         splits_depois = lambda d: __import__('math').prod(k for dd, k in splits if dd > d)
-        prov = proventos_bdr(e, prov, divs_us, px)
+        prov = proventos_bdr({**e, 'desde': e.get('desde') or dias[0]}, prov, divs_us, px)  # sem estimar antes do BDR existir
         d_us = max(px_us); p_us = px_us[d_us]
         n = ttm['acoes']
         prov12 = sum(v for d, v in divs_us if d > (dt.date.fromisoformat(d_us) - dt.timedelta(days=365)).isoformat())
         ind = indicadores(ttm, p_us, n, prov12)
         hist = {}
+        fim_ano = lambda a: anual[a].get('fim') or f'{a}-12-31'  # fechamento do ano fiscal da empresa
         for ano in sorted(anual):
-            pa = preco_em(px_us, f'{ano}-12-31')
-            dps = sum(v for d, v in divs_us if d[:4] == str(ano))
-            na = (anual[ano].get('acoes') or n) * splits_depois(f'{ano}-12-31')
+            fa = fim_ano(ano)
+            pa = preco_em(px_us, fa)
+            fa0 = (dt.date.fromisoformat(fa) - dt.timedelta(days=365)).isoformat()
+            dps = sum(v for d, v in divs_us if fa0 < d <= fa)
+            na = (anual[ano].get('acoes') or n) * splits_depois(fa)
             hist[ano] = indicadores(anual[ano], pa, na, dps) if pa else {}
             hist[ano]['preco'] = pa
         dolar = preco_em(px, hoje_d)
@@ -1025,9 +1268,9 @@ def montar(e, historico=False):
                 'n_bdrs': num_br(sup.get('totalNumberShares')), 'depositario': sup.get('hasPreferred'), 'codigo_cvm': sup.get('codeCVM'),
                 'site': det.get('website'), 'atividade': det.get('activity'), 'ticker_eua': e['us']}
         out['proventos_empresa'] = [{'data_com': d, 'valor': v} for d, v in reversed(divs_us)]
-        out['acoes_hist'] = {str(a): round((anual[a].get('acoes') or 0) * splits_depois(f'{a}-12-31')) or None for a in sorted(anual)}
+        out['acoes_hist'] = {str(a): round((anual[a].get('acoes') or 0) * splits_depois(fim_ano(a))) or None for a in sorted(anual)}
         out['acoes_hist']['hoje'] = n
-        out['preco_eua_anual'] = {str(a): preco_em(px_us, f'{a}-12-31') for a in anual}
+        out['preco_eua_anual'] = {str(a): preco_em(px_us, fim_ano(a)) for a in anual}
         out['preco_eua_mensal'] = {d[:7]: px_us[d] for d in sorted(px_us)}  # ultimo pregao de cada mes (termometro do BDR)
         moeda = 'USD'
     anos = sorted(anual)
@@ -1126,15 +1369,15 @@ def indices():
 
 
 # ---------------------------------------------------------------- comunicados
-_IPE = {}
-
-
 def ipe(ano):
-    """documentos entregues pelas companhias abertas a CVM num ano (um zip para todas)"""
-    if ano not in _IPE:
+    """documentos entregues pelas companhias abertas a CVM num ano (um zip para todas), separados por CNPJ"""
+    def busca():
         z = zipfile.ZipFile(io.BytesIO(baixar(f'{CVM}/IPE/DADOS/ipe_cia_aberta_{ano}.zip', timeout=180)))
-        _IPE[ano] = list(csv.DictReader(io.TextIOWrapper(z.open(z.namelist()[0]), encoding='latin-1'), delimiter=';'))
-    return _IPE[ano]
+        idx = defaultdict(list)
+        for r in csv.DictReader(io.TextIOWrapper(z.open(z.namelist()[0]), encoding='latin-1'), delimiter=';'):
+            idx[r['CNPJ_Companhia']].append(r)
+        return idx
+    return memo(('ipe', ano), busca)
 
 
 SEC_FORMS = {'10-K': 'Relatório anual (10-K)', '10-Q': 'Relatório trimestral (10-Q)', '8-K': 'Comunicado ao mercado (8-K)',
@@ -1154,11 +1397,14 @@ def comunicados(e):
     com, rel = [], []
     if e['tipo'] == 'fii':
         cnpj = re.sub(r'\D', '', e['cnpj'])
-        docs = []
-        for s in (0, 100):  # ~200 documentos mais recentes: da para uns 3 anos de relatorios gerenciais
-            raw = baixar(f'https://fnet.bmfbovespa.com.br/fnet/publico/pesquisarGerenciadorDocumentosDados?d=0&s={s}&l=100'
-                         f'&o%5B0%5D%5BdataEntrega%5D=desc&cnpjFundo={cnpj}', headers={'User-Agent': UA, 'X-Requested-With': 'XMLHttpRequest'}, timeout=60)
-            docs += json.loads(raw)['data']
+        def busca():
+            docs = []
+            for s in (0, 100):  # ~200 documentos mais recentes: da para uns 3 anos de relatorios gerenciais
+                raw = baixar(f'https://fnet.bmfbovespa.com.br/fnet/publico/pesquisarGerenciadorDocumentosDados?d=0&s={s}&l=100'
+                             f'&o%5B0%5D%5BdataEntrega%5D=desc&cnpjFundo={cnpj}', headers={'User-Agent': UA, 'X-Requested-With': 'XMLHttpRequest'}, timeout=60)
+                docs += json.loads(raw)['data']
+            return docs
+        docs = em_cache(f'fnet/{cnpj}', 60, busca)  # documentos do fundo: a cada 2 dias e meio
         for x in docs:
             tipo = (x.get('tipoDocumento') or '').strip()
             cat = (x.get('categoriaDocumento') or '').strip()
@@ -1173,7 +1419,7 @@ def comunicados(e):
                 com.append({'data': f'{a}-{m}-{d}', 'titulo': titulo, 'tipo': cat, 'url': url})
     elif e['tipo'] == 'acao':
         hoje = dt.date.today()
-        lin = [x for ano in (hoje.year, hoje.year - 1) for x in ipe(ano) if x['CNPJ_Companhia'] == e['cnpj']]
+        lin = [x for ano in (hoje.year, hoje.year - 1) for x in ipe(ano).get(e['cnpj'], [])]
         for x in lin:
             if x['Categoria'].startswith('Valores Mobiliários negociados'):
                 continue  # posicao mensal de administradores: muito repetitivo
@@ -1185,8 +1431,7 @@ def comunicados(e):
             else:
                 com.append(item)
     elif e['tipo'] == 'bdr':
-        raw = baixar(f'https://data.sec.gov/submissions/CIK{e["cik"]}.json', headers={'User-Agent': UA}, timeout=60)
-        r = json.loads(raw)['filings']['recent']
+        r = sec_json(f'submissions/CIK{e["cik"]}.json', 72)['filings']['recent']
         for i, f in enumerate(r['form']):
             if f not in SEC_FORMS:
                 continue
@@ -1221,57 +1466,105 @@ def gravar(arq, d):
     return True
 
 
+def carregar_empresas():
+    """cache/universo.json (todas as acoes e FIIs da B3 e os BDRs de empresas americanas, feito pelo universo.py)
+    com as EMPRESAS escritas a mao por cima. Sem o universo, so as EMPRESAS."""
+    fixas = {e['ticker']: e for e in EMPRESAS}
+    arq = os.path.join(CACHE, 'universo.json')
+    lista = []
+    if os.path.exists(arq):
+        for e in json.load(open(arq, encoding='utf-8'))['ativos']:
+            lista.append({**e, **fixas.get(e['ticker'], {})})
+    vistos = {e['ticker'] for e in lista}
+    return lista + [e for t, e in fixas.items() if t not in vistos]
+
+
+def opcao(nome):
+    return sys.argv[sys.argv.index(nome) + 1] if nome in sys.argv and sys.argv.index(nome) + 1 < len(sys.argv) else None
+
+
 def main():
     historico = '--historico' in sys.argv
     os.makedirs(SAIDA, exist_ok=True)
     hoje = dt.date.today()
-    cnpjs = [e['cnpj'] for e in EMPRESAS if e['tipo'] == 'acao']
+    inicio = time.time()
+    empresas = carregar_empresas()
+    so = opcao('--so')
+    if so:
+        quer = {x.strip().upper() for x in so.split(',')}
+        empresas = [e for e in empresas if e['ticker'] in quer]
+    if opcao('--limite'):
+        empresas = empresas[:int(opcao('--limite'))]
+    teste = bool(so or opcao('--limite'))
+    conta = lambda k: sum(1 for e in empresas if e['tipo'] == k)
+    print(f"{len(empresas)} ativos: {conta('acao')} acoes, {conta('fii')} FIIs, {conta('bdr')} BDRs")
+
+    # 1. arquivos grandes, uma vez para todos: balancos da CVM, informes dos FIIs, cotacoes da B3
+    cnpjs = sorted({e['cnpj'] for e in empresas if e['tipo'] == 'acao'})
     pasta_cvm = lambda c: os.path.join(CACHE, 'cvm', re.sub(r'\D', '', c))
     novos = [c for c in cnpjs if not os.path.isdir(pasta_cvm(c))]  # empresa nova: busca os balancos desde 2010
     if cnpjs:
         for ano in range(2010, hoje.year):
             alvo = cnpjs if (historico or ano == hoje.year - 1) else novos
             if alvo:
-                print(' CVM DFP', ano); cvm_baixar('dfp', ano, alvo)
+                print(' CVM DFP', ano, f'({len(alvo)} empresas)'); cvm_baixar('dfp', ano, alvo)
         for ano in (hoje.year - 1, hoje.year):
             print(' CVM ITR', ano); cvm_baixar('itr', ano, cnpjs)
-    novos_t = [e['ticker'] for e in EMPRESAS if not os.path.exists(cot_arquivo(e['ticker']))]
-    if novos_t and not historico:
-        print(' cotacoes desde', ANO_INICIO, 'para', ', '.join(novos_t))
-        atualizar_cotacoes(novos_t, True)
-    indice, erros = [], []
+    fiis = sorted({e['cnpj'] for e in empresas if e['tipo'] == 'fii'})
+    if fiis:
+        fii_cvm_baixar(fiis)
+    atualizar_cotacoes_todas([e['ticker'] for e in empresas], historico)
+    print(f' arquivos em lote prontos em {round(time.time() - inicio)} s')
+
+    # 2. cada ativo (varios ao mesmo tempo: a maior parte do tempo e espera da rede)
     arq_ind = os.path.join(SAIDA, 'indice.json')
-    antigo = {x['ticker']: x for x in json.load(open(arq_ind)).get('acoes', [])} if os.path.exists(arq_ind) else {}
-    for e in EMPRESAS:
+    antigo = {x['ticker']: x for x in json.load(open(arq_ind, encoding='utf-8')).get('acoes', [])} if os.path.exists(arq_ind) else {}
+
+    def processar(e):
+        _log_ativo.ticker = e['ticker']
         try:
             d = montar(e, historico)
-        except Exception as ex:  # mantem o arquivo de ontem dessa empresa e segue com as outras
-            print('  ERRO em', e['ticker'], repr(ex))
-            erros.append(e['ticker'])
-            if e['ticker'] in antigo:
-                indice.append(antigo[e['ticker']])
-            continue
+        except Exception as ex:  # mantem o arquivo de ontem desse ativo e segue com os outros
+            print('  ERRO em', e['ticker'], repr(ex)[:300])
+            return e, None
         arq = os.path.join(SAIDA, e['ticker'] + '.json')
         try:
             d['comunicados'], d['relatorios'] = comunicados(e)
         except Exception as ex:  # fonte fora do ar: ficam as listas de ontem
-            print('  aviso: comunicados de', e['ticker'], repr(ex))
+            print('  aviso: comunicados de', e['ticker'], repr(ex)[:200])
             try:
                 ontem = json.load(open(arq, encoding='utf-8'))
             except Exception:
                 ontem = {}
             d['comunicados'], d['relatorios'] = ontem.get('comunicados', []), ontem.get('relatorios', [])
         gravar(arq, d)
-        indice.append(resumo(d))
-        print(f"  ok {d['ticker']}: R$ {d['preco']} em {d['fechamento']}, balanço {d['balanco_ref']}")
+        print(f"  ok {d['ticker']}: {d['preco']} em {d['fechamento']}, balanço {d['balanco_ref']}")
+        return e, resumo(d)
+
+    with ThreadPoolExecutor(max_workers=TRABALHADORES) as ex:
+        resultados = list(ex.map(processar, empresas))
+    indice, erros = [], []
+    for e, r in resultados:
+        if r:
+            indice.append(r)
+        else:
+            erros.append(e['ticker'])
+            if e['ticker'] in antigo:
+                indice.append(antigo[e['ticker']])
     try:
         gravar(os.path.join(SAIDA, 'indices.json'), indices())
         print('  ok índices de comparação')
     except Exception as ex:  # fica o arquivo de ontem
         print('  aviso: índices de comparação', repr(ex))
+    if teste and antigo:  # rodada de teste: os ativos que ficaram de fora continuam na pesquisa
+        feitos = {x['ticker'] for x in indice}
+        indice += [x for t, x in antigo.items() if t not in feitos]
+    indice.sort(key=lambda x: -(x.get('liquidez') or 0))  # a pesquisa abre pelos mais negociados
     gravar(arq_ind, {'atualizado': dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).strftime('%Y-%m-%d %H:%M'), 'acoes': indice})
-    if erros and len(erros) == len(EMPRESAS):
-        sys.exit('nenhuma empresa foi atualizada')
+    print(f'\n{len(empresas) - len(erros)} de {len(empresas)} ativos atualizados em {round((time.time() - inicio) / 60, 1)} min.'
+          + (f' Ficaram com os dados anteriores ({len(erros)}): {", ".join(erros)}' if erros else ''))
+    if erros and len(erros) == len(empresas):
+        sys.exit('nenhum ativo foi atualizado')
 
 
 if __name__ == '__main__':

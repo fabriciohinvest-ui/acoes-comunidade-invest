@@ -26,6 +26,40 @@ A **página de pesquisa** (`index.html`) já está pronta para centenas ou milha
 
 Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Comunidade fica na Netlify. O sócio do Fabricio integra estas páginas ao site depois.
 
+### Estado em 08/11/2026: escala feita (versão 2)
+
+O plano da seção 9 foi feito para ações, FIIs e BDRs. Falta o tipo `eua` (S&P 500 sem BDR).
+
+- **`universo.py`** monta `cache/universo.json` uma vez por semana (detalhes no `LEIA-ME.md`, "Quais ativos entram"):
+  - ações negociadas no último mês, com CNPJ e nome de pregão da lista `GetInitialCompanies` da B3, nome com acento do cadastro da CVM e setor/segmento do `GetDetail`;
+  - FIIs pelo ISIN do informe mensal da CVM;
+  - BDRs de empresa pelo `GetCompaniesBDR` (categoria 6) e pela lista de tickers da SEC, só os que entregam 10-K/10-Q.
+- **`atualizar.py`** lê essa lista, e a `EMPRESAS` vale por cima:
+  - Cotações numa passada para todos (`atualizar_cotacoes_todas`), com o arquivo anual lido linha a linha.
+  - DFP/ITR, FRE, informe de FII e IPE baixados uma vez e separados por CNPJ.
+  - Respostas da B3, da SEC, do Yahoo e do Fundos.NET guardadas por idade em `cache/rede/` (`em_cache`).
+  - Balanço da SEC recalculado só com 10-K/10-Q novo (`fin_eua_guardado`).
+  - 8 ativos ao mesmo tempo (`ThreadPoolExecutor`).
+- **Balanço individual**: empresa que não entrega o consolidado num ano usa o individual (`_ind` em `cache/cvm/`), o que resolve o caso do ABCB4.
+- **Workflow**: `actions/cache` para `cache/` e `dados/`; o site vai para o GitHub Pages pelo próprio workflow (`deploy-pages`).
+  - Exige Settings → Pages → Source: GitHub Actions, que só o dono pode trocar.
+  - No modo antigo do Pages, o workflow salva no git só os ativos da `EMPRESAS`.
+- **A cotação não foi enxugada** (item 9.3). Medido em 08/11/2026: média de 250 KB por ação, 170 KB por FII e 160 KB por BDR. Com uns 1.260 ativos, o site no Pages fica perto de 240 MB, abaixo do limite de 1 GB, e o `acao.html` não precisou mudar.
+- **Balanço americano (`fin_eua`) corrigido para qualquer empresa**:
+  - **Ano fiscal fora de dezembro** (Apple em setembro, Microsoft em junho, Nvidia em janeiro). Antes, o `balanco_ref` saía "31/12" do ano fiscal (uma data no futuro) e o TTM ficava parado no último 10-K. Agora o ytd conta do início do ano fiscal, o TTM entra com o último 10-Q e o 4º trimestre é o ano fiscal menos os 9 meses. Preço e dividendos do histórico anual também usam o fechamento do ano fiscal.
+  - **Cada item vem do campo XBRL mais atualizado da empresa.** Os outros campos só completam datas que faltam. Exemplos: bancos (JPMorgan & cia.) informam a receita em `RevenuesNetOfInterestExpense` desde 2015, e a Broadcom informa o lucro em `ProfitLoss` desde 2025.
+  - **Proteções para banco**, que não tem lucro operacional (o EBITDA fica "-"), e para ano sem lucro informado.
+  - Em empresas de ano fiscal em dezembro, os números não mudaram (Google, Amazon, Meta e Tesla foram comparados antes e depois).
+  - O resultado guardado tem versão no nome (`fin_{cik}_{data}_v3.json`). Se mudar o cálculo de novo, suba a versão para refazer os guardados.
+- **Log**: com 8 ativos ao mesmo tempo, cada linha sai inteira e, durante um ativo, com `[TICKER]` na frente.
+- **Ficaram de fora**:
+  - units;
+  - FIIs sem ISIN no informe da CVM (uns 15%);
+  - BDRs de empresas que entregam 20-F;
+  - o tipo `eua`.
+- **Limite da fonte**: algumas empresas americanas aparecem com o balanço atrasado porque a própria base da SEC (`companyfacts`) ainda não trouxe os 10-Q mais novos. Em 08/11/2026, o Citi estava em dez/2025 e a Southern em mar/2026. O robô usa o mais recente que existe; não é erro do código.
+- **Testes de 08/11/2026** (no computador, com `--so`): 22 ativos variados, 20 BDRs de anos fiscais e bancos diferentes e 90 sorteados (30 ações, 30 FIIs e 30 BDRs, de muito a pouco negociados). Todos saíram sem erro. Com os 88 ativos novos, o histórico desde 2009 levou uns 3 minutos e o pico de memória ficou em 1,2 GB.
+
 ## 2. Regras que não podem ser quebradas
 
 1. **Conteúdo educativo.** Nunca escreva recomendação de compra ou venda, "melhores ações", nota ou ranking de "qual comprar". Ordenar uma tabela por um indicador é aceito; dizer que algo "está barato" não é.
@@ -173,6 +207,7 @@ Todas sem login e sem chave. O que cada uma dá:
 - **Desdobramentos**: ajuste a cotação e os proventos antigos pelo fator dos eventos da B3. O MXRF11 teve desdobramento de 1 para 10 em 16/05/2017, e o VP por cota e o nº de cotas antigos também precisam desse ajuste.
 - **Lucro de banco**: na DRE consolidada da CVM, até 2019 o lucro do banco está na conta **3.09**, não na 3.11. O robô procura pela descrição (`^lucro.*consolidado do per[íi]odo`, nível 1) e só usa a 3.11 se não achar.
 - **Nº de ações na SEC**: use o número do **arquivo original** de cada período. O 10-K seguinte já vem corrigido pelo desdobramento, então aplicar o split por cima dá P/L 10 ou 20 vezes errado (o Google 2021 deu P/L 504). Esse número original é multiplicado pelos splits posteriores. O código faz isso em `serie(..., primeiro=True)`.
+- **Ano fiscal na SEC**: não suponha que o ano termina em 31/12. O ano fiscal acaba no fim do período de 350 a 380 dias do 10-K (semanas de 52/53 variam uns dias). O ytd começa no dia seguinte ao fim do ano fiscal anterior (`inicios` em `fin_eua`).
 - **Proventos de BDR**: a B3 só mostra 12 meses. O robô acumula o que vê em `cache/proventos/{T}.json`, então o histórico cresce sozinho. Para trás, estima assim: dividendo em US$ × PTAX da data com × 0,7 (imposto de 30% retido nos EUA) ÷ k, sendo k a paridade calibrada com os pagamentos reais. Na tabela aparece como **"Dividendo (estimado)"**.
 - **Rendimentos de FII**:
   - A B3 só mostra 12 meses (acumulados em `cache/proventos/`).

@@ -6,14 +6,15 @@
 |---|---|
 | `index.html` | A pesquisa: lista todos os ativos do `dados/indice.json`, com busca, filtro por tipo e setor e ordenação |
 | `acao.html` | A página do ativo. Abre pelo endereço: `acao.html?t=BBAS3`, `acao.html?t=GOGL34` ou `acao.html?t=MXRF11` (ações, BDRs e fundos imobiliários usam a mesma página) |
-| `atualizar.py` | O robô. Baixa os dados públicos, calcula os indicadores e grava `dados/<TICKER>.json` |
+| `universo.py` | A lista de ativos: todas as ações e FIIs negociados na B3 no último mês e os BDRs de empresas americanas. Grava `cache/universo.json` uma vez por semana |
+| `atualizar.py` | O robô. Baixa os dados públicos, calcula os indicadores e grava `dados/<TICKER>.json` de todos os ativos da lista |
 | `dados/` | O que a página lê (um JSON por ação + `indice.json` com o resumo de todas + `indices.json` com IBOV, IFIX, SMLL, IDIV, IVVB11, CDI e IPCA mês a mês, para a comparação) |
 | `cache/` | Histórico guardado pelo robô (cotações desde 2009, balanços da CVM, proventos de BDR). Não apague |
 | `tesouro.html` | Tesouro Direto: todas as taxas à venda, se estão altas ou baixas contra 5 anos, simulador até o vencimento e de venda antecipada. Lê `dados/tesouro.json` |
 | `tesouro.py` | Robô do Tesouro: baixa as taxas do Tesouro Transparente e os juros do Banco Central e grava `dados/tesouro.json` (roda junto com o `atualizar.py`) |
 | `config.js` | Onde as páginas buscam os dados (padrão: a pasta `dados/` do próprio site) |
 | `netlify.toml` | Configuração da Netlify (sem build; libera a leitura dos dados por outros sites) |
-| `.github/workflows/atualizar.yml` | Agenda o robô todo dia útil às 21h30 (e repete às 8h do dia seguinte) |
+| `.github/workflows/atualizar.yml` | Agenda o robô todo dia útil às 21h30 (e repete às 8h do dia seguinte), guarda a memória dele (`cache/`) no próprio GitHub Actions e publica o site no GitHub Pages |
 
 ## Fontes (todas públicas e gratuitas)
 
@@ -30,6 +31,10 @@
 
 Siga o **PASSO-A-PASSO.md** (GitHub + Netlify, uns 20 minutos, uma vez só).
 
+Com todos os ativos, os dados não vão mais para o git (seriam centenas de MB por dia). A memória do robô (`cache/`) e os JSON do dia ficam no próprio GitHub Actions (actions/cache), e o workflow publica o site no GitHub Pages. Para isso, **o dono do repositório precisa, uma vez**, ir em **Settings → Pages → Build and deployment → Source** e escolher **GitHub Actions**. Enquanto isso não for feito, o robô continua salvando no repositório só os ativos da lista `EMPRESAS`, como antes.
+
+A SEC pede um e-mail de contato no pedido. Para o robô poder atualizar a lista de empresas americanas, crie a variável `CONTATO_SEC` com um e-mail de contato do site (Settings → Secrets and variables → Actions → Variables). Sem ela, vale a última lista guardada.
+
 ## Usar dentro do site da Comunidade Invest
 
 - **Mais simples**: usar o endereço da Netlify (ou um subdomínio dela) e linkar no menu do site.
@@ -37,15 +42,41 @@ Siga o **PASSO-A-PASSO.md** (GitHub + Netlify, uns 20 minutos, uma vez só).
   `window.CI_DADOS_URL = 'https://NOME.netlify.app/dados/';` (a leitura por outros sites já está liberada no `netlify.toml`).
 - Outras configurações opcionais (ponha no `config.js`): `window.CI_PAGINA_ATIVO` (endereço da página do ativo, padrão `acao.html`) e `window.CI_PAGINA_PESQUISA` (endereço da pesquisa, padrão `index.html`).
 
-## Adicionar uma ação ou BDR
+## Quais ativos entram
 
-Abra o `atualizar.py` e acrescente uma linha na lista `EMPRESAS` (no começo do arquivo), copiando o modelo:
+A lista se monta sozinha (`universo.py`, uma vez por semana):
 
-- Ação brasileira: ticker, CNPJ, código da B3 (4 letras), nome de pregão (como aparece em "Proventos em dinheiro" na B3), ISIN, setor e segmento. Se for banco, `'banco': True`.
-- BDR: ticker, código da B3, CIK da empresa na SEC, ticker nos EUA e ISIN do BDR.
-- Fundo imobiliário: `'tipo': 'fii'`, ticker, CNPJ do fundo, código da B3 (4 letras), ISIN da cota, segmento e tipo de fundo (copie a linha do MXRF11).
+- **Ações**: todo código de ação negociado no mercado à vista da B3 no último mês, de empresa que está na lista de companhias da B3. O nome vem do cadastro da CVM, e o setor e o segmento, da classificação da B3.
+- **FIIs**: todo fundo imobiliário negociado no último mês que aparece no informe mensal da CVM (pelo ISIN). O tipo (papel, tijolo, fundo de fundos ou híbrido) sai da carteira do último informe.
+- **BDRs**: BDR de empresa (não de ETF) negociado no último mês, cuja empresa entrega 10-K/10-Q à SEC. A empresa americana é achada pelo nome, e o setor vem do código SIC.
 
-Na primeira vez que o robô vê uma empresa nova, ele baixa sozinho o histórico (cotações desde 2009 e balanços desde 2010). Essa primeira rodada demora mais (uns 20 a 30 minutos); depois volta aos 2 minutos.
+Ficam de fora, por enquanto:
+
+- as **units** (SANB11, TAEE11, KLBN11...), porque o nº de ações da CVM conta ON e PN separadas;
+- os FIIs sem ISIN no informe da CVM (uns 15% dos negociados);
+- os BDRs de empresas que entregam 20-F (balanço em IFRS);
+- as ações do S&P 500 sem BDR.
+
+A lista `EMPRESAS` do `atualizar.py` continua valendo por cima: o que está escrito lá (nome, segmento, código nos EUA) vence o que veio da lista automática, e esses ativos entram mesmo sem negócio no mês.
+
+Para testar com poucos ativos: `python atualizar.py --so BBAS3,MXRF11` ou `python atualizar.py --limite 30`.
+
+## Em escala: como o robô não demora horas
+
+- **Arquivos grandes, uma vez para todos**: a cotação do dia (um arquivo da B3 traz todos os ativos), os balanços da CVM (um zip por ano), o informe dos FIIs, o Formulário de Referência e os comunicados da CVM são baixados uma vez por rodada e separados por ativo numa leitura só.
+- **Respostas guardadas** em `cache/rede/`:
+
+  | O que | Por quanto tempo |
+  |---|---|
+  | Proventos dos últimos 12 meses (B3) | um dia |
+  | Histórico de proventos (B3) | uma semana (o que saiu no meio da semana entra pelo complemento do dia) |
+  | Detalhe da empresa (B3) | um mês |
+  | Documentos dos FIIs e da SEC | 2 a 3 dias |
+  | Histórico do Yahoo | uma semana (a cotação do dia nos EUA é buscada todo dia) |
+  | Balanço da SEC | recalculado só quando a empresa entrega um 10-K ou 10-Q novo |
+
+- **8 ativos ao mesmo tempo** (`TRABALHADORES`), porque a maior parte do tempo é espera da rede.
+- **Ativo novo** ganha o histórico desde 2009 lendo os arquivos anuais da B3 uma vez para todos os novos.
 
 ## Diferenças conhecidas em relação ao Investidor10
 

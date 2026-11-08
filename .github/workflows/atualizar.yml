@@ -1,5 +1,11 @@
-# Robo diario: roda o atualizar.py depois do fechamento da B3 e salva os JSON no repositorio.
-# A Netlify, ligada a este repositorio, publica o site sozinha a cada commit (sem build).
+# Robo diario: lista de ativos (refeita uma vez por semana), dados do dia e publicacao no GitHub Pages.
+#
+# Em escala (todas as acoes e FIIs da B3 e os BDRs), os dados nao vao mais para o git: seriam centenas de MB por dia.
+#   - A memoria do robo (cache/) e os JSON do dia (dados/) ficam no actions/cache, de uma rodada para a outra.
+#   - O site (HTML + dados/) e publicado no GitHub Pages direto por este workflow.
+# Precisa, uma vez, do dono do repositorio: Settings -> Pages -> Build and deployment -> Source: GitHub Actions.
+# Enquanto o Pages estiver no modo antigo (branch main), o robo salva no repositorio so os ativos da lista EMPRESAS
+# do atualizar.py, como antes, para o site continuar no ar sem inchar o git.
 name: Atualizar ações
 
 on:
@@ -9,7 +15,9 @@ on:
   workflow_dispatch:         # botão "Run workflow" para rodar na mão
 
 permissions:
-  contents: write
+  contents: write   # modo antigo do Pages: salvar os dados no repositório
+  pages: write
+  id-token: write
 
 concurrency:
   group: atualizar
@@ -18,22 +26,106 @@ concurrency:
 jobs:
   atualizar:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 340     # a primeira carga (todos os ativos desde 2009) leva umas horas; o dia a dia, uns 20 minutos
+    outputs:
+      pages: ${{ steps.pages.outputs.tipo }}
+    env:
+      PYTHONUNBUFFERED: '1'                  # o log aparece na hora, linha a linha
+      CONTATO_SEC: ${{ vars.CONTATO_SEC }}   # e-mail de contato do site para a SEC (opcional; Settings -> Secrets and variables -> Actions -> Variables)
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+
+      - name: Memória do robô (cotações, balanços e dados de ontem)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            cache
+            dados
+          key: robo-${{ github.run_id }}
+          restore-keys: robo-
+
+      - name: Lista de ativos (refeita uma vez por semana)
+        run: python universo.py
+        continue-on-error: true   # se falhar, vale a lista da semana passada
+
       - name: Baixar dados e recalcular indicadores
         run: python atualizar.py
+
       - name: Tesouro Direto (taxas do dia)
         run: python tesouro.py
-        continue-on-error: true   # se o Tesouro falhar, as acoes salvam do mesmo jeito
-      - name: Salvar no repositório (a Netlify publica sozinha)
+        continue-on-error: true   # se o Tesouro falhar, as ações saem do mesmo jeito
+
+      - name: Guardar a memória do robô
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            cache
+            dados
+          key: robo-${{ github.run_id }}
+
+      - name: Cópia de segurança da memória (às terças e quando roda na mão)
+        if: always() && (github.event.schedule == '30 0 * * 2' || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-artifact@v4
+        with:
+          name: memoria-robo
+          path: cache
+          retention-days: 35
+          overwrite: true
+
+      - name: Como o GitHub Pages publica
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          tipo=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" | python -c "import json,sys; print(json.load(sys.stdin).get('build_type',''))" || true)
+          echo "Pages: ${tipo:-desconhecido}"
+          echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
+
+      - name: Montar o site (HTML + dados)
+        if: steps.pages.outputs.tipo == 'workflow'
+        run: |
+          mkdir -p _site
+          cp -r ./*.html config.js dados _site/
+          touch _site/.nojekyll
+          du -sh _site
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.pages.outputs.tipo == 'workflow'
+        with:
+          path: _site
+
+      - name: Modo antigo do Pages (branch main) - salva só os ativos da lista EMPRESAS
+        if: steps.pages.outputs.tipo != 'workflow'
+        run: |
+          echo "::warning::O GitHub Pages ainda publica a partir da branch main: só os ativos da lista EMPRESAS vão para o site. Para publicar todos, o dono do repositório troca em Settings -> Pages -> Source: GitHub Actions."
+          python - <<'EOF'
+          import json, atualizar as A
+          fixos = {e['ticker'] for e in A.EMPRESAS}
+          d = json.load(open('dados/indice.json', encoding='utf-8'))
+          d['acoes'] = [x for x in d['acoes'] if x['ticker'] in fixos]
+          json.dump(d, open('dados/indice.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+          open('fixos.txt', 'w').write('\n'.join(f'dados/{t}.json' for t in sorted(fixos)))
+          EOF
           git config user.name "robo-comunidade-invest"
           git config user.email "robo-comunidade-invest@users.noreply.github.com"
-          git add dados cache
+          git add dados/indice.json dados/indices.json $(cat fixos.txt)
+          git add dados/tesouro.json 2>/dev/null || true
           if git diff --cached --quiet; then echo "nada mudou"; exit 0; fi
           git commit -m "dados de $(TZ=America/Sao_Paulo date +%d/%m/%Y)"
           git push
+
+  publicar:
+    needs: atualizar
+    if: needs.atualizar.outputs.pages == 'workflow'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
