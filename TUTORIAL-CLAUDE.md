@@ -49,9 +49,10 @@ Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Co
 - **Comunicados** (seção depois de "Informações"): 6 por página, com link para o documento original. Ação: CVM (IPE). FII: B3 (Fundos.NET). BDR: SEC (em inglês).
 - **Gráficos novos, no fim da página**, todos calculados no navegador a partir do JSON do ativo + `dados/indices.json`, então se atualizam junto com o robô:
   - *Comparação com índices* (1A, 2A, 5A, 10A): o ativo com proventos reinvestidos contra CDI, IPCA, IBOV, IFIX, SMLL, IDIV e IVVB11, com a calculadora "Se você tivesse investido R$ X há N anos". FII começa no primeiro rendimento confiável (abr/2022 no MXRF11) e a nota avisa.
-  - *Termômetro*: cada indicador de hoje numa régua do mínimo ao máximo do próprio ativo (5 ou 10 anos), com a média. Texto neutro ("parte alta/baixa do histórico"), nunca "barato/caro".
-  - *Quanto caiu e quanto demorou para voltar*: queda desde o topo (com proventos reinvestidos), a maior queda, o tempo de recuperação e a tabela das quedas de 10% ou mais.
-  - *Renda x inflação*: proventos por ano no valor da época e corrigidos pelo IPCA, e a tabela de *yield on cost* (quem comprou em janeiro de cada ano recebe hoje X% sobre o que pagou).
+  - *Termômetro* (1A, 2A, 5A, 10A; mostra 3 linhas e "Ver mais"): cada indicador de hoje numa régua do mínimo ao máximo do próprio ativo, com a média. Ações e BDR: P/L, P/VP, DY e EV/EBIT no fim de cada mês = múltiplo do último balanço anual × variação do preço (BDR usa `preco_eua_mensal`, a ação nos EUA) × ajuste pelo lucro/EBIT dos últimos 4 trimestres já publicados (2 meses após o fim do trimestre). ROE e margem só em 5A/10A (anuais). FII: P/VP, DY 12M e rendimento do mês, mensais. Texto neutro ("parte alta/baixa do histórico"), nunca "barato/caro".
+  - *Quanto caiu e quanto demorou para voltar* (1A, 2A, 5A, 10A, MAX): queda desde o topo do período escolhido (com proventos reinvestidos), a maior queda, o tempo de recuperação e a tabela das quedas de 10% ou mais.
+  - *Quanto tempo segurar*: para cada pregão do histórico como data de compra, o resultado depois de 1, 2, 5 e 10 anos (preço + proventos reinvestidos, `trIndex()`): % de vezes no positivo, % que bateu o CDI (CDI aproximado pelo mês), pior, mediana (com % ao ano) e melhor. Prazo com menos de 120 datas de compra aparece como "histórico curto". Gráfico do resultado por data de compra contra o CDI.
+  - *Renda x inflação* (**só FII**, pedido do Fabricio): rendimentos por ano no valor da época e corrigidos pelo IPCA, e a tabela de *yield on cost* (quem comprou em janeiro de cada ano recebe hoje X% sobre o que pagou), com 4 linhas e "Ver mais".
   - FII: a *Distribuição da carteira* virou rosca (SVG). Saiu o gráfico antigo "Rentabilidade acumulada x CDI e IPCA", que a comparação substitui.
 - Cores dos gráficos: `--c1` a `--c8` no `:root` (`--c6` a `--c8` são da comparação e da rosca).
 
@@ -116,7 +117,7 @@ Regras do índice:
 - `anual` (por ano) e `trimestres` (por data de balanço): receita, custos, lucros, EBIT, EBITDA, imposto, ativos, passivos, PL, dívida, caixa e ações.
 - `ttm`: soma dos últimos 4 trimestres.
 - `hist_indicadores`: os indicadores calculados ano a ano.
-- Só BDR: `proventos_empresa` (dividendo em US$ por ação nos EUA) e `preco_eua_anual`.
+- Só BDR: `proventos_empresa` (dividendo em US$ por ação nos EUA), `preco_eua_anual` e `preco_eua_mensal` (último pregão de cada mês nos EUA, usado no termômetro).
 
 **Campos de FII (`fii`):**
 

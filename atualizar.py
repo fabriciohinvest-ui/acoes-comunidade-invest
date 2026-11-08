@@ -909,6 +909,7 @@ def montar(e, historico=False):
                 'site': det.get('website'), 'atividade': det.get('activity'), 'ticker_eua': e['us']}
         out['proventos_empresa'] = [{'data_com': d, 'valor': v} for d, v in reversed(divs_us)]
         out['preco_eua_anual'] = {str(a): preco_em(px_us, f'{a}-12-31') for a in anual}
+        out['preco_eua_mensal'] = {d[:7]: px_us[d] for d in sorted(px_us)}  # ultimo pregao de cada mes (termometro do BDR)
         moeda = 'USD'
     anos = sorted(anual)
     a5 = [a for a in anos if a <= ult_ano - 5]
