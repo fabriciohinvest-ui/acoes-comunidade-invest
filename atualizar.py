@@ -1018,20 +1018,35 @@ SEC_FORMS = {'10-K': 'Relatório anual (10-K)', '10-Q': 'Relatório trimestral (
 COMUNICADOS_MAX = 60
 
 
+MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+IPE_RELATORIOS = ('Apresentações a analistas/agentes do mercado', 'Press-release', 'Relatório de Análise Gerencial')
+RELATORIOS_MAX = 36
+
+
 def comunicados(e):
-    """ultimos documentos oficiais do ativo: FNET (FII), CVM IPE (acao) ou SEC (BDR). Lista de {data, titulo, tipo, url}."""
-    out = []
+    """documentos oficiais do ativo, em duas listas de {data, titulo, tipo, url}:
+    comunicados (avisos, fatos relevantes, atas...) e relatorios (o material visual de resultados:
+    relatorio gerencial do FII, apresentacao/release de resultados da empresa, release trimestral na SEC)."""
+    com, rel = [], []
     if e['tipo'] == 'fii':
         cnpj = re.sub(r'\D', '', e['cnpj'])
-        raw = baixar('https://fnet.bmfbovespa.com.br/fnet/publico/pesquisarGerenciadorDocumentosDados?d=0&s=0&l=' + str(COMUNICADOS_MAX) +
-                     '&o%5B0%5D%5BdataEntrega%5D=desc&cnpjFundo=' + cnpj, headers={'User-Agent': UA, 'X-Requested-With': 'XMLHttpRequest'}, timeout=60)
-        for x in json.loads(raw)['data']:
+        docs = []
+        for s in (0, 100):  # ~200 documentos mais recentes: da para uns 3 anos de relatorios gerenciais
+            raw = baixar(f'https://fnet.bmfbovespa.com.br/fnet/publico/pesquisarGerenciadorDocumentosDados?d=0&s={s}&l=100'
+                         f'&o%5B0%5D%5BdataEntrega%5D=desc&cnpjFundo={cnpj}', headers={'User-Agent': UA, 'X-Requested-With': 'XMLHttpRequest'}, timeout=60)
+            docs += json.loads(raw)['data']
+        for x in docs:
             tipo = (x.get('tipoDocumento') or '').strip()
             cat = (x.get('categoriaDocumento') or '').strip()
-            titulo = tipo if tipo and tipo != 'Outros Documentos' else (x.get('especieDocumento') or '').strip() or cat
             d, m, a = x['dataEntrega'][:10].split('/')
-            out.append({'data': f'{a}-{m}-{d}', 'titulo': titulo, 'tipo': cat,
-                        'url': f'https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id={x["id"]}'})
+            url = f'https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id={x["id"]}'
+            if tipo == 'Relatório Gerencial':
+                ref = (x.get('dataReferencia') or '').strip()
+                ref = MESES[int(ref[3:5]) - 1] + '/' + ref[6:10] if len(ref) == 10 else ''
+                rel.append({'data': f'{a}-{m}-{d}', 'titulo': 'Relatório Gerencial' + (f' · {ref}' if ref else ''), 'tipo': 'B3 Fundos.NET', 'url': url})
+            else:
+                titulo = tipo if tipo and tipo != 'Outros Documentos' else (x.get('especieDocumento') or '').strip() or cat
+                com.append({'data': f'{a}-{m}-{d}', 'titulo': titulo, 'tipo': cat, 'url': url})
     elif e['tipo'] == 'acao':
         hoje = dt.date.today()
         lin = [x for ano in (hoje.year, hoje.year - 1) for x in ipe(ano) if x['CNPJ_Companhia'] == e['cnpj']]
@@ -1039,17 +1054,34 @@ def comunicados(e):
             if x['Categoria'].startswith('Valores Mobiliários negociados'):
                 continue  # posicao mensal de administradores: muito repetitivo
             titulo = x['Assunto'].strip() or x['Tipo'].strip() or x['Categoria'].strip()
-            out.append({'data': x['Data_Entrega'][:10], 'titulo': titulo[:140], 'tipo': x['Categoria'].strip(), 'url': x['Link_Download']})
+            item = {'data': x['Data_Entrega'][:10], 'titulo': titulo[:140], 'tipo': x['Categoria'].strip(), 'url': x['Link_Download']}
+            if x['Tipo'].strip() in IPE_RELATORIOS:
+                item['tipo'] = x['Tipo'].strip().replace('Apresentações a analistas/agentes do mercado', 'Apresentação')
+                rel.append(item)
+            else:
+                com.append(item)
     elif e['tipo'] == 'bdr':
         raw = baixar(f'https://data.sec.gov/submissions/CIK{e["cik"]}.json', headers={'User-Agent': UA}, timeout=60)
         r = json.loads(raw)['filings']['recent']
         for i, f in enumerate(r['form']):
-            if f in SEC_FORMS:
-                ac = r['accessionNumber'][i].replace('-', '')
-                out.append({'data': r['filingDate'][i], 'titulo': SEC_FORMS[f], 'tipo': 'SEC (em inglês)',
-                            'url': f'https://www.sec.gov/Archives/edgar/data/{int(e["cik"])}/{ac}/{r["primaryDocument"][i]}'})
-    out.sort(key=lambda x: x['data'], reverse=True)
-    return out[:COMUNICADOS_MAX]
+            if f not in SEC_FORMS:
+                continue
+            ac = r['accessionNumber'][i]
+            base = f'https://www.sec.gov/Archives/edgar/data/{int(e["cik"])}/{ac.replace("-", "")}/'
+            if f in ('8-K', '6-K') and '2.02' in (r.get('items') or [''] * (i + 1))[i]:
+                # 8-K item 2.02 = divulgacao de resultado; o release (anexo 99.1) fica na pagina do envio
+                fd = r['filingDate'][i]
+                q, y = (int(fd[5:7]) - 1) // 3, int(fd[:4])  # o release sai no trimestre seguinte ao que ele cobre
+                q, y = (4, y - 1) if q == 0 else (q, y)
+                rel.append({'data': fd, 'titulo': f'Resultado do {q}º trimestre de {y} (release)',
+                            'tipo': 'SEC (em inglês)', 'url': base + ac + '-index.htm'})
+            else:
+                com.append({'data': r['filingDate'][i], 'titulo': SEC_FORMS[f], 'tipo': 'SEC (em inglês)', 'url': base + r['primaryDocument'][i]})
+    com.sort(key=lambda x: x['data'], reverse=True)
+    rel.sort(key=lambda x: x['data'], reverse=True)
+    vistos = set()  # documento reenviado (nova versao) aparece uma vez so, a mais nova
+    rel = [x for x in rel if not (x['titulo'] in vistos or vistos.add(x['titulo']))]
+    return com[:COMUNICADOS_MAX], rel[:RELATORIOS_MAX]
 
 
 def gravar(arq, d):
@@ -1093,13 +1125,14 @@ def main():
             continue
         arq = os.path.join(SAIDA, e['ticker'] + '.json')
         try:
-            d['comunicados'] = comunicados(e)
-        except Exception as ex:  # fonte fora do ar: fica a lista de ontem
+            d['comunicados'], d['relatorios'] = comunicados(e)
+        except Exception as ex:  # fonte fora do ar: ficam as listas de ontem
             print('  aviso: comunicados de', e['ticker'], repr(ex))
             try:
-                d['comunicados'] = json.load(open(arq, encoding='utf-8')).get('comunicados', [])
+                ontem = json.load(open(arq, encoding='utf-8'))
             except Exception:
-                d['comunicados'] = []
+                ontem = {}
+            d['comunicados'], d['relatorios'] = ontem.get('comunicados', []), ontem.get('relatorios', [])
         gravar(arq, d)
         indice.append(resumo(d))
         print(f"  ok {d['ticker']}: R$ {d['preco']} em {d['fechamento']}, balanço {d['balanco_ref']}")

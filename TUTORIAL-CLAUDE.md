@@ -46,7 +46,9 @@ Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Co
 - **"← Pesquisa"** no topo da página do ativo e uma **caixa "Buscar outro ativo"** com sugestões enquanto digita.
 - Funciona no celular. Testado em 390 px de largura, sem rolagem lateral.
 - **Emoji em cada informação** da empresa ou do fundo (dicionário `EMO` em `acao.html`; diferentes dos do Investidor10). Campo novo sem emoji ganha 📌.
-- **Comunicados** (seção depois de "Informações"): 6 por página, com link para o documento original. Ação: CVM (IPE). FII: B3 (Fundos.NET). BDR: SEC (em inglês).
+- **Comunicados e relatórios** (última seção, antes do rodapé; no menu fica no fim), dividida ao meio, 6 por página, com link para o documento original:
+  - esquerda, *Comunicados*: ação = CVM IPE; FII = B3 Fundos.NET; BDR = SEC (10-K, 10-Q, 8-K...).
+  - direita, o material visual de resultados: FII = *Relatório Gerencial* (Fundos.NET, tipo "Relatório Gerencial", rótulo com o mês de referência); ação = IPE com tipo "Apresentações a analistas/agentes do mercado", "Press-release" ou "Relatório de Análise Gerencial"; BDR = 8-K com item 2.02 (release de resultado; o link abre a página do envio, o release é o anexo 99.1).
 - **Gráficos novos, no fim da página**, todos calculados no navegador a partir do JSON do ativo + `dados/indices.json`, então se atualizam junto com o robô:
   - *Comparação com índices* (1A, 2A, 5A, 10A): o ativo com proventos reinvestidos contra CDI, IPCA, IBOV, IFIX, SMLL, IDIV e IVVB11, com a calculadora "Se você tivesse investido R$ X há N anos". FII começa no primeiro rendimento confiável (abr/2022 no MXRF11) e a nota avisa.
   - *Termômetro* (1A, 2A, 5A, 10A; mostra 3 linhas e "Ver mais"): cada indicador de hoje numa régua do mínimo ao máximo do próprio ativo, com a média. Ações e BDR: P/L, P/VP, DY e EV/EBIT no fim de cada mês = múltiplo do último balanço anual × variação do preço (BDR usa `preco_eua_mensal`, a ação nos EUA) × ajuste pelo lucro/EBIT dos últimos 4 trimestres já publicados (2 meses após o fim do trimestre). ROE e margem só em 5A/10A (anuais). FII: P/VP, DY 12M e rendimento do mês, mensais. Texto neutro ("parte alta/baixa do histórico"), nunca "barato/caro".
@@ -104,7 +106,7 @@ Regras do índice:
 
 **Campos comuns a todos:** `ticker`, `tipo`, `nome`, `razao`, `setor`, `segmento`, `atualizado` (horário de Brasília), `fechamento` (último pregão), `preco`, `cotacao`, `moeda_balanco`, `balanco_ref`, `proventos`, `eventos`, `comunicados`.
 
-- `comunicados` é uma lista de até 60 `{data, titulo, tipo, url}`, do mais novo para o mais antigo. Se a fonte falhar, o robô mantém a lista de ontem.
+- `comunicados` (até 60) e `relatorios` (até 36, sem repetir título: reenvio fica só o mais novo) são listas de `{data, titulo, tipo, url}`, do mais novo para o mais antigo. Se a fonte falhar, o robô mantém as listas de ontem. O FII busca os 200 documentos mais recentes no Fundos.NET (`l` aceita no máximo 100, por isso 2 páginas: `s=0` e `s=100`).
 
 - `cotacao` é uma lista de `[data, abertura, máxima, mínima, fechamento, volume_R$]`, ajustada por desdobramentos e grupamentos.
 - `proventos` é uma lista de `{tipo, data_com, pagamento, valor}`, já ajustados por desdobramento.
