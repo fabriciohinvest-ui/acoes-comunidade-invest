@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ação · Comunidade Invest</title>
+<style>
+/* ==== TEMA: troque so estas cores para aplicar a identidade do site ==== */
+:root{
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --bg:#f6f6f6;--s:#fff;--s2:#f0f0f0;--line:#e0e0e0;--fg:#1a1a1a;--mu:#6b6b6b;--ac:#2b2b2b;--on-ac:#fff;--soft:#ececec;--ac2:#8a8a8a;
+  --up:#b3261e;--upsoft:#f8e5e3;--down:#1e7a46;--downsoft:#e2f2e8;
+  --c1:#2b3a55;--c2:#1e7a46;--c3:#d08a1e;--c4:#7fb04a;--c5:#3d6fb5;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);font-family:var(--font);color:var(--fg);line-height:1.45}
+button,select,input{font:inherit;color:inherit}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px 60px}
+.num{font-variant-numeric:tabular-nums}
+/* topo fixo com as secoes */
+.bar{position:sticky;top:0;z-index:5;background:var(--ac);color:var(--on-ac)}
+.bar .in{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:16px;align-items:center;height:46px;overflow-x:auto;scrollbar-width:none}
+.bar .in::-webkit-scrollbar{display:none}
+.bar b{white-space:nowrap}.bar a{white-space:nowrap;text-decoration:none;font-size:14px;opacity:.85}.bar a:hover{opacity:1}
+.hd{padding:26px 0 8px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.logo{width:52px;height:52px;border-radius:14px;background:var(--ac);color:var(--on-ac);display:grid;place-items:center;font-weight:800;font-size:15px;flex:none}
+.hd h1{font-size:30px;line-height:1.1}.hd .sub{color:var(--mu);font-size:14.5px;margin-top:3px}
+.kp{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.kp div{background:var(--s);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.kp span{display:block;font-size:12px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.kp b{display:block;font-size:22px;margin-top:2px}
+.sec{background:var(--s);border:1px solid var(--line);border-radius:16px;margin-top:20px;overflow:hidden;scroll-margin-top:56px}
+.sh{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--line)}
+.sh h2{font-size:16px;text-transform:uppercase;letter-spacing:.04em}
+.sb{padding:18px 20px}
+.seg{display:inline-flex;gap:3px;background:var(--s2);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;padding:5px 12px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:600}
+.seg button.on{background:var(--ac);color:var(--on-ac)}
+select.sel{border:1px solid var(--line);border-radius:10px;background:var(--s);padding:6px 10px;font-size:13.5px}
+.ctrls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grp{border-left:3px solid var(--ac);padding-left:14px;margin-top:20px}.grp:first-child{margin-top:0}
+.grp h3{font-size:17px;font-weight:600;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.cd{background:var(--s2);border-radius:10px;padding:10px 12px;cursor:pointer;border:1.5px solid transparent;text-align:left}
+.cd:hover{border-color:var(--line)}.cd.on{border-color:var(--ac)}
+.cd .k{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mu);gap:6px;min-height:32px}
+.cd .k i{font-style:normal;color:var(--ac2)}
+.cd .v{font-size:19px;font-weight:650;margin-top:2px;display:flex;justify-content:space-between;align-items:center}
+.cd .v small{font-size:11px;color:var(--ac2);font-weight:400}
+.ihist{margin-top:14px;background:var(--s2);border-radius:12px;padding:12px 14px}
+.ihist h4{font-size:14px;display:flex;justify-content:space-between}
+.tw{overflow-x:auto;margin-top:6px}
+table.t{border-collapse:collapse;width:100%;font-size:14px;white-space:nowrap}
+table.t th{font-size:12.5px;color:var(--mu);font-weight:600;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+table.t td{padding:9px 12px;border-bottom:1px solid var(--line)}
+table.t td.r,table.t th.r{text-align:right}
+table.t tbody tr:nth-child(odd) td{background:var(--s2)}
+table.t td:first-child,table.t th:first-child{position:sticky;left:0;background:var(--s);z-index:1}
+table.t tbody tr:nth-child(odd) td:first-child{background:var(--s2)}
+table.t .ind td:first-child{padding-left:26px;font-weight:400}
+table.t .tot td{font-weight:650}
+.box2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.box2 div{background:var(--s2);border-radius:12px;padding:12px 16px}.box2 span{font-size:13px;color:var(--mu)}.box2 b{display:block;font-size:22px;font-weight:600}
+.pg{display:flex;gap:4px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.pg button{border:1px solid var(--line);background:var(--s);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px}.pg button.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac)}
+.radar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-width:640px;margin-top:12px}
+.radar div{border-radius:8px;padding:9px 0;text-align:center;font-size:14px;background:var(--s2);color:var(--mu)}
+.radar div.on{background:var(--downsoft);color:var(--down);font-weight:650}
+.inf{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.inf div{border:1px solid var(--line);border-radius:10px;padding:10px 14px}.inf span{display:block;font-size:12.5px;color:var(--mu)}.inf b{font-size:16px;font-weight:600}
+.chart{position:relative}.chart svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--ac);color:var(--on-ac);font-size:12.5px;border-radius:8px;padding:6px 9px;white-space:nowrap;transform:translate(-50%,-110%);display:none;z-index:3}
+.lg{display:flex;justify-content:center;gap:6px 18px;flex-wrap:wrap;font-size:13px;color:var(--mu);margin-bottom:6px}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.note{font-size:12.5px;color:var(--mu);margin-top:10px}
+.pos{color:var(--down)}.neg{color:var(--up)}
+footer{font-size:12.5px;color:var(--mu);margin-top:24px}footer p+p{margin-top:6px}
+.legal{border:1px dashed var(--line);border-radius:12px;padding:10px 14px;margin-top:10px}
+.load{padding:80px 0;text-align:center;color:var(--mu)}
+.bar a.volta{opacity:1;font-weight:600;border-right:1px solid rgba(255,255,255,.25);padding-right:14px}
+.bmini{position:relative;min-width:240px}.bmini input{width:100%;border:1.5px solid var(--line);background:var(--s);border-radius:12px;padding:9px 12px 9px 34px;font-size:14.5px;outline:none}
+.bmini input:focus{border-color:var(--ac)}.bmini svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ac2)}
+.sug{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--s);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.12);z-index:10;overflow:hidden;display:none}
+.sug a{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;text-decoration:none;font-size:14px}.sug a:hover,.sug a.on{background:var(--s2)}.sug small{color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:760px){.bmini{min-width:0;width:100%}}
+/* previa: secao fechada mostra so o comeco; botao "Ver mais" abre o resto */
+.sec.fechado .gs .grp:nth-child(n+2),.sec.fechado #pg{display:none}
+.sec.fechado.l3 tbody tr:nth-child(n+4),.sec.fechado.l4 tbody tr:nth-child(n+5),.sec.fechado.l5 tbody tr:nth-child(n+6),.sec.fechado.l6 tbody tr:nth-child(n+7){display:none}
+.sec.fechado .sb{position:relative}.sec.fechado .sb::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(transparent,var(--s));pointer-events:none}
+@media (max-width:760px){.sec.fechado .gs .grp:first-child .cd:nth-child(n+7){display:none}}
+.mais{display:block;width:100%;border:0;border-top:1px solid var(--line);background:var(--s);padding:12px;font-weight:650;font-size:14px;cursor:pointer;color:var(--fg)}.mais:hover{background:var(--s2)}
+.divisor{margin:34px 0 0;font-size:20px;display:flex;align-items:center;gap:12px;scroll-margin-top:56px}.divisor::after{content:"";flex:1;height:1px;background:var(--line)}
+.bar a{cursor:pointer}
+.lg span{cursor:pointer;user-select:none;padding:2px 4px;border-radius:6px}.lg span:hover{background:var(--s2)}.lg span.off{opacity:.4;text-decoration:line-through}
+.lgdica{text-align:center;font-size:11.5px;color:var(--ac2);margin:-2px 0 6px}
+.aj{font-style:normal;color:var(--ac2);cursor:pointer;padding:0 3px;border-radius:50%}.aj:hover{color:var(--fg);background:var(--soft)}
+#pop{position:absolute;z-index:30;max-width:330px;width:calc(100vw - 32px);background:var(--s);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:12px 14px 13px;font-size:14px;line-height:1.5;display:none}
+#pop h4{font-size:14.5px;margin-bottom:4px;padding-right:22px}#pop button{position:absolute;top:6px;right:8px;border:0;background:none;font-size:18px;cursor:pointer;color:var(--mu)}
+@media (max-width:760px){.wrap{padding:0 12px 48px}.kp{grid-template-columns:repeat(2,1fr)}.kp div:first-child{grid-column:1/-1}.inf{grid-template-columns:1fr 1fr}.box2{grid-template-columns:1fr}.sh,.sb{padding-left:14px;padding-right:14px}.hd h1{font-size:24px}.cards{grid-template-columns:1fr 1fr}.radar{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<nav class="bar"><div class="in" id="nav"></div></nav>
+<div class="wrap" id="app"><div class="load">Carregando…</div></div>
+<script src="config.js"></script>
+<script>
+/* ===== CONFIGURACAO =====
+   DADOS_URL: endereco da pasta "dados" publicada pelo robo diario (GitHub Pages ou o servidor do site).
+   A pagina abre a acao do endereco: acao.html?t=BBAS3  */
+const DADOS_URL = (window.CI_DADOS_URL || 'dados/');
+const PESQUISA = (window.CI_PAGINA_PESQUISA || 'index.html');  // pagina com a lista de todos os ativos
+let T = (new URLSearchParams(location.search).get('t') || (/^#[A-Za-z]{4}\d{1,2}$/.test(location.hash) ? location.hash.slice(1) : '') || 'BBAS3').toUpperCase();
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const nf=(c)=>new Intl.NumberFormat('pt-BR',{minimumFractionDigits:c,maximumFractionDigits:c});
+const N0=nf(0),N2=nf(2),N1=nf(1);
+const MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+let A, M; // dados da acao; simbolo da moeda dos balancos
+const isNum=v=>v!=null&&isFinite(v);
+const grande=(v,sim)=>{if(!isNum(v))return'-';const a=Math.abs(v),s=v<0?'-':'';const p=sim?sim+' ':'';if(a>=1e12)return`${s}${p}${N2.format(a/1e12)} ${a/1e12<2?'Trilhão':'Trilhões'}`;if(a>=1e9)return`${s}${p}${N2.format(a/1e9)} ${a/1e9<2?'Bilhão':'Bilhões'}`;if(a>=1e6)return`${s}${p}${N2.format(a/1e6)} ${a/1e6<2?'Milhão':'Milhões'}`;return s+p+N2.format(a)};
+const curto=v=>{if(!isNum(v))return'';const a=Math.abs(v),s=v<0?'-':'';return a>=1e12?s+N1.format(a/1e12)+'T':a>=1e9?s+N0.format(a/1e9)+'B':a>=1e6?s+N0.format(a/1e6)+'M':s+N1.format(a)};
+const dBR=s=>s?s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4):'-';
+const F={x:v=>isNum(v)?N2.format(v):'-',p:v=>isNum(v)?N2.format(v)+'%':'-',r:v=>isNum(v)?(M==='US$'?'US$ ':'R$ ')+N2.format(v):'-'};
+const brl=v=>isNum(v)?'R$ '+N2.format(v):'-';
+
+// ---------- grafico combinado (barras + linhas, 2 eixos, dica ao tocar) ----------
+function chart(el,labels,todas,o={}){
+  el._args=[labels,todas,o];const oc=el._ocultas||(el._ocultas=new Set());if(todas.every(s=>oc.has(s.nome)))oc.clear();const series=todas.filter(s=>!oc.has(s.nome));
+  const box=el.clientWidth||900,W=Math.max(320,box),H=o.h||(W<600?260:320),pl=o.pl||52,pr=series.some(s=>s.eixo==='d')?52:14,pt=12,pb=28;
+  const esq=series.filter(s=>s.eixo!=='d').flatMap(s=>s.vals).filter(isNum),dir=series.filter(s=>s.eixo==='d').flatMap(s=>s.vals).filter(isNum);
+  const rng=(v,zero)=>{let mn=Math.min(...v,zero?0:Infinity),mx=Math.max(...v,zero?0:-Infinity);if(!v.length){mn=0;mx=1}if(mx===mn)mx=mn+1;if(!zero){const p=(mx-mn)*.08;mn-=p;mx+=p}return[mn,mx]};
+  const temBarra=series.some(s=>s.tipo==='barra'&&s.eixo!=='d');
+  const [a0,a1]=rng(esq,temBarra||o.zero),[b0,b1]=rng(dir,o.zeroD);
+  const n=labels.length,cw=(W-pl-pr)/n,cx=i=>pl+cw*(i+.5),ya=v=>pt+(H-pt-pb)*(1-(v-a0)/(a1-a0)),yb=v=>pt+(H-pt-pb)*(1-(v-b0)/(b1-b0));
+  let g='';
+  for(let k=0;k<=4;k++){const v=a0+(a1-a0)*k/4,y=ya(v);g+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-6}" y="${y+4}" font-size="11" text-anchor="end" fill="var(--mu)">${(o.fmtE||curto)(v)}</text>`;
+    if(dir.length){const vb=b0+(b1-b0)*k/4;g+=`<text x="${W-pr+6}" y="${y+4}" font-size="11" fill="var(--mu)">${(o.fmtD||curto)(vb)}</text>`}}
+  const passo=Math.max(1,Math.ceil(n/(W<600?5:o.ticks||12)));
+  labels.forEach((l,i)=>{if(n<20?(i===n-1||i%passo===0&&n-1-i>=passo):i%passo===0)g+=`<text x="${cx(i)}" y="${H-8}" font-size="11.5" text-anchor="middle" fill="var(--mu)">${l}</text>`});
+  if(o.destaque!=null)g+=`<rect x="${pl+cw*o.destaque}" y="${pt}" width="${cw}" height="${H-pt-pb}" fill="var(--s2)"/>`;
+  const bars=series.filter(s=>s.tipo==='barra'),nb=bars.length;
+  bars.forEach((s,j)=>{const y=s.eixo==='d'?yb:ya;const bw=cw*.7/nb;s.vals.forEach((v,i)=>{if(!isNum(v))return;const x=pl+cw*i+cw*.15+bw*j,y0=y(Math.max(0,s.eixo==='d'?b0:a0)>0?(s.eixo==='d'?b0:a0):0);const yy=y(v);g+=`<rect x="${x}" y="${Math.min(yy,y0)}" width="${bw}" height="${Math.max(1,Math.abs(y0-yy))}" rx="3" fill="${typeof s.cor==='function'?s.cor(v):s.cor}"/>`})});
+  series.filter(s=>s.tipo!=='barra').forEach(s=>{const y=s.eixo==='d'?yb:ya;let d='',on=0;s.vals.forEach((v,i)=>{if(!isNum(v)){on=0;return}d+=(on?'L':'M')+cx(i).toFixed(1)+' '+y(v).toFixed(1);on=1});
+    g+=`<path d="${d}" fill="none" stroke="${s.cor}" stroke-width="${s.w||2.2}" stroke-linejoin="round"/>`;if(n<=30)s.vals.forEach((v,i)=>{if(isNum(v))g+=`<circle cx="${cx(i)}" cy="${y(v)}" r="3" fill="var(--s)" stroke="${s.cor}" stroke-width="1.6"/>`})});
+  g+=`<line id="cur" x1="0" x2="0" y1="${pt}" y2="${H-pb}" stroke="var(--ac2)" stroke-dasharray="3 3" visibility="hidden"/>`;
+  el.innerHTML=(o.legenda===false?'':`<div class="lg">${todas.map(s=>`<span data-lg="${s.nome}" class="${oc.has(s.nome)?'off':''}" title="Toque para mostrar ou esconder"><i style="background:${typeof s.cor==='function'?s.cor(1):s.cor}"></i>${s.nome}</span>`).join('')}</div>${todas.length>1?'<div class="lgdica">Toque nos nomes para mostrar ou esconder no gráfico</div>':''}`)+`<div class="chart"><svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="tip"></div></div>`;
+  el.querySelectorAll('[data-lg]').forEach(b=>b.onclick=()=>{const k=b.dataset.lg;if(oc.has(k))oc.delete(k);else if(todas.filter(s=>!oc.has(s.nome)).length>1)oc.add(k);chart(el,...el._args)});
+  const svg=el.querySelector('svg'),tip=el.querySelector('.tip'),cur=svg.querySelector('#cur');
+  const mv=ev=>{const r=svg.getBoundingClientRect(),x=(ev.clientX-r.left)*W/r.width,i=Math.max(0,Math.min(n-1,Math.floor((x-pl)/cw)));
+    cur.setAttribute('x1',cx(i));cur.setAttribute('x2',cx(i));cur.setAttribute('visibility','visible');
+    tip.innerHTML=`<b>${o.rotTip?o.rotTip(i):labels[i]}</b>`+series.map(s=>`<br>${s.nome}: ${(s.fmt||curto)(s.vals[i])}`).join('');tip.style.display='block';
+    tip.style.left=Math.min(r.width-60,Math.max(60,cx(i)*r.width/W))+'px';tip.style.top=(pt+10)*r.height/H+'px'};
+  svg.onpointermove=mv;svg.onpointerdown=mv;svg.onpointerleave=()=>{tip.style.display='none';cur.setAttribute('visibility','hidden')};
+}
+
+// ---------- explicacoes simples (abre ao tocar no ⓘ, sem sair da pagina) ----------
+const EXP={
+ pl:['P/L (Preço / Lucro)','Quantos anos de lucro seriam necessários para "pagar" o preço da ação, se o lucro ficasse igual. P/L 8 = o preço equivale a 8 anos de lucro. Quanto menor, mais barata em relação ao lucro. Compare sempre com empresas do mesmo setor.'],
+ pvp:['P/VP (Preço / Valor Patrimonial)','Compara o preço com o patrimônio por ação ou cota (o que sobraria se vendesse tudo e pagasse as dívidas). Abaixo de 1: a bolsa paga menos que o patrimônio. Acima de 1: paga mais.'],
+ psr:['P/Receita (PSR)','Quanto o mercado paga por cada R$ 1 que a empresa vende. Útil para comparar empresas que ainda dão pouco lucro.'],
+ dy:['Dividend Yield (DY)','Quanto foi pago em dividendos, JCP ou rendimentos nos últimos 12 meses, em % do preço de hoje. DY 6% = para cada R$ 100 investidos, R$ 6 recebidos no ano.'],
+ payout:['Payout','Parte do lucro que foi distribuída aos acionistas. Payout 40% = de cada R$ 100 de lucro, R$ 40 foram pagos e R$ 60 ficaram na empresa.'],
+ ev_ebitda:['EV/EBITDA','Valor da firma (valor de mercado + dívidas − caixa) dividido pelo EBITDA. Parecido com o P/L, mas leva em conta a dívida e olha o resultado da operação. Menor = mais barata.'],
+ ev_ebit:['EV/EBIT','Valor da firma (valor de mercado + dívidas − caixa) dividido pelo EBIT, o lucro da operação antes de juros e impostos. Menor = mais barata.'],
+ p_ebit:['P/EBIT','Valor de mercado dividido pelo EBIT, o lucro da operação antes de juros e impostos.'],
+ p_ativo:['P/Ativo','Valor de mercado dividido por tudo o que a empresa tem (ativos). Mostra quanto o mercado paga por cada R$ 1 de ativo.'],
+ p_acl:['P/Ativo Circulante Líquido','Valor de mercado dividido por (bens de curto prazo − todas as dívidas). Fica negativo quando as dívidas são maiores, o que é normal em bancos.'],
+ p_cg:['P/Capital de Giro','Valor de mercado dividido pelo capital de giro (bens de curto prazo − dívidas de curto prazo). Capital de giro é a folga para tocar o dia a dia.'],
+ lpa:['LPA (Lucro por Ação)','Lucro dos últimos 12 meses dividido pelo número de ações. É quanto de lucro cabe em cada ação.'],
+ vpa:['VPA (Valor Patrimonial por Ação)','Patrimônio líquido dividido pelo número de ações. É quanto do patrimônio cabe em cada ação.'],
+ margem_bruta:['Margem Bruta','De cada R$ 100 vendidos, quanto sobra depois de pagar o custo direto do que foi vendido.'],
+ margem_ebitda:['Margem EBITDA','De cada R$ 100 vendidos, quanto sobra da operação antes de juros, impostos e depreciação. Mostra o caixa que o negócio gera.'],
+ margem_ebit:['Margem EBIT','De cada R$ 100 vendidos, quanto sobra da operação depois das despesas do dia a dia, antes de juros e impostos.'],
+ margem_liquida:['Margem Líquida','De cada R$ 100 vendidos, quanto vira lucro no final, depois de tudo: custos, despesas, juros e impostos.'],
+ giro_ativos:['Giro dos Ativos','Quantos reais a empresa vende para cada R$ 1 que tem em ativos. Mais alto = usa melhor o que tem.'],
+ roe:['ROE (Retorno sobre o Patrimônio)','Quanto a empresa lucrou para cada R$ 100 do dinheiro dos sócios. ROE 15% = R$ 15 de lucro no ano para cada R$ 100 de patrimônio.'],
+ roa:['ROA (Retorno sobre os Ativos)','Quanto a empresa lucrou para cada R$ 100 de tudo o que ela tem (ativos). Em bancos costuma ficar perto de 1%, porque os ativos são enormes.'],
+ roic:['ROIC (Retorno sobre o Capital Investido)','Quanto a operação rende sobre todo o dinheiro colocado no negócio, dos sócios e emprestado. Mostra se a empresa gera valor com o que investe. Em bancos o número costuma ficar distorcido.'],
+ divliq_pl:['Dívida Líquida / Patrimônio','Dívida líquida (dívidas − caixa) dividida pelo patrimônio. Mostra o tamanho da dívida perto do dinheiro dos sócios. Negativo = tem mais caixa que dívida.'],
+ divliq_ebitda:['Dívida Líquida / EBITDA','Quantos anos de geração de caixa seriam necessários para pagar a dívida. Negativo = tem mais caixa que dívida.'],
+ liquidez_corrente:['Liquidez Corrente','Bens de curto prazo divididos pelas dívidas de curto prazo. Acima de 1 = tem mais a receber e em caixa no próximo ano do que a pagar.'],
+ pl_ativos:['Patrimônio / Ativos','Quanto do que a empresa tem pertence aos sócios. O resto foi bancado por terceiros (dívidas, depósitos, fornecedores).'],
+ passivos_ativos:['Passivos / Ativos','Quanto do que a empresa tem foi bancado por terceiros (dívidas, depósitos, fornecedores).'],
+ cagr_receitas_5a:['CAGR Receitas 5 anos','Crescimento médio por ano da receita nos últimos 5 anos.'],
+ cagr_lucros_5a:['CAGR Lucros 5 anos','Crescimento médio por ano do lucro nos últimos 5 anos.'],
+ receita:['Receita Líquida','Tudo o que a empresa vendeu no período, já descontando impostos sobre vendas e devoluções.'],
+ custos:['Custos','Custo direto do que foi vendido. Em bancos, é principalmente o que o banco paga para captar dinheiro.'],
+ lucro_bruto:['Lucro Bruto','Receita menos os custos diretos.'],
+ lucro_liquido:['Lucro Líquido','O que sobra no final, depois de todos os custos, despesas, juros e impostos.'],
+ ebitda:['EBITDA','Lucro da operação antes de juros, impostos, depreciação e amortização. É uma aproximação do caixa gerado pelo negócio.'],
+ ebit:['EBIT','Lucro da operação antes de juros e impostos.'],
+ imposto:['Imposto','Imposto de renda e contribuição social do período, como aparece no balanço.'],
+ divida_bruta:['Dívida Bruta','Total de empréstimos e financiamentos da empresa.'],
+ divida_liquida:['Dívida Líquida','Dívida bruta menos o caixa. Negativa = a empresa tem mais caixa do que dívida.'],
+ ativo_total:['Ativo Total','Tudo o que a empresa tem: caixa, aplicações, valores a receber, estoques, imóveis, máquinas.'],
+ ativo_circ:['Ativo Circulante','Bens e direitos que viram dinheiro em até 1 ano.'],
+ ativo_nc:['Ativo Não Circulante','Bens e direitos de longo prazo, como imóveis, máquinas e investimentos.'],
+ passivo_total:['Passivo Total','Tudo o que a empresa deve mais o patrimônio dos sócios. É sempre igual ao ativo total.'],
+ passivo_circ:['Passivo Circulante','Dívidas e obrigações que vencem em até 1 ano.'],
+ passivo_nc:['Passivo Não Circulante','Dívidas e obrigações que vencem depois de 1 ano.'],
+ pl_consolidado:['Patrimônio Líquido','O dinheiro dos sócios: tudo o que a empresa tem menos tudo o que ela deve.'],
+ margem_ebitda_:['',''],
+};
+const EXPF={
+ pl:['Patrimônio líquido','O valor de tudo o que o fundo tem (imóveis, CRIs, cotas de outros fundos, caixa) menos o que ele deve.'],
+ ultimo_rendimento:['Último rendimento','Valor por cota do rendimento mais recente anunciado pelo fundo.'],
+ rend_medio_12m:['Rendimento médio (12M)','Média dos rendimentos mensais por cota dos últimos 12 meses.'],
+ rend_12m:['Rendimentos (12M)','Soma dos rendimentos por cota pagos nos últimos 12 meses.'],
+ rend:['Rendimentos no ano','Soma dos rendimentos por cota com data com no ano.'],
+ vp_cota:['Valor patrimonial por cota','Patrimônio do fundo dividido pelo número de cotas: quanto vale cada cota pelos ativos do fundo.'],
+ rent_12m:['Rentabilidade (12M)','Quanto ganhou quem comprou há 12 meses: variação da cota mais os rendimentos recebidos.'],
+ rent:['Rentabilidade no ano','Variação da cota no ano mais os rendimentos recebidos.'],
+ liquidez_diaria:['Liquidez média diária','Valor médio negociado por dia na bolsa no último mês. Quanto maior, mais fácil comprar e vender sem mexer no preço.'],
+ valor_mercado:['Valor de mercado','Cotação vezes o número de cotas: quanto a bolsa diz que o fundo vale.'],
+ cotistas:['Número de cotistas','Quantas pessoas e empresas têm cotas do fundo.'],
+ cotas:['Cotas emitidas','Número total de cotas que o fundo já emitiu.'],
+ taxa_adm_12m:['Taxa de administração (12M)','Quanto o fundo pagou de taxa de administração nos últimos 12 meses, em % do patrimônio. Ela sai do resultado antes da distribuição dos rendimentos.'],
+ dy_medio_5a:['DY médio de 5 anos','Média do Dividend Yield de cada um dos últimos 5 anos.'],
+ preco:['Cotação no fim do ano','Preço de fechamento no último pregão do ano.'],
+ cdi:['CDI','Taxa de referência da renda fixa. É o que rende, por exemplo, um CDB que paga 100% do CDI.'],
+ ipca:['IPCA','A inflação oficial do Brasil.'],
+};
+const expl=k=>(A&&A.tipo==='fii'&&EXPF[k])||EXP[k]||EXPF[k];
+const aj=k=>expl(k)&&expl(k)[0]?`<i class="aj" data-aj="${k}" role="button" tabindex="0" aria-label="O que é isso?">ⓘ</i>`:'';
+
+// ---------- montagem ----------
+const IND=[
+ ['Valuation',[['pl','P/L','x','Preço ÷ lucro por ação dos últimos 12 meses'],['pvp','P/VP','x','Preço ÷ valor patrimonial por ação'],['psr','P/Receita (PSR)','x','Valor de mercado ÷ receita de 12 meses'],['dy','Dividend Yield','p','Proventos com data com nos últimos 12 meses ÷ preço'],['payout','Payout','p','Proventos por ação ÷ lucro por ação'],['ev_ebitda','EV/EBITDA','x','Valor da firma ÷ EBITDA de 12 meses'],['ev_ebit','EV/EBIT','x','Valor da firma ÷ EBIT de 12 meses'],['p_ebit','P/EBIT','x','Valor de mercado ÷ EBIT'],['p_ativo','P/Ativo','x','Valor de mercado ÷ ativo total'],['p_acl','P/Ativo Circ. Líq.','x','Valor de mercado ÷ (ativo circulante − passivo total)'],['p_cg','P/Cap. Giro','x','Valor de mercado ÷ (ativo circulante − passivo circulante)'],['lpa','LPA','r','Lucro por ação, 12 meses'],['vpa','VPA','r','Valor patrimonial por ação']]],
+ ['Eficiência',[['margem_bruta','Margem Bruta','p'],['margem_ebitda','Margem EBITDA','p'],['margem_ebit','Margem EBIT','p'],['margem_liquida','Margem Líquida','p'],['giro_ativos','Giro Ativos','x']]],
+ ['Rentabilidade',[['roe','ROE','p','Lucro ÷ patrimônio líquido'],['roa','ROA','p','Lucro ÷ ativo total'],['roic','ROIC','p','(EBIT − impostos) ÷ (patrimônio + dívida)']]],
+ ['Endividamento',[['divliq_pl','Dív. Líquida/PL','x'],['divliq_ebitda','Dív. Líquida/EBITDA','x'],['liquidez_corrente','Liquidez Corrente','x'],['pl_ativos','Patrimônio/Ativos','x'],['passivos_ativos','Passivos/Ativos','x']]],
+ ['Crescimento',[['cagr_receitas_5a','CAGR Receitas 5 anos','p'],['cagr_lucros_5a','CAGR Lucros 5 anos','p']]]
+];
+let st={ab:{},cot:'1a',ind:'pl',hi:5,dv:'10',dvm:'dy',pg:0,rad:'com',po:'5',rl:'10',rlp:'anual',res:5,pt:'10'};
+const anos=()=>Object.keys(A.anual).map(Number).sort((a,b)=>a-b);
+const seg=(id,ops,k)=>`<div class="seg" data-seg="${k}">${ops.map(([v,t])=>`<button data-v="${v}" class="${String(st[k])===String(v)?'on':''}">${t}</button>`).join('')}</div>`;
+function sec(id,titulo,ctrls,corpo,prev){return`<section class="sec ${prev?prev+(st.ab[id]?'':' fechado'):''}" id="${id}"><div class="sh"><h2>${titulo}</h2><div class="ctrls">${ctrls||''}</div></div><div class="sb">${corpo}</div>${prev?`<button class="mais" data-mais="${id}">${st.ab[id]?'Ver menos ▴':'Ver mais ▾'}</button>`:''}</section>`}
+function render(){
+  if(A.tipo==='fii')return renderFii();
+  M=A.moeda_balanco==='USD'?'US$':'R$';const I=A.indicadores,bdr=A.tipo==='bdr';
+  const c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],v12=c.find(r=>r[0]>=String(+u[0].slice(0,4)-1)+u[0].slice(4));
+  document.title=`${A.ticker}: ${A.nome} · Comunidade Invest`;
+  const secs=[['cotacao','Cotação'],['indicadores','Indicadores'],['hist','Histórico'],['dividendos','Dividendos'],['sobre','Empresa'],['resultados','Resultados'],['balanco','Balanço'],['graficos','Gráficos']];
+  $('#nav').innerHTML=`<a class="volta" href="${PESQUISA}">← Pesquisa</a><b>${A.ticker}</b>`+secs.map(([i,t])=>`<a data-go="${i}">${t}</a>`).join('');
+  const indDisp=IND.flatMap(g=>g[1]).filter(([k])=>isNum(I[k])||Object.values(A.hist_indicadores).some(h=>isNum(h[k])));
+  $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${A.setor} · ${A.segmento}${bdr?' · BDR':''} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
+  <div class="kp"><div><span>Cotação</span><b class="num">${brl(A.preco)}</b><small class="num ${u[4]>=ant[4]?'pos':'neg'}">${(u[4]>=ant[4]?'+':'')+N2.format((u[4]/ant[4]-1)*100)}% no dia</small></div>
+  <div><span>Variação (12M)</span><b class="num ${u[4]>=v12[4]?'pos':'neg'}">${N2.format((u[4]/v12[4]-1)*100)}%</b></div><div><span>P/L</span><b class="num">${F.x(I.pl)}</b></div><div><span>P/VP</span><b class="num">${F.x(I.pvp)}</b></div><div><span>DY</span><b class="num">${F.p(I.dy)}</b></div></div>
+  ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><p class="note">Preço de fechamento na B3, corrigido por desdobramentos e grupamentos.</p>')}
+  ${sec('indicadores','Indicadores fundamentalistas '+A.ticker,'',`<p style="font-size:14px;color:var(--mu);margin-bottom:14px">Toque num indicador para ver o gráfico do histórico.${bdr?` Indicadores calculados com os balanços da ${A.razao} (em dólar) e a cotação de ${A.info.ticker_eua} nos EUA.`:''}</p><div class="gs">${IND.map(([g,l])=>{const ls=l.filter(([k])=>!(k.startsWith('divliq')||k.includes('ebitda'))||isNum(I[k]));return ls.length?`<div class="grp"><h3>${g}</h3><div class="cards">${ls.map(([k,t,f,h])=>`<button class="cd" data-ind="${k}"><div class="k">${t}${aj(k)}</div><div class="v num">${F[f](I[k])}<small>▦</small></div></button>`).join('')}</div></div>`:''}).join('')}</div>`,'p')}
+  ${sec('hist','Histórico de indicadores fundamentalistas',seg('hi',[[5,'5A'],[10,'10A']],'hi'),'<div class="tw" id="tHi"></div>','l6')}
+  ${sec('dividendos','Histórico de dividendos · '+A.ticker,'','<div class="box2" id="dvBox" style="margin-top:0"></div><div class="tw" id="tProv" style="margin-top:14px"></div><div class="pg" id="pg"></div>','l5')}
+  ${sec('radar','Radar de dividendos · '+A.ticker,'',`<p style="font-size:14.5px">Com base no histórico de proventos da ${A.ticker} nos últimos 5 anos, os meses em que costuma haver data com ou pagamento.</p><div style="margin-top:12px">${seg('rad',[['com','Data Com'],['pag','Data Pagamento']],'rad')}</div><div class="radar" id="rad"></div>`)}
+  ${sec('sobre','Informações sobre a empresa','',`<div class="inf" id="inf"></div>`)}
+  ${sec('resultados','Resultados '+A.nome,seg('res',[[5,'5 anos'],[10,'10 anos']],'res'),`<div class="tw" id="tRes"></div><p class="note">Valores em ${M==='US$'?'dólares':'reais'}${bdr?', como entregues à SEC (EUA)':', do balanço consolidado entregue à CVM'}.</p>`,'l4')}
+  ${sec('balanco','Balanço patrimonial '+A.nome,'','<div class="tw" id="tBal"></div>','l3')}
+  <h2 class="divisor" id="graficos">Gráficos</h2>
+  ${sec('gind','Histórico do indicador',`<select class="sel" id="selInd">${indDisp.map(([k,t])=>`<option value="${k}">${t}</option>`).join('')}</select>`,'<div id="gIh"></div>')}
+  ${sec('gdiv','Dividendos por ano · '+A.ticker,`<select class="sel" id="dvm"><option value="dy">Dividend Yield</option><option value="valor">Valor por ação</option></select>`+seg('dv',[['5','5A'],['10','10A'],['max','MAX']],'dv'),'<div id="gDv"></div>')}
+  ${sec('payout','Payout de '+A.nome,seg('po',[['5','5A'],['10','10A'],['max','MAX']],'po'),'<div id="gPo"></div>')}
+  ${sec('receitas','Receitas e lucros',`<select class="sel" id="rlp"><option value="anual">Anual</option><option value="trim">Trimestral</option></select>`+seg('rl',[['5','5A'],['10','10A'],['max','MAX']],'rl'),'<div id="gRl"></div>')}
+  ${sec('lxc','Lucro x cotação · '+A.ticker,'','<div id="gLc"></div>'+(bdr?`<p class="note">Cotação de ${A.info.ticker_eua} nos EUA em dólar, no fim de cada ano.</p>`:''))}
+  ${sec('patrimonio','Evolução do patrimônio · '+A.nome,seg('pt',[['5','5A'],['10','10A'],['max','MAX']],'pt'),'<div id="gPt"></div>')}
+  <footer><p><b>Fontes:</b> ${bdr?`B3 (cotação e proventos do BDR), SEC/EUA (balanços da ${A.razao}), Yahoo Finance (cotação nos EUA), Banco Central (dólar PTAX)`:'B3 (cotações, proventos e desdobramentos), CVM (balanços DFP e ITR, free float no Formulário de Referência)'}. Balanço mais recente: ${dBR(A.balanco_ref)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
+  <p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>`;
+  ligar();ligarBusca();
+  ['cot','ind','hi','dv','prov','rad','po','inf','rl','lc','res','pt','bal'].forEach(desenhar);
+}
+// ---------- busca rapida no topo (usa o mesmo indice.json da pagina de pesquisa) ----------
+let INDICE=null;
+const buscaHTML=()=>`<div class="bmini"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="bq" type="search" placeholder="Buscar outro ativo" autocomplete="off" aria-label="Buscar outro ativo"><div class="sug" id="sug"></div></div>`;
+async function ligarBusca(){
+  const inp=$('#bq'),sug=$('#sug');if(!inp)return;
+  if(!INDICE){try{INDICE=(window.CI_INDICE||await (await fetch(DADOS_URL+'indice.json',{cache:'no-cache'})).json()).acoes||[]}catch(e){INDICE=[]}}
+  const tira=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  let sel=0,res=[];
+  const ir=t=>{if(window.CI_ACOES&&window.CI_ACOES[t])abrirAcao(t);else location.href='?t='+encodeURIComponent(t)};
+  const mostra=()=>{const q=tira(inp.value).trim();if(!q){sug.style.display='none';return}
+    res=INDICE.map(x=>{const t=tira(x.ticker),n=tira(x.nome);return[t.startsWith(q)?0:t.includes(q)?1:n.startsWith(q)?2:n.includes(q)?3:9,x]}).filter(a=>a[0]<9).sort((a,b)=>a[0]-b[0]).slice(0,8).map(a=>a[1]);sel=0;
+    sug.innerHTML=res.length?res.map((x,i)=>`<a href="?t=${x.ticker}" data-t="${x.ticker}" class="${i===sel?'on':''}"><b>${x.ticker}</b><small>${x.nome}</small></a>`).join(''):`<a href="${PESQUISA}?q=${encodeURIComponent(inp.value)}"><small>Ver na pesquisa completa</small></a>`;sug.style.display='block';
+    sug.querySelectorAll('[data-t]').forEach(a=>a.onclick=e=>{e.preventDefault();ir(a.dataset.t)})};
+  inp.oninput=mostra;inp.onfocus=mostra;
+  inp.onkeydown=e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();sel=(sel+(e.key==='ArrowDown'?1:res.length-1))%Math.max(1,res.length);sug.querySelectorAll('a').forEach((a,i)=>a.classList.toggle('on',i===sel))}
+    if(e.key==='Enter'){e.preventDefault();if(res[sel])ir(res[sel].ticker);else if(inp.value)location.href=PESQUISA+'?q='+encodeURIComponent(inp.value)}if(e.key==='Escape')sug.style.display='none'};
+  if(!window._bqL){window._bqL=1;document.addEventListener('click',e=>{const g=$('#sug');if(g&&!e.target.closest('.bmini'))g.style.display='none'})}
+}
+const DES=k=>A.tipo==='fii'?desenharFii(k):desenhar(k);
+function ligar(){
+  const fii=A.tipo==='fii';
+  const ir=id=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};
+  $$('[data-go]').forEach(a=>a.onclick=e=>{e.preventDefault();ir(a.dataset.go)});
+  $$('[data-seg]').forEach(s=>s.querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=s.dataset.seg;st[k]=['hi','res','fha'].includes(k)?+b.dataset.v:b.dataset.v;s.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));DES(k)}));
+  $$('[data-mais]').forEach(b=>b.onclick=()=>{const id=b.dataset.mais,el=document.getElementById(id);st.ab[id]=!st.ab[id];el.classList.toggle('fechado',!st.ab[id]);b.textContent=st.ab[id]?'Ver menos ▴':'Ver mais ▾';
+    if(id==='dividendos'){st.pg=0;DES('prov')}if(!st.ab[id]&&el.getBoundingClientRect().top<0)el.scrollIntoView({block:'start'})});
+  const sel=$('#selInd'),tem=k=>[...sel.options].some(o=>o.value===k);
+  const mapa=k=>tem(k)?k:fii?({ultimo_rendimento:'rend',rend_medio_12m:'rend',rend_12m:'rend',dy_medio_5a:'dy',rent_12m:'dy',valor_mercado:'pl',liquidez_diaria:'pl',cotas:'cotistas',taxa_adm_12m:'pl'})[k]:null;
+  const marca=()=>$$('[data-ind]').forEach(x=>x.classList.toggle('on',mapa(x.dataset.ind)===st.ind));
+  $$('[data-ind]').forEach(b=>b.onclick=e=>{if(e.target.closest('.aj'))return;const k=mapa(b.dataset.ind);if(k){st.ind=k;sel.value=k;marca();DES(fii?'find':'ind')}ir('gind')});
+  if(!tem(st.ind))st.ind=sel.options[0].value;
+  sel.value=st.ind;sel.onchange=e=>{st.ind=e.target.value;marca();DES(fii?'find':'ind')};marca();
+  const dvm=$('#dvm');dvm.value=fii?st.fdvm:st.dvm;dvm.onchange=e=>{if(fii){st.fdvm=e.target.value;DES('fdv')}else{st.dvm=e.target.value;DES('dv')}};
+  if($('#rlp')){$('#rlp').value=st.rlp;$('#rlp').onchange=e=>{st.rlp=e.target.value;DES('rl')}}
+}
+const corte=(arr,k)=>k==='max'?arr:arr.slice(-(+k));
+function provAno(){const o={};A.proventos.forEach(p=>{const y=p.data_com.slice(0,4);o[y]=(o[y]||0)+p.valor});return o}
+function desenhar(k){
+  const I=A.indicadores,ys=anos(),bdr=A.tipo==='bdr';
+  if(k==='cot'){const c=A.cotacao,u=c[c.length-1][0],dias={'1m':31,'6m':183,'1a':366,'5a':1827,'10a':3653,'max':99999}[st.cot];const lim=new Date(new Date(u).getTime()-dias*864e5).toISOString().slice(0,10);
+    const s=c.filter(r=>r[0]>=lim),lb=s.map(r=>st.cot==='1m'?r[0].slice(8)+'/'+r[0].slice(5,7):MES[+r[0].slice(5,7)-1]+'/'+r[0].slice(2,4));
+    chart($('#gCot'),lb,[{nome:'Cotação',tipo:'linha',cor:'var(--c1)',vals:s.map(r=>r[4]),fmt:v=>brl(v),w:1.8}],{fmtE:v=>N2.format(v),legenda:false,rotTip:i=>dBR(s[i][0]),ticks:8})}
+  if(k==='ind'){const it=IND.flatMap(g=>g[1]).find(x=>x[0]===st.ind),h=A.hist_indicadores,yy=ys.slice(-10);
+    const f=it[2]==='p'?v=>N2.format(v)+'%':v=>N2.format(v);
+    chart($('#gIh'),[...yy.map(String),'Atual'],[{nome:it[1],tipo:'barra',cor:v=>v<0?'var(--up)':'var(--c1)',vals:[...yy.map(y=>(h[y]||{})[st.ind]),I[st.ind]],fmt:f}],{fmtE:f,legenda:false,destaque:yy.length})}
+  if(k==='hi'){const yy=ys.slice(-st.hi).reverse(),h=A.hist_indicadores;const L=IND.flatMap(g=>g[1]).filter(([k])=>!['cagr_receitas_5a','cagr_lucros_5a'].includes(k)&&(isNum(I[k])||yy.some(y=>isNum((h[y]||{})[k]))));
+    $('#tHi').innerHTML=`<table class="t num"><thead><tr><th></th><th class="r">Atual</th>${yy.map(y=>`<th class="r">${y}</th>`).join('')}</tr></thead><tbody>${L.map(([k,t,f])=>`<tr><td>${t}${aj(k)}</td><td class="r">${F[f](I[k])}</td>${yy.map(y=>`<td class="r">${F[f]((h[y]||{})[k])}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
+  if(k==='dv'){const pa=provAno(),yy=corte(ys.filter(y=>y>=+ys[0]),st.dv==='max'?'max':st.dv),cur=String(new Date().getFullYear());
+    const lb=[...yy.map(String),'Últ. 12M'];
+    const vals=st.dvm==='dy'?[...yy.map(y=>bdr?(A.hist_indicadores[y]||{}).dy:pa[y]&&(A.hist_indicadores[y]||{}).preco?pa[y]/A.hist_indicadores[y].preco*100:null),I.dy]:[...yy.map(y=>pa[y]||null),A.proventos.filter(p=>p.data_com>new Date(Date.now()-365*864e5).toISOString().slice(0,10)).reduce((t,p)=>t+p.valor,0)];
+    chart($('#gDv'),lb,[{nome:st.dvm==='dy'?'Dividend Yield':'Proventos por ação (R$)',tipo:'barra',cor:'var(--c1)',vals,fmt:st.dvm==='dy'?F.p:v=>'R$ '+N2.format(v||0)}],{fmtE:st.dvm==='dy'?(Math.max(...vals.filter(isNum))>=4?v=>N0.format(v)+'%':v=>N2.format(v)+'%'):v=>N2.format(v)});
+    const y5=ys.slice(-5),h=A.hist_indicadores,med=a=>{const v=a.filter(isNum);return v.length?v.reduce((t,x)=>t+x,0)/v.length:null};
+    $('#dvBox').innerHTML=`<div><span>Dividend Yield Atual</span><b>${F.p(I.dy)}</b></div><div><span>Dividend Yield médio de 5 anos</span><b>${F.p(med(y5.map(y=>(h[y]||{}).dy)))}</b></div><div><span>Payout Atual</span><b>${F.p(I.payout)}</b></div><div><span>Payout médio de 5 anos</span><b>${F.p(med(y5.map(y=>(h[y]||{}).payout)))}</b></div>`}
+  if(k==='prov'){const P=A.proventos,pp=st.ab.dividendos?10:5,tot=Math.ceil(P.length/pp),s=P.slice(st.pg*pp,st.pg*pp+pp);
+    $('#tProv').innerHTML=`<table class="t num"><thead><tr><th>Tipo</th><th>Data com</th><th>Pagamento</th><th class="r">Valor${bdr?' por BDR':''}</th></tr></thead><tbody>${s.map(p=>`<tr><td>${p.tipo}</td><td>${dBR(p.data_com)}</td><td>${p.pagamento?dBR(p.pagamento):'-'}</td><td class="r">${p.valor.toFixed(8).replace('.',',')}</td></tr>`).join('')}</tbody></table>`;
+    const pgs=[...new Set([0,1,2,3,4,st.pg-1,st.pg,st.pg+1,tot-1])].filter(i=>i>=0&&i<tot).sort((a,b)=>a-b);
+    $('#pg').innerHTML=`<button data-p="${Math.max(0,st.pg-1)}">‹ Anterior</button>`+pgs.map(i=>`<button data-p="${i}" class="${i===st.pg?'on':''}">${i+1}</button>`).join('')+`<button data-p="${Math.min(tot-1,st.pg+1)}">Próximo ›</button>`;
+    $$('#pg button').forEach(b=>b.onclick=()=>{st.pg=+b.dataset.p;desenhar('prov')})}
+  if(k==='rad'){const lim=String(new Date().getFullYear()-5),ms=new Set(A.proventos.filter(p=>p.data_com>=lim).map(p=>st.rad==='com'?p.data_com:p.pagamento).filter(Boolean).map(d=>+d.slice(5,7)));
+    $('#rad').innerHTML=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'].map((m,i)=>`<div class="${ms.has(i+1)?'on':''}">${ms.has(i+1)?'$ ':''}${m}</div>`).join('')}
+  if(k==='po'){const yy=corte(ys,st.po),h=A.hist_indicadores;const lb=[...yy.map(String),'ÚLT 12M'];
+    chart($('#gPo'),lb,[{nome:'Lucro Líquido',tipo:'barra',cor:'var(--c1)',vals:[...yy.map(y=>A.anual[y].lucro_liquido),A.ttm.lucro_liquido],fmt:v=>grande(v,M)},{nome:'Payout',tipo:'linha',eixo:'d',cor:'var(--c4)',vals:[...yy.map(y=>(h[y]||{}).payout),I.payout],fmt:F.p},{nome:'Dividend Yield',tipo:'linha',eixo:'d',cor:'var(--c3)',vals:[...yy.map(y=>(h[y]||{}).dy),I.dy],fmt:F.p}],{fmtD:v=>N0.format(v)+'%',zeroD:true,destaque:yy.length})}
+  if(k==='inf'){const f=A.info,G=v=>grande(v,'R$'),GU=v=>grande(v,M);const it=bdr?[
+    ['Valor de mercado (empresa)',GU(f.valor_mercado)],['Valor de firma',GU(f.valor_firma)],['Patrimônio Líquido',GU(f.pl)],['Nº de ações (empresa)',grande(f.n_papeis)],['Ativos',GU(f.ativos)],['Ativo Circulante',GU(f.ativo_circ)],['Caixa e aplicações',GU(f.disponibilidade)],['Dívida Bruta',GU(f.divida_bruta)],['Dívida Líquida',GU(f.divida_liquida)],
+    ['Cotação nos EUA ('+f.ticker_eua+')','US$ '+N2.format(f.preco_eua)],['Dólar PTAX',brl(f.dolar)],['Paridade',`1 ação ≈ ${N1.format(f.paridade)} BDRs`],['Liquidez Média Diária (BDR)',G(f.liquidez_diaria)],['Nº de BDRs',grande(f.n_bdrs)],['Depositário',f.depositario||'-'],['Setor',A.setor],['Segmento',A.segmento]]:[
+    ['Valor de mercado',G(f.valor_mercado)],['Valor de firma',G(f.valor_firma)],['Patrimônio Líquido',G(f.pl)],['Nº total de papéis',grande(f.n_papeis)],['Ativos',G(f.ativos)],['Ativo Circulante',G(f.ativo_circ)],['Disponibilidade',G(f.disponibilidade)],['Segmento de Listagem',f.listagem||'-'],['Free Float',F.p(f.free_float)],['Tag Along',F.p(f.tag_along)],['Liquidez Média Diária',G(f.liquidez_diaria)],['Setor',A.setor],['Segmento',A.segmento],['Acionistas',isNum(f.acionistas)?N0.format(f.acionistas):'-'],['CNPJ',f.cnpj]];
+    $('#inf').innerHTML=it.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('')}
+  if(k==='rl'){let lb,rec,luc,dest;if(st.rlp==='anual'){const yy=corte(ys,st.rl);lb=[...yy.map(String),'ÚLT 12M'];rec=[...yy.map(y=>A.anual[y].receita),A.ttm.receita];luc=[...yy.map(y=>A.anual[y].lucro_liquido),A.ttm.lucro_liquido];dest=yy.length}
+    else{const ts=corte(Object.keys(A.trimestres).sort(),st.rl==='max'?'max':String(+st.rl*4));lb=ts.map(d=>Math.ceil(+d.slice(5,7)/3)+'T'+d.slice(2,4));rec=ts.map(d=>A.trimestres[d].receita);luc=ts.map(d=>A.trimestres[d].lucro_liquido)}
+    chart($('#gRl'),lb,[{nome:'Receita Líquida',tipo:'barra',cor:'var(--c2)',vals:rec,fmt:v=>grande(v,M)},{nome:'Lucro Líquido',tipo:'linha',cor:'var(--c3)',vals:luc,fmt:v=>grande(v,M)}],{destaque:dest})}
+  if(k==='lc'){const yy=ys;const pr=y=>bdr?(A.preco_eua_anual||{})[y]:(A.hist_indicadores[y]||{}).preco;
+    chart($('#gLc'),[...yy.map(String),'Hoje'],[{nome:'Lucro Líquido',tipo:'linha',cor:'var(--c2)',vals:[...yy.map(y=>A.anual[y].lucro_liquido),A.ttm.lucro_liquido],fmt:v=>grande(v,M)},{nome:'Cotação',tipo:'linha',eixo:'d',cor:'var(--c3)',vals:[...yy.map(pr),bdr?A.info.preco_eua:A.preco],fmt:v=>(bdr?'US$ ':'R$ ')+N2.format(v)}],{fmtD:v=>N0.format(v),destaque:yy.length})}
+  if(k==='res'){const yy=ys.slice(-st.res).reverse(),R=[['receita','Receita Líquida'],['custos','Custos'],['lucro_bruto','Lucro Bruto'],['lucro_liquido','Lucro Líquido'],['ebitda','EBITDA'],['ebit','EBIT'],['imposto','Imposto'],['divida_bruta','Dívida Bruta'],['divida_liquida','Dívida Líquida']],P=[['margem_bruta','Margem Bruta'],['margem_ebitda','Margem Ebitda'],['margem_liquida','Margem Líquida'],['roe','ROE'],['roic','ROIC']];
+    const h=A.hist_indicadores;
+    $('#tRes').innerHTML=`<table class="t num"><thead><tr><th></th><th class="r">ÚLT. 12M</th>${yy.map(y=>`<th class="r">${y}</th>`).join('')}</tr></thead><tbody>${R.map(([k,t])=>`<tr><td>${t} - (${M})${aj(k)}</td><td class="r">${grande(A.ttm[k])}</td>${yy.map(y=>`<td class="r">${grande(A.anual[y][k])}</td>`).join('')}</tr>`).join('')}${P.map(([k,t])=>`<tr><td>${t} - (%)${aj(k)}</td><td class="r">${F.p(I[k])}</td>${yy.map(y=>`<td class="r">${F.p((h[y]||{})[k])}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
+  if(k==='pt'){const yy=corte(ys,st.pt);chart($('#gPt'),[...yy.map(String),'ÚLT 12M'],[{nome:'Patrimônio',tipo:'barra',cor:'var(--c1)',vals:[...yy.map(y=>A.anual[y].pl_consolidado),A.ttm.pl_consolidado],fmt:v=>grande(v,M)},{nome:'Receita Líquida',tipo:'linha',cor:'var(--c4)',vals:[...yy.map(y=>A.anual[y].receita),A.ttm.receita],fmt:v=>grande(v,M)},{nome:'Lucro Líquido',tipo:'linha',cor:'var(--c3)',vals:[...yy.map(y=>A.anual[y].lucro_liquido),A.ttm.lucro_liquido],fmt:v=>grande(v,M)}],{destaque:yy.length})}
+  if(k==='bal'){const yy=ys.slice().reverse(),L=[['ativo_total','ATIVO TOTAL',1],['ativo_circ','Ativo Circulante'],['ativo_nc','Ativo Não Circulante'],[null],['passivo_total','PASSIVO TOTAL',1],['passivo_circ','Passivo Circulante'],['passivo_nc','Passivo Não Circulante'],['pl_consolidado','Patrimônio Líquido Consolidado']];
+    $('#tBal').innerHTML=`<table class="t num"><thead><tr><th>#</th>${yy.map(y=>`<th class="r">${y}</th>`).join('')}</tr></thead><tbody>${L.map(([k,t,tot])=>k?`<tr class="${tot?'tot':'ind'}"><td>${t} - (${M})${aj(k)}</td>${yy.map(y=>`<td class="r">${grande(A.anual[y][k])}</td>`).join('')}</tr>`:`<tr><td>&nbsp;</td>${yy.map(()=>'<td></td>').join('')}</tr>`).join('')}</tbody></table>`}
+}
+// ---------- fundos imobiliarios ----------
+Object.assign(st,{fdv:'24',fdvm:'valor',fvp:'5',frt:'5',fha:5});
+const FIND=[['Principais',[['dy','Dividend Yield (12M)','p','Rendimentos com data com nos últimos 12 meses ÷ cotação'],['pvp','P/VP','x','Cotação ÷ valor patrimonial por cota'],['ultimo_rendimento','Último rendimento','r'],['rend_medio_12m','Rendimento médio (12M)','r'],['vp_cota','Valor patrimonial por cota','r'],['rent_12m','Rentabilidade (12M)','p','Variação da cota + rendimentos em 12 meses']]],
+ ['Mais dados',[['liquidez_diaria','Liquidez média diária','g'],['valor_mercado','Valor de mercado','g'],['pl','Patrimônio líquido','g'],['cotistas','Nº de cotistas','n'],['cotas','Cotas emitidas','n'],['taxa_adm_12m','Taxa de adm. (12M)','p','Despesa com taxa de administração nos últimos 12 informes, em % do patrimônio'],['dy_medio_5a','DY médio 5 anos','p'],['rend_12m','Rendimentos (12M)','r']]]];
+const N3=new Intl.NumberFormat('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:3}),brl3=v=>isNum(v)?'R$ '+N3.format(v):'-';
+const FF={...F,r:brl3,g:v=>grande(v,'R$'),n:v=>isNum(v)?N0.format(v):'-'};
+function renderFii(){
+  M='R$';const I=A.indicadores,f=A.info;
+  const c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],v12=c.find(r=>r[0]>=String(+u[0].slice(0,4)-1)+u[0].slice(4));
+  document.title=`${A.ticker}: ${A.nome} · Comunidade Invest`;
+  const secs=[['cotacao','Cotação'],['indicadores','Indicadores'],['rentab','Rentabilidade'],['hist','Histórico'],['dividendos','Dividendos'],['sobre','Fundo'],['carteira','Carteira'],['graficos','Gráficos']];
+  $('#nav').innerHTML=`<a class="volta" href="${PESQUISA}">← Pesquisa</a><b>${A.ticker}</b>`+secs.map(([i,t])=>`<a data-go="${i}">${t}</a>`).join('');
+  const R=A.rentab,P=[['1m','1 mês'],['3m','3 meses'],['6m','6 meses'],['12m','1 ano'],['24m','2 anos'],['60m','5 anos'],['120m','10 anos']].filter(([k])=>R[k]);
+  $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${A.setor} · ${A.segmento}${A.tipo_fundo?' · '+A.tipo_fundo:''} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
+  <div class="kp"><div><span>Cotação</span><b class="num">${brl(A.preco)}</b><small class="num ${u[4]>=ant[4]?'pos':'neg'}">${(u[4]>=ant[4]?'+':'')+N2.format((u[4]/ant[4]-1)*100)}% no dia</small></div>
+  <div><span>Variação (12M)</span><b class="num ${u[4]>=v12[4]?'pos':'neg'}">${N2.format((u[4]/v12[4]-1)*100)}%</b></div><div><span>Dividend Yield</span><b class="num">${F.p(I.dy)}</b></div><div><span>P/VP</span><b class="num">${F.x(I.pvp)}</b></div><div><span>Último rendimento</span><b class="num">${brl3(I.ultimo_rendimento)}</b></div></div>
+  ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><p class="note">Preço de fechamento na B3, corrigido por desdobramentos e grupamentos.</p>')}
+  ${sec('indicadores','Indicadores '+A.ticker,'',`<p style="font-size:14px;color:var(--mu);margin-bottom:14px">Toque num indicador para ver o gráfico do histórico.</p><div class="gs">${FIND.map(([g,l])=>`<div class="grp"><h3>${g}</h3><div class="cards">${l.map(([k,t,fm,h])=>`<button class="cd" data-ind="${k}"><div class="k">${t}${aj(k)}</div><div class="v num">${FF[fm](I[k])}<small>▦</small></div></button>`).join('')}</div></div>`).join('')}</div>`,'p')}
+  ${sec('rentab','Rentabilidade '+A.ticker,'',`<div class="tw"><table class="t num"><thead><tr><th>Período</th><th class="r">${A.ticker}</th><th class="r">CDI</th><th class="r">IPCA</th></tr></thead><tbody>${P.map(([k,t])=>`<tr><td>${t}</td><td class="r ${R[k].fii>=0?'pos':'neg'}">${F.p(R[k].fii)}</td><td class="r">${F.p(R[k].cdi)}</td><td class="r">${F.p(R[k].ipca)}</td></tr>`).join('')}</tbody></table></div><p class="note">Rentabilidade = variação da cota + rendimentos recebidos no período (sem reinvestir).</p>`,'l4')}
+  ${sec('hist','Histórico anual '+A.ticker,seg('fha',[[5,'5A'],[10,'10A']],'fha'),'<div class="tw" id="tHi"></div>','l4')}
+  ${sec('dividendos','Histórico de rendimentos · '+A.ticker,'','<div class="box2" id="dvBox" style="margin-top:0"></div><div class="tw" id="tProv" style="margin-top:14px"></div><div class="pg" id="pg"></div>','l5')}
+  ${sec('radar','Radar de rendimentos · '+A.ticker,'',`<p style="font-size:14.5px">Com base no histórico de rendimentos da ${A.ticker} nos últimos 5 anos, os meses em que costuma haver data com ou pagamento.</p><div style="margin-top:12px">${seg('rad',[['com','Data Com'],['pag','Data Pagamento']],'rad')}</div><div class="radar" id="rad"></div>`)}
+  ${sec('sobre','Informações sobre o fundo','',`<div class="inf">${[['Razão social',f.razao],['CNPJ',f.cnpj],['Público-alvo',f.publico_alvo],['Mandato',f.mandato],['Segmento',A.segmento],['Segmento (cadastro na CVM)',f.segmento_cvm],['Tipo de fundo',A.tipo_fundo],['Tipo de gestão',f.tipo_gestao],['Prazo de duração',f.prazo],['Administrador',f.administrador],['Início do fundo',f.inicio?dBR(f.inicio):'-'],['Valor patrimonial',grande(I.pl,'R$')],['Valor patrimonial por cota',brl(I.vp_cota)],['Cotas emitidas',FF.n(I.cotas)],['Nº de cotistas',FF.n(I.cotistas)],['Taxa de adm. (12M)',F.p(I.taxa_adm_12m)+' do PL'],['Último rendimento',`${brl3(I.ultimo_rendimento)} (data com ${dBR(I.ultimo_rend_data)})`],['Código ISIN',f.isin]].map(([k,v])=>`<div><span>${k}</span><b>${v||'-'}</b></div>`).join('')}</div>`)}
+  ${sec('carteira','Composição da carteira',``,`<div class="tw" id="tCart"></div><p class="note">Último informe mensal entregue à CVM (${mesBR(A.composicao.data)}). Percentual sobre o total de ativos do fundo.</p>`,'l4')}
+  <h2 class="divisor" id="graficos">Gráficos</h2>
+  ${sec('gind','Histórico do indicador',`<select class="sel" id="selInd">${[['dy','Dividend Yield (ano)'],['pvp','P/VP'],['vp_cota','Valor patrimonial por cota'],['rend','Rendimentos no ano (R$/cota)'],['cotistas','Nº de cotistas'],['pl','Patrimônio líquido']].map(([k,t])=>`<option value="${k}">${t}</option>`).join('')}</select>`,'<div id="gIh"></div>')}
+  ${sec('gdiv','Rendimentos por mês · '+A.ticker,`<select class="sel" id="dvm"><option value="valor">Valor por cota</option><option value="dy">Dividend Yield do mês</option></select>`+seg('fdv',[['12','1A'],['24','2A'],['60','5A'],['max','MAX']],'fdv'),'<div id="gDv"></div>')}
+  ${sec('gvp','Valor patrimonial x cotação',seg('fvp',[['1','1A'],['5','5A'],['max','MAX']],'fvp'),'<div id="gVp"></div><p class="note">Fim de cada mês. P/VP abaixo de 1 = cota negociada abaixo do valor patrimonial.</p>')}
+  ${sec('grt','Rentabilidade acumulada x CDI e IPCA',seg('frt',[['1','1A'],['5','5A'],['10','10A'],['max','MAX']],'frt'),'<div id="gRt"></div><p class="note">Reinvestindo os rendimentos todo mês.</p>')}
+  ${sec('gpl','Patrimônio e cotistas','','<div id="gPl"></div>')}
+  ${sec('gcart','Composição da carteira','','<div id="gCart"></div>')}
+  <footer><p><b>Fontes:</b> B3 (cotações e rendimentos), CVM (informe mensal do fundo: patrimônio, cotas, cotistas e carteira), Banco Central (CDI e IPCA), Yahoo Finance (rendimentos antigos). Os rendimentos começam em ${mesBR(A.proventos[A.proventos.length-1].data_com.slice(0,7))}: antes disso não há histórico público confiável, por isso DY e rentabilidade dos anos anteriores aparecem como "-". Informe mais recente: ${mesBR(A.composicao.data)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
+  <p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>`;
+  ligar();ligarBusca();
+  ['cot','find','fhi','fdvbox','prov','rad','fcart','find','fdv','fvp','frt','fpl','fgc'].forEach(desenharFii);
+}
+const mesBR=m=>m?MES[+m.slice(5,7)-1]+'/'+m.slice(0,4):'-',mesC=m=>MES[+m.slice(5,7)-1]+'/'+m.slice(2,4);
+function desenharFii(k){
+  const I=A.indicadores,an=A.anual,ys=Object.keys(an).sort(),ms=Object.keys(A.mensal).sort();
+  if(['cot','prov','rad'].includes(k))return desenhar(k);
+  if(k==='fha'||k==='fhi'){const yy=ys.slice(-st.fha).reverse(),L=[['preco','Cotação no fim do ano','r'],['rend','Rendimentos (R$/cota)','r4'],['dy','Dividend Yield','p'],['vp_cota','Valor patrimonial por cota','r'],['pvp','P/VP','x'],['rent','Rentabilidade (cota + rendimentos)','p'],['cdi','CDI no ano','p'],['pl','Patrimônio líquido','g'],['cotistas','Nº de cotistas','n']];
+    const fm={...FF,r4:v=>isNum(v)?'R$ '+N2.format(v):'-'};
+    $('#tHi').innerHTML=`<table class="t num"><thead><tr><th></th>${yy.map(y=>`<th class="r">${y}</th>`).join('')}</tr></thead><tbody>${L.map(([c,t,f])=>`<tr><td>${t}${aj(c)}</td>${yy.map(y=>`<td class="r">${fm[f]((an[y]||{})[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
+  if(k==='fdvbox')$('#dvBox').innerHTML=`<div><span>Dividend Yield (12M)</span><b>${F.p(I.dy)}</b></div><div><span>Dividend Yield médio de 5 anos</span><b>${F.p(I.dy_medio_5a)}</b></div><div><span>Último rendimento</span><b>${brl3(I.ultimo_rendimento)}</b></div><div><span>Rendimento médio (12M)</span><b>${brl3(I.rend_medio_12m)}</b></div>`;
+  if(k==='fcart'){const it=A.composicao.itens,t=it.reduce((s,x)=>s+x[1],0);
+    $('#tCart').innerHTML=`<table class="t num"><thead><tr><th>Ativo</th><th class="r">Valor</th><th class="r">% da carteira</th></tr></thead><tbody>${it.slice().sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<tr><td>${n}</td><td class="r">${grande(v,'R$')}</td><td class="r">${N2.format(v/t*100)}%</td></tr>`).join('')}</tbody></table>`}
+  if(k==='fgc'){const it=A.composicao.itens.slice().sort((a,b)=>b[1]-a[1]),t=it.reduce((s,x)=>s+x[1],0),cores=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--ac2)','var(--up)','var(--mu)'];
+    $('#gCart').innerHTML=`<div style="display:flex;height:22px;border-radius:6px;overflow:hidden;margin-bottom:14px">${it.map(([n,v],i)=>`<div title="${n}" style="width:${v/t*100}%;background:${cores[i%8]}"></div>`).join('')}</div>`+it.map(([n,v],i)=>`<div style="display:grid;grid-template-columns:minmax(120px,220px) 1fr 64px;gap:10px;align-items:center;margin:7px 0;font-size:14px"><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${cores[i%8]};margin-right:7px"></i>${n}</span><div style="background:var(--s2);border-radius:5px;height:14px"><div style="width:${v/t*100}%;height:100%;border-radius:5px;background:${cores[i%8]}"></div></div><b class="num" style="text-align:right">${N1.format(v/t*100)}%</b></div>`).join('')}
+  if(k==='find'){const c=st.ind,yy=ys.slice(-10),fm=c==='dy'?F.p:c==='pl'?v=>grande(v,'R$'):c==='cotistas'?FF.n:c==='pvp'?F.x:v=>'R$ '+N2.format(v);
+    const atual={dy:I.dy,pvp:I.pvp,vp_cota:I.vp_cota,rend:I.rend_12m,cotistas:I.cotistas,pl:I.pl}[c];
+    chart($('#gIh'),[...yy,c==='rend'||c==='dy'?'Últ. 12M':'Atual'],[{nome:$('#selInd').selectedOptions[0].text,tipo:'barra',cor:'var(--c1)',vals:[...yy.map(y=>an[y][c]),atual],fmt:fm}],{fmtE:c==='pl'?curto:c==='dy'?v=>N1.format(v)+'%':c==='cotistas'?curto:v=>N2.format(v),legenda:false,destaque:yy.length})}
+  if(k==='fdv'){const mm=st.fdv==='max'?ms:ms.slice(-(+st.fdv));const M2=A.mensal;
+    const vals=mm.map(m=>st.fdvm==='dy'?(M2[m].rend&&M2[m].preco?M2[m].rend/M2[m].preco*100:null):M2[m].rend);
+    chart($('#gDv'),mm.map(mesC),[{nome:st.fdvm==='dy'?'Dividend Yield do mês':'Rendimento por cota (R$)',tipo:'barra',cor:'var(--c1)',vals,fmt:st.fdvm==='dy'?F.p:brl3}],{fmtE:st.fdvm==='dy'?v=>N2.format(v)+'%':v=>N3.format(v),legenda:false,ticks:12})}
+  if(k==='fvp'){const mm=st.fvp==='max'?ms:ms.slice(-(+st.fvp*12)),M2=A.mensal;
+    chart($('#gVp'),mm.map(mesC),[{nome:'Valor patrimonial por cota',tipo:'linha',cor:'var(--c1)',vals:mm.map(m=>M2[m].vp_cota),fmt:brl},{nome:'Cotação',tipo:'linha',cor:'var(--c3)',vals:mm.map(m=>M2[m].preco),fmt:brl},{nome:'P/VP',tipo:'linha',eixo:'d',cor:'var(--c4)',vals:mm.map(m=>M2[m].pvp),fmt:F.x,w:1.6}],{fmtE:v=>N2.format(v),fmtD:v=>N2.format(v),ticks:10})}
+  if(k==='frt'){const S=A.serie_rent,n=S.datas.length,i0=st.frt==='max'?0:Math.max(0,n-1-(+st.frt*12)),b=x=>{const base=1+x[i0]/100;return x.slice(i0).map(v=>((1+v/100)/base-1)*100)};
+    chart($('#gRt'),S.datas.slice(i0).map(mesC),[{nome:A.ticker,tipo:'linha',cor:'var(--c1)',vals:b(S.fii),fmt:F.p},{nome:'CDI',tipo:'linha',cor:'var(--c3)',vals:b(S.cdi),fmt:F.p},{nome:'IPCA',tipo:'linha',cor:'var(--c4)',vals:b(S.ipca),fmt:F.p}],{fmtE:v=>N0.format(v)+'%',ticks:10,zero:true})}
+  if(k==='fpl'){const yy=ys.filter(y=>an[y].pl);chart($('#gPl'),yy,[{nome:'Patrimônio líquido',tipo:'barra',cor:'var(--c1)',vals:yy.map(y=>an[y].pl),fmt:v=>grande(v,'R$')},{nome:'Nº de cotistas',tipo:'linha',eixo:'d',cor:'var(--c3)',vals:yy.map(y=>an[y].cotistas),fmt:FF.n}],{fmtD:v=>v>=1e6?N1.format(v/1e6)+' mi':N0.format(v/1e3)+' mil',zeroD:true})}
+}
+
+// carrega: dados embutidos (previa) ou do servidor
+async function abrirAcao(t){
+  T=String(t).toUpperCase();
+  try{A=(window.CI_ACOES&&window.CI_ACOES[T])||await (await fetch(DADOS_URL+T+'.json',{cache:'no-cache'})).json();st.ab={};st.pg=0;render();scrollTo(0,0)}
+  catch(e){$('#app').innerHTML=`<div class="load">Não foi possível carregar ${T}.</div>`;console.error(e)}
+}
+window.abrirAcao=abrirAcao;
+document.body.insertAdjacentHTML('beforeend','<div id="pop" role="dialog"><button aria-label="Fechar">×</button><h4></h4><p></p></div>');
+document.addEventListener('click',e=>{const a=e.target.closest('.aj'),pop=$('#pop');
+  if(a){e.preventDefault();e.stopPropagation();const x=expl(a.dataset.aj);if(!x)return;pop.querySelector('h4').textContent=x[0];pop.querySelector('p').textContent=x[1];pop.style.display='block';
+    const r=a.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight;pop.style.left=Math.max(16,Math.min(innerWidth-w-16,r.left+r.width/2-w/2))+'px';pop.style.top=(scrollY+(r.bottom+8+h>innerHeight?Math.max(8,r.top-h-8):r.bottom+8))+'px';return}
+  if(!e.target.closest('#pop')||e.target.closest('#pop button'))pop.style.display='none'},true);
+
+abrirAcao(T);
+{let t;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>A&&(A.tipo==='fii'?['cot','find','fdv','fvp','frt','fpl']:['cot','ind','dv','po','rl','lc','pt']).forEach(DES),200)})}
+</script>
+</body>
+</html>

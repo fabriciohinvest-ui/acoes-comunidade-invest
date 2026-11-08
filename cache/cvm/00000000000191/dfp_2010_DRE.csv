@@ -1,0 +1,79 @@
+CNPJ_CIA;DT_REFER;VERSAO;DENOM_CIA;CD_CVM;GRUPO_DFP;MOEDA;ESCALA_MOEDA;ORDEM_EXERC;DT_INI_EXERC;DT_FIM_EXERC;CD_CONTA;DS_CONTA;VL_CONTA;ST_CONTA_FIXA
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.01;Receitas da Intermediação Financeira;67608506.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.01;Receitas da Intermediação Financeira;85143206.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.01.01;Receita de Juros;67608506.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.01.01;Receita de Juros;85143206.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.02;Despesas da Intermediação Financeira;-39302642.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.02;Despesas da Intermediação Financeira;-50775741.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.02.01;Despesa de Juros;-33064926.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.02.01;Despesa de Juros;-43061187.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.02.02;Despesa com Provisão para Perdas em Empréstimos;-6237716.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.02.02;Despesa com Provisão para Perdas em Empréstimos;-7714554.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.03;Resultado Bruto Intermediação Financeira;28305864.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.03;Resultado Bruto Intermediação Financeira;34367465.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04;Outras Despesas/Receitas Operacionais;-8682482.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04;Outras Despesas/Receitas Operacionais;-17816599.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.01;Receitas de Prestação de Serviços;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.01;Receitas de Prestação de Serviços;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.02;Despesas de Pessoal;-12815618.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.02;Despesas de Pessoal;-14494994.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.03;Outras Despesas Administrativas;-7270172.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.03;Outras Despesas Administrativas;-8630926.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.04;Despesas Tributárias;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.04;Despesas Tributárias;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.05;Outras Receitas Operacionais;25458726.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.05;Outras Receitas Operacionais;23855006.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.05.01;Receita Líquida de Tarifas e Comissões;11644419.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.05.01;Receita Líquida de Tarifas e Comissões;13602500.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.05.02;Ganhos/(Perdas) Líquidos sobre Ativos/Passivos Financeiros ao Valor Justo por Meio do Resultado;-1317074.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.05.02;Ganhos/(Perdas) Líquidos sobre Ativos/Passivos Financeiros ao Valor Justo por Meio do Resultado;-2175394.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.05.03;Ganhos/(Perdas) Líquidos sobre Ativos Financeiros Disponíveis para Venda;305540.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.05.03;Ganhos/(Perdas) Líquidos sobre Ativos Financeiros Disponíveis para Venda;364147.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.05.04;Ganhos/(Perdas) Líquidos em Coligadas;90511.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.05.04;Ganhos/(Perdas) Líquidos em Coligadas;127620.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.05.05;Resultado com Operações de Seguro e Previdência Complementar;1495618.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.05.05;Resultado com Operações de Seguro e Previdência Complementar;1928181.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.05.06;Outras Receitas;13239712.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.05.06;Outras Receitas;10007952.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.06;Outras Despesas Operacionais;-14055418.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.06;Outras Despesas Operacionais;-18545685.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.06.01;Amortização de Ativos Intangíveis;-1938112.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.06.01;Amortização de Ativos Intangíveis;-2948594.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.06.02;Depreciação;-868117.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.06.02;Depreciação;-1013015.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.06.03;Outras Despesas;-11249189.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.06.03;Outras Despesas;-14584076.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.04.07;Resultado da Equivalência Patrimonial;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.04.07;Resultado da Equivalência Patrimonial;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.05;Resultado Antes dos Tributos sobre o Lucro;19623382.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.05;Resultado Antes dos Tributos sobre o Lucro;16550866.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.06;Imposto de Renda e Contribuição Social sobre o Lucro;-6143992.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.06;Imposto de Renda e Contribuição Social sobre o Lucro;-5220521.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.06.01;Corrente;-5938060.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.06.01;Corrente;-6272346.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.06.02;Diferido;-205932.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.06.02;Diferido;1051825.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.07;Resultado Líquido das Operações Continuadas;13479390.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.07;Resultado Líquido das Operações Continuadas;11330345.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.08;Resultado Líquido das Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.08;Resultado Líquido das Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.08.01;Lucro/Prejuízo Líquido das Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.08.01;Lucro/Prejuízo Líquido das Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.08.02;Ganhos/Perdas Líquidas sobre Ativos de Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.08.02;Ganhos/Perdas Líquidas sobre Ativos de Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.09;Lucro/Prejuízo Consolidado do Período;13479390.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.09;Lucro/Prejuízo Consolidado do Período;11330345.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.09.01;Atribuído a Sócios da Empresa Controladora;13442940.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.09.01;Atribuído a Sócios da Empresa Controladora;11296009.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.09.02;Atribuído a Sócios Não Controladores;36450.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.09.02;Atribuído a Sócios Não Controladores;34336.0000000000;S
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.99;Lucro por Ação - (R$ / Ação);0.0000000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.99;Lucro por Ação - (R$ / Ação);0.0000000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.99.01;Lucro Básico por Ação;0.0000000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.99.01;Lucro Básico por Ação;0.0000000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.99.01.01;ON;5.2400000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.99.01.01;ON;4.1700000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.99.02;Lucro Diluído por Ação;0.0000000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.99.02;Lucro Diluído por Ação;0.0000000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2009-01-01;2009-12-31;3.99.02.01;ON;5.2000000000;N
+00.000.000/0001-91;2010-12-31;3;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2010-01-01;2010-12-31;3.99.02.01;ON;4.1400000000;N

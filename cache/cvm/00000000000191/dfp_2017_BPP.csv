@@ -1,0 +1,85 @@
+CNPJ_CIA;DT_REFER;VERSAO;DENOM_CIA;CD_CVM;GRUPO_DFP;MOEDA;ESCALA_MOEDA;ORDEM_EXERC;DT_FIM_EXERC;CD_CONTA;DS_CONTA;VL_CONTA;ST_CONTA_FIXA
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2;Passivo Total;1387215686.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2;Passivo Total;1353075042.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.01;Passivos Financeiros para Negociação;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.01;Passivos Financeiros para Negociação;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.02;Outros Passivos Financeiros ao Valor Justo no Resultado;2234846.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.02;Outros Passivos Financeiros ao Valor Justo no Resultado;789887.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.03;Passivos Financeiros ao Custo Amortizado;1189577620.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.03;Passivos Financeiros ao Custo Amortizado;1164950712.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.03.01;Depósitos de Clientes;425315886.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.03.01;Depósitos de Clientes;426076603.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.03.02;Valores a Pagar a Instituições Financeiras;21276934.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.03.02;Valores a Pagar a Instituições Financeiras;24649124.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.03.03;Obrigações por Operações Compromissadas;374634032.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.03.03;Obrigações por Operações Compromissadas;376242695.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.03.04;Obrigações por emissão de títulos e valores mobiliários e outras obrigações;368350768.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.03.04;Obrigações por emissão de títulos e valores mobiliários e outras obrigações;337982290.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.04;Provisões;9562939.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.04;Provisões;9600351.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.05;Passivos Fiscais;8843301.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.05;Passivos Fiscais;5434568.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.05.01;Passivos por Impostos Correntes;5946803.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.05.01;Passivos por Impostos Correntes;2365251.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.05.02;Passivos por Impostos Diferidos;2896498.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.05.02;Passivos por Impostos Diferidos;3069317.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.06;Outros Passivos;86920287.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.06;Outros Passivos;71061096.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.07;Passivos sobre Ativos Não Correntes a Venda e Descontinuados;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.07;Passivos sobre Ativos Não Correntes a Venda e Descontinuados;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.07.01;Passivos sobre Ativos Não Correntes a Venda;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.07.01;Passivos sobre Ativos Não Correntes a Venda;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.07.02;Passivos sobre Ativos de Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.07.02;Passivos sobre Ativos de Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08;Patrimônio Líquido Consolidado;90076693.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08;Patrimônio Líquido Consolidado;101238428.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.01;Capital Social Realizado;75100000.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.01;Capital Social Realizado;75100000.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.01.01;Capital Social;67000000.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.01.01;Capital Social;67000000.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.01.02;Instrumento Elegível a Capital Principal;8100000.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.01.02;Instrumento Elegível a Capital Principal;8100000.0000000000;N
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.02;Reservas de Capital;3752637.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.02;Reservas de Capital;3754270.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.02.01;Ágio na Emissão de Ações;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.02.01;Ágio na Emissão de Ações;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.02.02;Reserva Especial de Ágio na Incorporação;5607386.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.02.02;Reserva Especial de Ágio na Incorporação;5604313.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.02.03;Alienação de Bônus de Subscrição;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.02.03;Alienação de Bônus de Subscrição;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.02.04;Opções Outorgadas;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.02.04;Opções Outorgadas;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.02.05;Ações em Tesouraria;-1854749.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.02.05;Ações em Tesouraria;-1850043.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.03;Reservas de Reavaliação;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.03;Reservas de Reavaliação;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04;Reservas de Lucros;27646569.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04;Reservas de Lucros;35280691.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.01;Reserva Legal;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.01;Reserva Legal;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.02;Reserva Estatutária;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.02;Reserva Estatutária;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.03;Reserva para Contingências;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.03;Reserva para Contingências;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.04;Reserva de Lucros a Realizar;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.04;Reserva de Lucros a Realizar;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.05;Reserva de Retenção de Lucros;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.05;Reserva de Retenção de Lucros;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.06;Reserva Especial para Dividendos Não Distribuídos;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.06;Reserva Especial para Dividendos Não Distribuídos;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.07;Reserva de Incentivos Fiscais;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.07;Reserva de Incentivos Fiscais;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.08;Dividendo Adicional Proposto;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.08;Dividendo Adicional Proposto;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.04.09;Ações em Tesouraria;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.04.09;Ações em Tesouraria;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.05;Lucros/Prejuízos Acumulados;-2513647.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.05;Lucros/Prejuízos Acumulados;-2817724.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.06;Ajustes de Avaliação Patrimonial;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.06;Ajustes de Avaliação Patrimonial;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.07;Ajustes Acumulados de Conversão;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.07;Ajustes Acumulados de Conversão;0.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.08;Outros Resultados Abrangentes;-17609319.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.08;Outros Resultados Abrangentes;-13960404.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;PENÚLTIMO;2016-12-31;2.08.09;Participação dos Acionistas Não Controladores;3700453.0000000000;S
+00.000.000/0001-91;2017-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Balanço Patrimonial Passivo;REAL;MIL;ÚLTIMO;2017-12-31;2.08.09;Participação dos Acionistas Não Controladores;3881595.0000000000;S

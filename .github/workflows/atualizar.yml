@@ -1,0 +1,36 @@
+# Robo diario: roda o atualizar.py depois do fechamento da B3 e salva os JSON no repositorio.
+# A Netlify, ligada a este repositorio, publica o site sozinha a cada commit (sem build).
+name: Atualizar ações
+
+on:
+  schedule:
+    - cron: '30 0 * * 2-6'   # 21h30 de Brasília, de segunda a sexta
+    - cron: '0 11 * * 2-6'   # 8h de Brasília: repescagem caso a B3 tenha publicado tarde
+  workflow_dispatch:         # botão "Run workflow" para rodar na mão
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atualizar
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Baixar dados e recalcular indicadores
+        run: python atualizar.py
+      - name: Salvar no repositório (a Netlify publica sozinha)
+        run: |
+          git config user.name "robo-comunidade-invest"
+          git config user.email "robo-comunidade-invest@users.noreply.github.com"
+          git add dados cache
+          if git diff --cached --quiet; then echo "nada mudou"; exit 0; fi
+          git commit -m "dados de $(TZ=America/Sao_Paulo date +%d/%m/%Y)"
+          git push

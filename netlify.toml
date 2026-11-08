@@ -1,0 +1,16 @@
+# Site das paginas de acoes (Netlify). Nao ha "build": os arquivos ja estao prontos.
+[build]
+  publish = "."
+  command = ""
+  # PARTE B do passo a passo (plano da Netlify por creditos): apague o "#" da linha abaixo
+  # para a Netlify NAO republicar quando o robo so mudou dados/ e cache/ (cada publicacao gasta creditos).
+  # So faca isso depois de apontar o config.js para o GitHub Pages.
+  # ignore = "[ \"$CACHED_COMMIT_REF\" = \"$COMMIT_REF\" ] && exit 1; git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!dados' ':!cache'"
+
+# Os JSON de dados mudam todo dia: o navegador sempre confere se ha versao nova.
+# CORS liberado para o site principal da Comunidade Invest poder ler estes dados.
+[[headers]]
+  for = "/dados/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=0, must-revalidate"

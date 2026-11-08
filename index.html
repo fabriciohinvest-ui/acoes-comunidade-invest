@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pesquisa de ativos · Comunidade Invest</title>
+<style>
+/* ==== TEMA: as mesmas cores da pagina de cada ativo (acao.html) ==== */
+:root{
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --bg:#f6f6f6;--s:#fff;--s2:#f0f0f0;--line:#e0e0e0;--fg:#1a1a1a;--mu:#6b6b6b;--ac:#2b2b2b;--on-ac:#fff;--soft:#ececec;--ac2:#8a8a8a;
+  --up:#b3261e;--down:#1e7a46;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);font-family:var(--font);color:var(--fg);line-height:1.45}
+button,select,input{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.bar{position:sticky;top:0;z-index:5;background:var(--ac);color:var(--on-ac)}
+.bar .in{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:16px;align-items:center;height:46px}
+.bar b{white-space:nowrap}.bar span{opacity:.75;font-size:14px}
+.wrap{max-width:1120px;margin:0 auto;padding:26px 20px 60px}
+h1{font-size:28px;line-height:1.15}
+.sub{color:var(--mu);font-size:14.5px;margin-top:4px}
+.busca{position:relative;margin-top:18px}
+.busca input{width:100%;border:1.5px solid var(--line);background:var(--s);border-radius:14px;padding:14px 16px 14px 44px;font-size:16px;outline:none}
+.busca input:focus{border-color:var(--ac)}
+.busca svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ac2)}
+.filtros{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.seg{display:inline-flex;gap:3px;background:var(--s2);border-radius:999px;padding:3px;flex-wrap:wrap}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:600}
+.seg button.on{background:var(--ac);color:var(--on-ac)}
+select.sel{border:1px solid var(--line);border-radius:10px;background:var(--s);padding:7px 10px;font-size:13.5px}
+.cont{font-size:13.5px;color:var(--mu);margin-left:auto}
+.box{background:var(--s);border:1px solid var(--line);border-radius:16px;margin-top:16px;overflow:hidden}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;white-space:nowrap}
+th{font-size:12.5px;color:var(--mu);font-weight:600;text-align:right;padding:11px 12px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;background:var(--s)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--s);z-index:1}
+th.on{color:var(--fg)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right}
+tbody tr{cursor:pointer}tbody tr:hover td{background:var(--s2)}
+.at{display:flex;gap:10px;align-items:center}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--ac);color:var(--on-ac);display:grid;place-items:center;font-weight:800;font-size:10.5px;flex:none}
+.at b{display:block;font-size:14.5px}.at small{display:block;color:var(--mu);font-size:12.5px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;background:var(--soft);color:var(--mu);margin-left:6px;vertical-align:1px}
+.pos{color:var(--down)}.neg{color:var(--up)}
+.vazio{padding:40px 16px;text-align:center;color:var(--mu)}
+.pg{display:flex;gap:4px;justify-content:center;padding:12px;flex-wrap:wrap}
+.pg button{border:1px solid var(--line);background:var(--s);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px}.pg button.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac)}
+footer{font-size:12.5px;color:var(--mu);margin-top:20px}
+.legal{border:1px dashed var(--line);border-radius:12px;padding:10px 14px;margin-top:10px}
+@media (max-width:760px){.wrap{padding:20px 16px 48px}h1{font-size:23px}.cont{margin-left:0;width:100%}th,td{padding:9px 9px}.at small{max-width:130px}}
+</style>
+</head>
+<body>
+<nav class="bar"><div class="in"><b>Comunidade Invest</b><span>Ações, FIIs e BDRs</span></div></nav>
+<main class="wrap">
+  <h1>Pesquise uma ação, FII ou BDR</h1>
+  <p class="sub" id="sub">Digite o código (ex.: BBAS3) ou o nome da empresa ou do fundo.</p>
+  <div class="busca">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <input id="q" type="search" placeholder="Buscar por código ou nome" autocomplete="off" aria-label="Buscar ativo">
+  </div>
+  <div class="filtros">
+    <div class="seg" id="tipos"><button data-t="" class="on">Todos</button><button data-t="acao">Ações</button><button data-t="fii">FIIs</button><button data-t="bdr">BDRs</button></div>
+    <select class="sel" id="setor" aria-label="Setor"><option value="">Todos os setores</option></select>
+    <span class="cont" id="cont"></span>
+  </div>
+  <div class="box"><div class="tw"><table class="num"><thead id="th"></thead><tbody id="tb"></tbody></table></div><div class="pg" id="pg"></div></div>
+  <footer><p id="fonte"></p><p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>
+</main>
+<script src="config.js"></script>
+<script>
+/* ===== CONFIGURACAO =====
+   DADOS_URL: pasta "dados" publicada pelo robo diario (a mesma que a acao.html usa).
+   PAGINA: endereco da pagina de cada ativo. */
+const DADOS_URL = (window.CI_DADOS_URL || 'dados/');
+const PAGINA = (window.CI_PAGINA_ATIVO || 'acao.html');
+const POR_PAGINA = 50;
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const nf=c=>new Intl.NumberFormat('pt-BR',{minimumFractionDigits:c,maximumFractionDigits:c}),N2=nf(2);
+const isNum=v=>v!=null&&isFinite(v);
+const grande=(v,m)=>{if(!isNum(v))return'-';const a=Math.abs(v),p=m==='USD'?'US$ ':'R$ ';return a>=1e12?p+N2.format(a/1e12)+' tri':a>=1e9?p+N2.format(a/1e9)+' bi':a>=1e6?p+N2.format(a/1e6)+' mi':p+N2.format(a)};
+const tira=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const TIPO={acao:'Ação',fii:'FII',bdr:'BDR'};
+const COLS=[['ticker','Ativo',r=>`<div class="at"><div class="logo">${r.ticker.slice(0,4)}</div><div><b>${r.ticker}<span class="tag">${TIPO[r.tipo]||r.tipo}</span></b><small>${r.nome}</small></div></div>`],
+  ['preco','Cotação',r=>'R$ '+N2.format(r.preco)],['var_dia','Dia',r=>pc(r.var_dia,1)],['var_12m','12 meses',r=>pc(r.var_12m,1)],
+  ['dy','DY',r=>isNum(r.dy)?N2.format(r.dy)+'%':'-'],['pvp','P/VP',r=>isNum(r.pvp)?N2.format(r.pvp):'-'],['pl','P/L',r=>isNum(r.pl)?N2.format(r.pl):'-'],
+  ['roe','ROE',r=>isNum(r.roe)?N2.format(r.roe)+'%':'-'],['liquidez','Liquidez diária',r=>grande(r.liquidez,'BRL')],['valor_mercado','Valor de mercado',r=>grande(r.valor_mercado,r.moeda_vm)]];
+const pc=(v,cor)=>isNum(v)?`<span class="${cor?(v>=0?'pos':'neg'):''}">${(v>=0?'+':'')+N2.format(v)}%</span>`:'-';
+let L=[],st={q:'',tipo:'',setor:'',ord:'liquidez',desc:true,pg:0};
+try{const u=new URLSearchParams(location.search);st.q=u.get('q')||'';st.tipo=u.get('tipo')||''}catch(e){}
+
+function filtrar(){
+  const q=tira(st.q).trim();
+  let r=L.filter(x=>(!st.tipo||x.tipo===st.tipo)&&(!st.setor||x.setor===st.setor));
+  if(q)r=r.map(x=>{const t=tira(x.ticker),n=tira(x.nome),s=t.startsWith(q)?0:t.includes(q)?1:n.startsWith(q)?2:n.includes(q)||tira(x.segmento).includes(q)||tira(x.setor).includes(q)?3:9;return[s,x]}).filter(a=>a[0]<9).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
+  if(!q||st.ordManual){const k=st.ord,d=st.desc?-1:1;r=r.slice().sort((a,b)=>k==='ticker'?d*a.ticker.localeCompare(b.ticker):(isNum(a[k])?isNum(b[k])?d*(a[k]-b[k]):-1:isNum(b[k])?1:0))}
+  return r;
+}
+function desenhar(){
+  const r=filtrar(),tot=Math.ceil(r.length/POR_PAGINA);st.pg=Math.min(st.pg,Math.max(0,tot-1));
+  $('#th').innerHTML='<tr>'+COLS.map(([k,t])=>`<th data-k="${k}" class="${st.ord===k?'on':''}">${t}${st.ord===k?(st.desc?' ▾':' ▴'):''}</th>`).join('')+'</tr>';
+  const pag=r.slice(st.pg*POR_PAGINA,(st.pg+1)*POR_PAGINA);
+  $('#tb').innerHTML=pag.length?pag.map(x=>`<tr data-t="${x.ticker}">${COLS.map(([k,,f])=>`<td>${f(x)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${COLS.length}" class="vazio" style="position:static;text-align:center">Nenhum ativo encontrado para "${st.q.replace(/[<>&"]/g,'')}".</td></tr>`;
+  $('#cont').textContent=`${r.length} ${r.length===1?'ativo':'ativos'}`;
+  $('#pg').innerHTML=tot>1?Array.from({length:tot},(_,i)=>`<button data-p="${i}" class="${i===st.pg?'on':''}">${i+1}</button>`).join(''):'';
+  $$('#th th').forEach(h=>h.onclick=()=>{const k=h.dataset.k;if(st.ord===k)st.desc=!st.desc;else{st.ord=k;st.desc=k!=='ticker'}st.ordManual=true;desenhar()});
+  $$('#tb tr[data-t]').forEach(tr=>tr.onclick=()=>abrir(tr.dataset.t));
+  $$('#pg button').forEach(b=>b.onclick=()=>{st.pg=+b.dataset.p;desenhar();$('.box').scrollIntoView({block:'start'})});
+}
+function abrir(t){location.href=PAGINA+'?t='+encodeURIComponent(t)}
+function iniciar(dados){
+  L=dados.acoes||[];
+  const setores=[...new Set(L.map(x=>x.setor).filter(Boolean))].sort();
+  $('#setor').innerHTML='<option value="">Todos os setores</option>'+setores.map(s=>`<option>${s}</option>`).join('');
+  $('#sub').textContent=`${L.length} ativos com dados de fechamento de ${(L[0]||{}).fechamento?L[0].fechamento.split('-').reverse().join('/'):'-'}. Digite o código (ex.: BBAS3) ou o nome.`;
+  $('#fonte').innerHTML='<b>Fontes:</b> B3, CVM, SEC (EUA), Banco Central e Yahoo Finance. Atualizado todo dia útil depois do fechamento.';
+  $('#q').value=st.q;$$('#tipos button').forEach(b=>b.classList.toggle('on',b.dataset.t===st.tipo));
+  desenhar();
+}
+$('#q').oninput=e=>{st.q=e.target.value;st.pg=0;st.ordManual=false;desenhar()};
+$('#q').onkeydown=e=>{if(e.key==='Enter'){const r=filtrar();if(r.length)abrir(r[0].ticker)}};
+$$('#tipos button').forEach(b=>b.onclick=()=>{st.tipo=b.dataset.t;st.pg=0;$$('#tipos button').forEach(x=>x.classList.toggle('on',x===b));desenhar()});
+$('#setor').onchange=e=>{st.setor=e.target.value;st.pg=0;desenhar()};
+(async()=>{
+  try{iniciar(window.CI_INDICE||await (await fetch(DADOS_URL+'indice.json',{cache:'no-cache'})).json())}
+  catch(e){$('#tb').innerHTML=`<tr><td class="vazio" style="position:static;text-align:center">Não foi possível carregar a lista de ativos.</td></tr>`;console.error(e)}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+CNPJ_CIA;DT_REFER;VERSAO;DENOM_CIA;CD_CVM;GRUPO_DFP;MOEDA;ESCALA_MOEDA;ORDEM_EXERC;DT_INI_EXERC;DT_FIM_EXERC;CD_CONTA;DS_CONTA;VL_CONTA;ST_CONTA_FIXA
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.01;Receitas de Intermediação Financeira;98659704.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.01;Receitas de Intermediação Financeira;125947217.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.01.01;Receita de Juros;98659704.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.01.01;Receita de Juros;125947217.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.02;Despesas de Intermediação Financeira;-43232120.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.02;Despesas de Intermediação Financeira;-66273138.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.02.01;Despesa de Juros;-43232120.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.02.01;Despesa de Juros;-66273138.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.03;Resultado Bruto de Intermediação Financeira;55427584.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.03;Resultado Bruto de Intermediação Financeira;59674079.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04;Outras Despesas e Receitas Operacionais;-43850581.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04;Outras Despesas e Receitas Operacionais;-35684288.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.01;Despesa de Provisão para Perda Esperada para Risco de Crédito;-19687420.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.01;Despesa de Provisão para Perda Esperada para Risco de Crédito;-12863436.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.02;Receitas de Prestação de Serviços;22666341.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.02;Receitas de Prestação de Serviços;22668819.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.03;Despesas com Pessoal;-21688312.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.03;Despesas com Pessoal;-23524659.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.04;Outras Despesas de Administrativas;-7421859.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.04;Outras Despesas de Administrativas;-7535192.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.05;Despesas Tributárias;-5168082.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.05;Despesas Tributárias;-5722627.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.06;Outras Receitas Operacionais;1382179.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.06;Outras Receitas Operacionais;8159428.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.06.01;Ganhos líquidos sobre instrumentos financeiros;1886264.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.06.01;Ganhos líquidos sobre instrumentos financeiros;199415.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.06.02;Resultado líquido em operações de câmbio e em conversão de transações em moedas estrangeiras;-7082412.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.06.02;Resultado líquido em operações de câmbio e em conversão de transações em moedas estrangeiras;-1286536.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.06.03;Outras;6578327.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.06.03;Outras;9246549.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.07;Outras Despesas Operacionais;-16255349.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.07;Outras Despesas Operacionais;-19953365.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.07.01;Amortização de ativos intangíveis;-1807612.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.07.01;Amortização de ativos intangíveis;-1420318.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.07.02;Provisões trabalhistas, fiscais e cíveis;-5742025.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.07.02;Provisões trabalhistas, fiscais e cíveis;-7515682.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.07.03;Depreciação;-2406382.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.07.03;Depreciação;-2574102.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.07.04;Outras;-6299330.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.07.04;Outras;-8443263.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.04.08;Resultado da Equivalência Patrimonial;2321921.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.04.08;Resultado da Equivalência Patrimonial;3086744.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.05;Resultado antes dos Tributos sobre o Lucro;11577003.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.05;Resultado antes dos Tributos sobre o Lucro;23989791.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.06;Imposto de Renda e Contribuição Social sobre o Lucro;1715880.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.06;Imposto de Renda e Contribuição Social sobre o Lucro;-4266920.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.06.01;Corrente;-3591017.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.06.01;Corrente;-3544398.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.06.02;Diferido;5306897.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.06.02;Diferido;-722522.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.07;Lucro ou Prejuízo das Operações Continuadas;13292883.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.07;Lucro ou Prejuízo das Operações Continuadas;19722871.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.08;Resultado Líquido das Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.08;Resultado Líquido das Operações Descontinuadas;0.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.09;Lucro ou Prejuízo antes das Participações e Contribuições Estatutárias;13292883.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.09;Lucro ou Prejuízo antes das Participações e Contribuições Estatutárias;19722871.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.10;Participações nos Lucros e Contribuições Estatutárias;0.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.10;Participações nos Lucros e Contribuições Estatutárias;0.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.11;Lucro ou Prejuízo Líquido Consolidado do Período;13292883.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.11;Lucro ou Prejuízo Líquido Consolidado do Período;19722871.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.11.01;Atribuído aos Sócios da Empresa Controladora;11851616.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.11.01;Atribuído aos Sócios da Empresa Controladora;18344326.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.11.02;Atribuído aos Sócios não Controladores;1441267.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.11.02;Atribuído aos Sócios não Controladores;1378545.0000000000;S
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.99;Lucro por Ação (R$/Ação);0.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.99;Lucro por Ação (R$/Ação);0.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.99.01;Lucro Básico por Ação;0.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.99.01;Lucro Básico por Ação;0.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.99.01.01;ON;4.1600000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.99.01.01;ON;6.4300000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.99.02;Lucro Diluído por Ação;0.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.99.02;Lucro Diluído por Ação;0.0000000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;PENÚLTIMO;2020-01-01;2020-12-31;3.99.02.01;ON;4.1600000000;N
+00.000.000/0001-91;2021-12-31;2;BCO BRASIL S.A.;001023;DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;2021-01-01;2021-12-31;3.99.02.01;ON;6.4300000000;N

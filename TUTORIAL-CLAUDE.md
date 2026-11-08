@@ -1,0 +1,285 @@
+# Tutorial para o Claude: páginas de ações, BDRs e FIIs da Comunidade Invest
+
+Este arquivo é para o Claude que vai continuar este projeto. Leia inteiro antes de mexer em qualquer coisa. Ele resume tudo o que foi decidido e descoberto com o Fabricio (dono da Comunidade Invest) até aqui.
+
+---
+
+## 1. O que é e em que pé está
+
+Um site de páginas de ativos no estilo do Investidor10. As regras são três:
+
+- **Só dados públicos e gratuitos.**
+- **Atualização sozinha todo dia útil.**
+- **Números o mais fiéis possível** ao que o Investidor10 mostra.
+
+**Hoje (versão 1)** o site tem 3 ativos, um de cada tipo, que servem de modelo:
+
+| Ticker | Tipo no código | O que testa |
+|---|---|---|
+| BBAS3 (Banco do Brasil) | `acao` com `'banco': True` | Ação brasileira; balanço de banco, que é diferente |
+| GOGL34 (Alphabet/Google) | `bdr` | BDR: balanço em dólar da SEC, cotação dos EUA, dividendos convertidos |
+| MXRF11 (Maxi Renda) | `fii` | Fundo imobiliário: rendimentos, P/VP, rentabilidade × CDI/IPCA, carteira |
+
+A **página de pesquisa** (`index.html`) já está pronta para centenas ou milhares de ativos: busca, filtros por tipo e setor, ordenação e paginação de 50 em 50. Ela lê só o `dados/indice.json`.
+
+**Próxima etapa (seu trabalho):** cobrir **todas as ações e FIIs da B3**, **todas as ações americanas que têm BDR na B3** e as do **S&P 500**. Essa lista dos EUA foi escolha do Fabricio porque é grátis via SEC + Yahoo. Tudo continua se atualizando sozinho todo dia, rápido. O plano está na seção 9.
+
+Colocar no ar: ver `PASSO-A-PASSO.md` (GitHub + Netlify). O site principal da Comunidade fica na Netlify. O sócio do Fabricio integra estas páginas ao site depois.
+
+## 2. Regras que não podem ser quebradas
+
+1. **Conteúdo educativo.** Nunca escreva recomendação de compra ou venda, "melhores ações", nota ou ranking de "qual comprar". Ordenar uma tabela por um indicador é aceito; dizer que algo "está barato" não é.
+2. **Nada de dado pessoal do Fabricio** (e-mail, nome) em User-Agent, URL ou cabeçalho de requisição. O User-Agent padrão é `ComunidadeInvest dados-publicos`. A SEC pede um contato no User-Agent: use um e-mail de contato **do site** que o Fabricio ou o sócio informarem. Não invente um.
+3. **Falha não apaga dado.** Se uma fonte cair, o robô mantém o JSON de ontem daquele ativo e segue com os outros. Ele só sai com erro se todos falharem. Mantenha isso no código em escala.
+4. **Nunca invente número.** Se não há dado confiável, mostre "-" e explique no rodapé ou no ⓘ. Exemplos: rendimentos de FII antes de 2022 e vacância.
+5. **Sem dependências.** O `atualizar.py` usa só a biblioteca padrão do Python (3.9+). Se precisar de algo novo, prefira manter assim (o workflow não roda `pip install`).
+6. Linguagem das páginas: português simples, para quem está começando.
+
+## 3. O que o Fabricio pediu no layout (já está feito, mantenha)
+
+- **Cotação no topo**: gráfico de cotação logo depois do cabeçalho.
+- Depois, **os dados escritos**, cada seção com uma **prévia** e o botão **"Ver mais"**. As seções são: indicadores fundamentalistas, histórico de indicadores, histórico de dividendos, resultados e balanço patrimonial. Isso vale para todos os ativos.
+- **Todos os outros gráficos juntos, embaixo dos dados escritos, um abaixo do outro**, depois do divisor "Gráficos". Ficam lá: histórico de um indicador, dividendos, payout, receitas e lucros, lucro × cotação e patrimônio.
+- **Menu do topo funcionando**: usa `data-go` + `scrollIntoView`. Não use link com `#secao`, porque isso quebrou a prévia e o hash é lido como ticker.
+- **Legenda clicável em todos os gráficos**: clicar numa série esconde ou mostra só ela (`[data-lg]`, estado em `el._ocultas`).
+- **ⓘ ao lado de cada nome** (ROE, ROIC, P/VP...): abre um quadradinho com explicação simples **na própria página**, sem ir para outra. Os textos estão nos dicionários `EXP` (ações e BDR) e `EXPF` (FII) em `acao.html`. Todo indicador novo precisa ganhar texto lá.
+- **"← Pesquisa"** no topo da página do ativo e uma **caixa "Buscar outro ativo"** com sugestões enquanto digita.
+- Funciona no celular. Testado em 390 px de largura, sem rolagem lateral.
+
+## 4. Mapa dos arquivos
+
+| Arquivo | O que é |
+|---|---|
+| `atualizar.py` | O robô (cerca de 980 linhas). Baixa, calcula e grava `dados/<TICKER>.json` + `dados/indice.json` |
+| `index.html` | A pesquisa. Lê `indice.json` e manda para `acao.html?t=TICKER`. Lê `?q=` e `?tipo=` da URL |
+| `acao.html` | A página de qualquer ativo (`?t=TICKER`). `render()` faz ação e BDR, `renderFii()` faz FII |
+| `config.js` | `window.CI_DADOS_URL` (onde estão os JSON). Opcionais: `CI_PAGINA_ATIVO`, `CI_PAGINA_PESQUISA` |
+| `netlify.toml` | Sem build, publica a raiz e dá CORS `*` em `/dados/*`. Tem uma linha `ignore` comentada (parte B do passo a passo) |
+| `.github/workflows/atualizar.yml` | Cron `30 0 * * 2-6` (21h30 BRT, seg a sex) e `0 11 * * 2-6` (repescagem às 8h), mais `workflow_dispatch` |
+| `dados/` | Saída: o que as páginas leem |
+| `cache/` | Memória do robô. **Não apagar.** Detalhes na seção 6 |
+| `PASSO-A-PASSO.md` | Como pôr no ar (GitHub + Netlify) |
+| `LEIA-ME.md` | Visão para humanos: fontes, como adicionar ativo, diferenças conhecidas |
+
+Para testar localmente, rode `python -m http.server 8765` na pasta e abra `http://localhost:8765/`. As páginas usam `fetch`, então abrir o arquivo direto com duplo clique não funciona.
+
+Como o robô funciona:
+
+- `python atualizar.py` faz a atualização do dia.
+- `python atualizar.py --historico` refaz tudo do zero, desde 2009 (uns 1,5 GB de download).
+- Ticker novo em `EMPRESAS` baixa o próprio histórico sozinho na primeira vez.
+
+## 5. Formato dos dados
+
+### `dados/indice.json`
+
+É uma linha por ativo, feita pela função `resumo(d)`. É isto que a pesquisa lista:
+
+```json
+{"atualizado": "2026-11-08 02:22", "acoes": [
+  {"ticker": "BBAS3", "nome": "Banco do Brasil", "tipo": "acao", "setor": "Financeiro", "segmento": "Bancos",
+   "fechamento": "2026-11-06", "preco": 17.13, "var_dia": 3.88, "var_12m": -25.07, "dy": 4.03, "pvp": 0.53,
+   "pl": 8.0, "roe": 6.6, "liquidez": 1163271197.6, "valor_mercado": 98169187105.2, "moeda_vm": "BRL"}]}
+```
+
+Regras do índice:
+
+- Percentuais já vêm em % (4.03 = 4,03%).
+- `pl` e `roe` são `null` para FII.
+- `moeda_vm` é `USD` para BDR, porque o valor de mercado é o da empresa nos EUA.
+- Em escala, mantenha o índice enxuto: cerca de 300 bytes por linha, 2.000 ativos ≈ 600 KB.
+
+### `dados/<TICKER>.json`
+
+**Campos comuns a todos:** `ticker`, `tipo`, `nome`, `razao`, `setor`, `segmento`, `atualizado` (horário de Brasília), `fechamento` (último pregão), `preco`, `cotacao`, `moeda_balanco`, `balanco_ref`, `proventos`, `eventos`.
+
+- `cotacao` é uma lista de `[data, abertura, máxima, mínima, fechamento, volume_R$]`, ajustada por desdobramentos e grupamentos.
+- `proventos` é uma lista de `{tipo, data_com, pagamento, valor}`, já ajustados por desdobramento.
+- `eventos` é uma lista de `{data, fator}` (desdobramento > 1, grupamento < 1).
+
+**Campos de ação (`acao`) e BDR (`bdr`):**
+
+- `indicadores`: `pl, pvp, psr, ev_ebit, ev_ebitda, p_ebit, p_ativo, p_acl, p_cg, lpa, vpa, margem_bruta, margem_ebit, margem_ebitda, margem_liquida, giro_ativos, roe, roa, roic, dy, payout, liquidez_corrente, pl_ativos, passivos_ativos, divliq_pl, divliq_ebitda, valor_mercado, valor_firma, cagr_receitas_5a, cagr_lucros_5a`
+- `info`: valor de mercado, valor da firma, PL, nº de papéis, ativos, dívidas, free float, tag along, liquidez diária, listagem, CNPJ, site e atividade. Para BDR também `preco_eua, data_eua, dolar, paridade, n_bdrs, depositario, ticker_eua`.
+- `anual` (por ano) e `trimestres` (por data de balanço): receita, custos, lucros, EBIT, EBITDA, imposto, ativos, passivos, PL, dívida, caixa e ações.
+- `ttm`: soma dos últimos 4 trimestres.
+- `hist_indicadores`: os indicadores calculados ano a ano.
+- Só BDR: `proventos_empresa` (dividendo em US$ por ação nos EUA) e `preco_eua_anual`.
+
+**Campos de FII (`fii`):**
+
+- `indicadores`: `dy, pvp, ultimo_rendimento, ultimo_rend_data, rend_medio_12m, rend_12m, vp_cota, pl, valor_mercado, liquidez_diaria, cotistas, cotas, taxa_adm_12m, rent_12m, dy_medio_5a`
+- `info`: razão social, CNPJ, público-alvo, mandato, segmento na CVM, gestão, prazo, administrador, início, ISIN e site.
+- `mensal` (`AAAA-MM`): PL, VP por cota, cotas, cotistas, taxa de administração e DY do mês.
+- `anual`: rendimentos e DY por ano.
+- `rentab`: `1m, 3m, 6m, 12m, 24m...`, cada um com fii, cdi e ipca.
+- `serie_rent`: datas e as séries acumuladas fii, cdi e ipca.
+- `composicao`: `{data, itens}`, a carteira por categoria.
+
+## 6. Fontes, endereços e pegadinhas
+
+Todas sem login e sem chave. O que cada uma dá:
+
+| Fonte | Endereço | Uso |
+|---|---|---|
+| B3 COTAHIST anual | `https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{ano}.ZIP` | Cotações desde 2009 (histórico) |
+| B3 COTAHIST diário | `.../COTAHIST_D{ddmmaaaa}.ZIP` | Pregão do dia. **Um arquivo traz todos os ativos** |
+| B3 empresas | `https://sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/{Metodo}/{base64 do JSON}` | `GetListedSupplementCompany` (proventos 12m, desdobramentos, dados do BDR), `GetListedCashDividends` (histórico de proventos em dinheiro, pelo **nome de pregão**), `GetDetail` (free float, site, atividade), `GetInitialCompanies` (lista de todas as empresas) |
+| B3 fundos | `https://sistemaswebb3-listados.b3.com.br/fundsProxy/fundsCall/GetListedSupplementFunds/{base64 de {"cnpj":"só dígitos","identifierFund":"MXRF","typeFund":7}}` | Rendimentos 12m e desdobramentos de FII |
+| CVM DFP/ITR | `https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/{DFP,ITR}/DADOS/{dfp,itr}_cia_aberta_{ano}.zip` | Balanços. **Um zip por ano traz todas as empresas** |
+| CVM FRE | `.../CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_{ano}.zip` | Free float, acionistas |
+| CVM FII | `https://dados.cvm.gov.br/dados/FII/DOC/INF_MENSAL/DADOS/inf_mensal_fii_{ano}.zip` | Informe mensal de **todos** os FIIs: arquivos `geral`, `complemento` e `ativo_passivo` |
+| SEC | `https://data.sec.gov/api/xbrl/companyfacts/CIK{10 dígitos}.json` | Balanços das empresas americanas (BDR e EUA) |
+| Yahoo | `https://query1.finance.yahoo.com/v8/finance/chart/{SYM}?period1=..&period2=..&interval=1d&events=div%7Csplit` | Cotação nos EUA, dividendos e splits; rendimentos antigos de FII (`MXRF11.SA`) |
+| Banco Central SGS | `https://api.bcb.gov.br/dados/serie/bcdata.sgs.{N}/dados?formato=json&dataInicial=..&dataFinal=..` | 1 = dólar PTAX, 12 = CDI diário, 433 = IPCA mensal. Pedir em janelas de até 10 anos |
+
+**Pegadinhas já resolvidas** (não "conserte" de volta):
+
+- **COTAHIST** é texto de largura fixa. Use o mercado à vista (TPMERC 010). Os preços vêm em centavos e sem vírgula. O volume usado é o financeiro.
+- **Desdobramentos**: ajuste a cotação e os proventos antigos pelo fator dos eventos da B3. O MXRF11 teve desdobramento de 1 para 10 em 16/05/2017, e o VP por cota e o nº de cotas antigos também precisam desse ajuste.
+- **Lucro de banco**: na DRE consolidada da CVM, até 2019 o lucro do banco está na conta **3.09**, não na 3.11. O robô procura pela descrição (`^lucro.*consolidado do per[íi]odo`, nível 1) e só usa a 3.11 se não achar.
+- **Nº de ações na SEC**: use o número do **arquivo original** de cada período. O 10-K seguinte já vem corrigido pelo desdobramento, então aplicar o split por cima dá P/L 10 ou 20 vezes errado (o Google 2021 deu P/L 504). Esse número original é multiplicado pelos splits posteriores. O código faz isso em `serie(..., primeiro=True)`.
+- **Proventos de BDR**: a B3 só mostra 12 meses. O robô acumula o que vê em `cache/proventos/{T}.json`, então o histórico cresce sozinho. Para trás, estima assim: dividendo em US$ × PTAX da data com × 0,7 (imposto de 30% retido nos EUA) ÷ k, sendo k a paridade calibrada com os pagamentos reais. Na tabela aparece como **"Dividendo (estimado)"**.
+- **Rendimentos de FII**:
+  - A B3 só mostra 12 meses (acumulados em `cache/proventos/`).
+  - O Yahoo tem o MXRF11 contínuo só a partir de **abr/2022** e desconta direitos de subscrição. Arredonde para 0,005, que é como o fundo paga.
+  - Use só o trecho contínuo mais recente: um buraco de mais de 50 dias corta o histórico.
+  - A **data com** é o pregão anterior à data ex; use o dia útil anterior para não cair em feriado (deu duplicado no Finados).
+  - Junte duplicados com tolerância de ±8 dias.
+- **DY_mes da CVM** de anos antigos tem lixo (negativo, repetido). Não use para estimar rendimento.
+- **Coluna de CNPJ do informe de FII** muda de nome: é `CNPJ_Fundo_Classe` nos anos novos e `CNPJ_Fundo` nos antigos.
+- **www.sec.gov** (onde fica `company_tickers.json`) deu **403** a partir do ambiente do Claude. Já `data.sec.gov` funciona. No GitHub Actions, com um User-Agent de contato correto, deve funcionar; senão use a lista do S&P 500 da Wikipédia, que já traz o CIK.
+- A **BBAS3 caiu cerca de 30% em 26/10/2026**. É dado real da B3, não erro de ajuste.
+
+## 7. Fórmulas (conferidas contra o Investidor10 no BBAS3 e no GOGL34)
+
+- **Nº de ações** = total, **incluindo tesouraria** (composição do capital da CVM; na SEC, `dei:EntityCommonStockSharesOutstanding` do arquivo original).
+- **LPA** = lucro líquido **do controlador** (TTM) ÷ nº de ações. **VPA** = PL do controlador ÷ ações.
+- **P/L** = preço ÷ LPA. **P/VP** = preço ÷ VPA. **PSR** = valor de mercado ÷ receita TTM.
+- **Valor da firma (EV)** = valor de mercado + dívida líquida. **Para banco, EV = valor de mercado.**
+- **Banco**: ativo circulante = conta **1.02** e passivo circulante = **2.02** (é assim que o Investidor10 trata).
+- **P/ACL** = valor de mercado ÷ (ativo circulante − passivo total, incluindo o PL, como o Investidor10 faz).
+- **CAGR receitas/lucros 5 anos** = TTM comparado com o ano (último ano fechado − 4).
+- **Liquidez diária** = média do volume financeiro dos últimos **21 pregões**.
+- **DY** = soma dos proventos com **data com** nos últimos 12 meses ÷ preço. **Payout** = proventos ÷ lucro.
+- **BDR**: indicadores com o balanço em dólar e a **cotação da ação original nos EUA** (mesmo critério do Investidor10). DY com os proventos do BDR em R$ ÷ preço do BDR.
+- **FII**:
+  - **DY** = rendimentos 12m ÷ preço.
+  - **P/VP** = preço ÷ `Valor_Patrimonial_Cotas` do último informe.
+  - **Rentabilidade** = (preço final + rendimentos pelas datas ex no período) ÷ preço inicial − 1, comparada com o CDI e o IPCA acumulados no mesmo período.
+  - **Taxa de administração 12m** = soma dos últimos 12 `Percentual_Despesas_Taxa_Administracao` mensais.
+  - **Carteira** = categorias do `ativo_passivo`.
+
+## 8. Diferenças aceitas (não perca tempo tentando zerar)
+
+- **ROIC e imposto de banco**: o Investidor10 usa outro imposto. Aqui fica o da CVM, por isso o ROIC do BB sai diferente (até negativo).
+- **Receita por região e por segmento**: não existe em arquivo estruturado da CVM ou da SEC (só em PDF de release). Seção não feita.
+- **FII**: sem rendimentos antes de abr/2022 (MXRF11). Sem vacância, que só está no informe trimestral e só para fundo de imóveis.
+- **Cotação é a de fechamento.** Tempo real exige contrato pago com a B3.
+
+## 9. Plano para escalar para todos os ativos
+
+Não dá para montar um ativo por vez: o código já é genérico e o que falta é **gerar a lista `EMPRESAS` sozinho** e **baixar em lote**. A estimativa é de uns 2 dias de trabalho. Faça nesta ordem e teste cada passo com 20 ou 30 ativos antes de rodar com todos.
+
+### 9.1 Montar o universo automaticamente
+
+Crie um arquivo `universo.py` (ou uma função) que gera `cache/universo.json` uma vez por semana, com uma linha por ativo no mesmo formato de `EMPRESAS`:
+
+- **Tickers da B3**: do COTAHIST do último pregão. Fique com TPMERC 010 e lote padrão e classifique pelo **ISIN**:
+  - `...ACN...` = ação (exemplo `BRBBASACNOR3`)
+  - `...CTF...` = FII (exemplo `BRMXRFCTF008`)
+  - `...BDR...` = BDR (exemplo `BRGOGLBDR001`)
+  - Confira os códigos BDI no layout oficial do COTAHIST (`SeriesHistoricas_Layout.pdf`, no site da B3) antes de filtrar por eles.
+  - Descarte ativos sem negócio nos últimos 30 dias.
+- **Ações → CNPJ, nome de pregão e setor**:
+  - `GetInitialCompanies` da B3. São cerca de 3.550 registros, e o tipo 1 dá cerca de 567 empresas com ações.
+  - O cadastro da CVM (`https://dados.cvm.gov.br/dados/CIA_ABERTA/CAD/DADOS/cad_cia_aberta.csv`, com setor).
+  - O FCA da CVM (`.../CIA_ABERTA/DOC/FCA/DADOS/fca_cia_aberta_{ano}.zip`, arquivo de valores mobiliários com o código de negociação). Confira os nomes de coluna no arquivo.
+  - Os 4 primeiros caracteres do ticker são o `b3`.
+  - Marque `banco: True` quando o setor da CVM for banco, ou quando a DFP tiver a estrutura de instituição financeira.
+- **FIIs → CNPJ**: no `inf_mensal_fii_{ano}_geral` da CVM, ligue o ISIN da cota ao CNPJ do fundo (o nome das colunas muda entre anos, veja a seção 6). Segmento e tipo vêm do próprio informe (mandato e segmento de atuação).
+- **BDRs → empresa nos EUA**: do `GetListedSupplementCompany` do BDR (vem código e paridade) e do ticker americano, ache o **CIK** (Wikipédia "List of S&P 500 companies" tem o CIK; `company_tickers.json` da SEC, se acessível). Fique só com as empresas que entregam balanço à SEC (10-K/10-Q). Pule ETFs e BDRs de empresas não americanas, ou trate sem balanço.
+- **S&P 500 sem BDR**: lista da Wikipédia (ticker, nome, setor GICS e CIK). Isso pede um **tipo novo `eua`**: ação americana com preço em US$ do Yahoo e balanço da SEC. É o caminho do BDR sem a parte da B3 e sem a conversão. No `acao.html`, reuse `render()` com a moeda em US$ e sem o bloco "dados do BDR"; no `index.html`, adicione o botão "EUA" no filtro de tipos.
+
+### 9.2 Baixar em lote, não ativo por ativo
+
+O robô de hoje já baixa os zips da CVM uma vez e filtra pelos CNPJs. Em escala:
+
+- **Cotações**: **um** COTAHIST diário por dia, lido uma vez, com uma linha acrescentada em `cache/cotacoes/{T}.csv` para cada ticker. Hoje `atualizar_cotacoes` é chamada por ativo; troque por uma chamada única com todos os tickers. Ela já aceita uma lista.
+- **Balanços BR**: DFP e ITR do ano atual e do anterior, uma vez para todos os CNPJs. Divida por CNPJ em `cache/cvm/{cnpj}/`.
+- **FII**: um zip do informe mensal do ano para todos os fundos. Divida por CNPJ em `cache/fii/{cnpj}/`.
+- **B3 (proventos, desdobramentos, free float)**: são 3 chamadas por ativo, e com cerca de 2.000 ativos isso pesa. Faça cache por idade:
+  - `GetListedSupplementCompany` / `GetListedSupplementFunds`: todo dia (traz os 12 meses).
+  - `GetListedCashDividends` (histórico completo): uma vez por semana.
+  - `GetDetail`: uma vez por mês.
+  - Guarde a data da última busca no cache.
+- **SEC**: balanço só muda a cada trimestre. Busque o `companyfacts` de um CIK uma vez por semana, ou só quando o endpoint `https://data.sec.gov/submissions/CIK{cik}.json` mostrar um 10-Q/10-K novo. Limite: no máximo 10 requisições por segundo.
+- **Yahoo**: uma chamada por ativo americano por dia, usando `range=5d` no dia a dia e o histórico inteiro só na primeira vez.
+- **Paralelismo**: `concurrent.futures.ThreadPoolExecutor(max_workers=8)` para B3, Yahoo e SEC, com novas tentativas e pausa crescente (já existe em `baixar`). Se a B3 ou o Yahoo devolverem 429, baixe para 4 workers.
+- Meta: atualização diária em **menos de 15 minutos** no GitHub Actions. A primeira carga leva horas e pode rodar em partes.
+
+### 9.3 Deixar os arquivos leves
+
+Hoje um JSON tem de 160 a 280 KB, por causa da cotação diária desde 2009. Com 2.000 ativos daria uns 400 MB.
+
+- No `dados/`, grave a cotação como `[data, fechamento]`: diária nos últimos 2 anos e semanal antes disso. O OHLC completo fica só no `cache/`. Ajuste o `chart` da cotação no `acao.html` para ler o formato novo, verificando o tamanho de cada linha para continuar aceitando o antigo.
+- Grave sem espaços (`separators=(',', ':')`, como já está). A Netlify e o GitHub Pages já entregam com gzip.
+- Alvo: até cerca de 50 KB por ativo, uns 100 MB no total.
+- O robô já **não regrava um JSON quando só o horário mudou** (função `gravar`). Isso evita commit e publicação sem dado novo.
+
+### 9.4 Onde guardar e publicar em escala
+
+Commitar 100 MB de JSON todo dia incha o histórico do git (gigabytes por ano). Troque para:
+
+- **`cache/`** fora do git: `actions/cache` com a chave `cache-${{ github.run_id }}` e `restore-keys: cache-`. Isso restaura o último e salva um novo a cada rodada; o limite é 10 GB por repositório. Faça também um backup semanal do cache como *release asset* ou *artifact*, porque o `actions/cache` apaga o que fica 7 dias sem uso.
+- **`dados/`** publicado sem commit:
+  - Opção A, grátis e recomendada: **GitHub Pages via Actions** (`actions/upload-pages-artifact` + `actions/deploy-pages`). O site pode ter até 1 GB e o CORS já vem liberado. As páginas leem os dados via `config.js` (`CI_DADOS_URL = 'https://USUARIO.github.io/REPO/dados/'`).
+  - Opção B: um **site separado na Netlify só para os dados**, publicado com `netlify deploy --prod --dir=dados` (token em secret). O `--prod` substitui o site inteiro, por isso tem que ser um site separado, nunca o site principal. Atenção: no plano por créditos da Netlify, cada publicação gasta 15 dos 300 créditos grátis do mês.
+- O HTML (`index.html`, `acao.html`, `config.js`) continua na Netlify, e só muda quando você muda o código.
+
+### 9.5 Ordem sugerida de trabalho
+
+1. `universo.py` + teste: imprimir quantos ativos de cada tipo e conferir 10 ao acaso no site da B3.
+2. Cotações em lote + JSON enxuto + `acao.html` lendo o formato novo.
+3. Ações BR: rodar 30, comparar 5 com o Investidor10 (checklist da seção 10), depois todas.
+4. FIIs: idem.
+5. BDRs, depois o tipo `eua` (S&P 500).
+6. Cache por idade + paralelismo, medindo o tempo da rodada diária.
+7. Workflow novo (actions/cache + Pages), com aviso claro no log de quantos ativos falharam.
+8. Pesquisa: botão "EUA", conferir que a paginação e a busca continuam rápidas com o índice completo.
+
+## 10. Checklist de validação (rode a cada mudança grande)
+
+- [ ] `python atualizar.py` termina, e o log mostra `ok TICKER` para todos (ou `ERRO` só onde a fonte caiu, com o JSON de ontem mantido).
+- [ ] `index.html`:
+  - [ ] lista todos os ativos;
+  - [ ] busca "maxi" acha o MXRF11, e "brasil" + Enter abre o BBAS3;
+  - [ ] filtro por tipo e setor funciona;
+  - [ ] ordenar por DY e por liquidez funciona;
+  - [ ] paginação funciona.
+- [ ] `acao.html?t=BBAS3`, `?t=GOGL34` e `?t=MXRF11`:
+  - [ ] sem erro no console;
+  - [ ] "Ver mais" abre e fecha;
+  - [ ] menu do topo rola até a seção certa;
+  - [ ] legenda esconde e mostra a série;
+  - [ ] ⓘ abre a explicação;
+  - [ ] "← Pesquisa" volta;
+  - [ ] busca do topo sugere.
+- [ ] Celular (390 px): sem rolagem lateral, e os rótulos dos eixos não se sobrepõem.
+- [ ] Compare com o Investidor10, para 5 ativos de cada tipo:
+  - ações: P/L, P/VP, DY, ROE, margem líquida, LPA, VPA, liquidez e valor de mercado;
+  - FII: DY, P/VP, último rendimento, VP por cota e cotistas.
+  - Diferença aceitável: a do dia de cotação. Se uma passar de 2%, investigue antes de seguir.
+- [ ] Um ativo com desdobramento recente: a cotação antiga e os proventos antigos estão ajustados.
+- [ ] Um banco além do BB (por exemplo ITUB4): lucro de anos antes de 2020 preenchido.
+
+## 11. Como foi feito o teste até aqui
+
+Testes com Playwright no Chromium, com o site servido por `python -m http.server`, em 1200 px e 390 px:
+
+- fluxo da pesquisa (busca, filtros, ordenação, Enter);
+- busca do topo da página do ativo;
+- legendas, ⓘ e "Ver mais";
+- console sem erros.
+
+Repita esse tipo de teste depois de cada mudança no HTML.
