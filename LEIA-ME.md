@@ -52,6 +52,8 @@ A lista se monta sozinha (`universo.py`, uma vez por semana):
   - Empresa americana (10-K/10-Q): balanço da própria SEC.
   - Empresa de fora dos EUA (20-F: TSMC, Nubank, ASML, Alibaba, Inter, Stone, Novo Nordisk...): balanço anual e trimestral do Yahoo Finance, convertido para dólar pelo câmbio de cada data, com o nº de ações em ADRs. Quem não divulga trimestre fica só com o anual, e a página avisa no topo.
 - **ETFs**: todo fundo de índice negociado no último mês (CODBDI 14 no arquivo da B3: BOVA11, IVVB11, SMAL11...). Nome pelo Yahoo; administrador, proventos e desdobramentos pela B3. Não têm balanço: a página mostra cotação, proventos, comparação com índices, quedas e "quanto tempo segurar".
+  - **O que tem dentro**: a carteira do mês que o ETF entrega à CVM (CDA, `cda_fie`), com a porcentagem de cada ativo sobre o patrimônio. A página mostra as 10 maiores e "Ver mais". Sai uns 35 dias depois do fim do mês; quem pediu sigilo à CVM aparece com o aviso.
+  - Os fundos de infraestrutura listados (CDII11, JURO11, os "Isento" do Itaú e do Bradesco) entram junto, com o segmento "Fundo de infraestrutura" e o texto deles.
 
 Ficam de fora, por enquanto:
 

@@ -75,7 +75,14 @@ O plano da seção 9 foi feito para ações, FIIs e BDRs. Falta o tipo `eua` (S&
     - **TTM:** a soma dos 4 últimos trimestres. Sem trimestres, fica o último ano, e o JSON leva `aviso`, que a página mostra no topo.
     - **Ações por ADR:** o nº de ações é contado em ADRs, porque a cotação usada é a do ADR. A proporção sai do P/L do Yahoo (preço do ADR ÷ lucro por ADR) e encaixa numa lista de proporções comuns: TSMC 5, Alibaba e Baidu 8. Pelo valor de mercado não dá certo, porque o Yahoo calcula com a ação de casa e o ADR da TSMC tem uns 15% de ágio. Com prejuízo, usa o valor de mercado.
   - **ETFs** (`tipo: etf`, `montar_etf`, `renderEtf` no `acao.html`): CODBDI 14. Nome pelo Yahoo (`nome_etf` limpa o nome longo), segmento pelo nome (`ETF_TIPOS`), administrador, proventos e desdobramentos pelo `GetListedSupplementFunds` da B3 (typeFund 20).
-  - **Lista:** `VERSAO = 3` no `universo.py`, para refazer a lista na hora.
+  - **Carteira dos ETFs** (`cda_etfs`, `carteira_etf`): o CDA mensal da CVM (`cda_fi_AAAAMM.zip`, arquivo `cda_fie_AAAAMM.csv`, linhas `CLASSES FIIM`). Vale o mês mais recente com pelo menos 50 fundos; o do mês corrente sai incompleto.
+    - **Ligação com o fundo:** o ETF é ligado ao fundo pelo nome. `palavras_fundo` tira acento e as palavras genéricas ("fundo de índice", "responsabilidade limitada", "resp") e compara o resto.
+    - **Porcentagens:** % sobre `VL_PATRIM_LIQ`. Ações emprestadas são somadas à posição. Disponibilidades e valores a receber ou a pagar vão para "caixa e outros".
+    - **Ativo de fora sem nome** (emissor 9000132): vale o código do ativo (QQQ, IAU).
+    - **Sigilo:** quem está só no `cda_fie_CONFID` sai com `sigilo: true`.
+    - **Na página:** `carteiraHTML`, com 10 linhas e "Ver mais" (classe `l10`). Quando um fundo tem mais de 90% da carteira (IVVB11 → iShares Core S&P 500), a nota avisa que o ETF investe por meio de outro fundo.
+  - **Fundos de infraestrutura** listados (CODBDI 14 também) ficam com o segmento "Fundo de infraestrutura" e o texto próprio na página.
+  - **Lista:** `VERSAO = 5` no `universo.py`, para refazer a lista na hora.
 - **Ficaram de fora**:
   - units;
   - FIIs sem ISIN no informe da CVM (uns 15%);

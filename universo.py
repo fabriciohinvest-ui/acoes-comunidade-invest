@@ -20,7 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 import atualizar as A
 
 ARQ = os.path.join(A.CACHE, 'universo.json')
-VERSAO = 4  # suba quando mudar a regra da lista: a lista guardada e refeita na hora, sem esperar a semana
+VERSAO = 5  # suba quando mudar a regra da lista: a lista guardada e refeita na hora, sem esperar a semana
 DIAS = 30  # negociado nesse periodo
 
 
@@ -351,6 +351,7 @@ def bdrs(neg):
 
 # ---------------------------------------------------------------- ETFs (fundos de indice)
 ETF_TIPOS = [  # pelo nome do fundo; o que nao casar fica so "ETF"
+    (r'INFRA|INCENTIVAD|ISENTO', 'Fundo de infraestrutura'),  # FI-Infra listado (debentures incentivadas), nao e ETF de indice
     (r'BITCOIN|CRIPTO|CRYPTO|ETHER|SOLANA|\bHASH|\bBLOCKCHAIN|\bXRP\b|\bDEFI\b|\bWEB3\b', 'Criptoativos'),
     (r'\bOURO\b|\bGOLD\b', 'Ouro'),
     (r'IMA-?B|\bIRF-?M\b|\bIDKA\b|TESOURO|RENDA FIXA|\bDEB[EÊ]NTURE|\bIMA\b|\bCDI\b|\bSELIC\b|\bPRE\b|INFLA[CÇ]|CREDITO PRIVADO|CRÉDITO PRIVADO', 'Renda fixa'),
