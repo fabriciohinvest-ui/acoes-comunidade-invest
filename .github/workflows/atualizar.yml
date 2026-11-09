@@ -129,3 +129,5 @@ jobs:
     steps:
       - id: deploy
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 1800000   # 30 min: com uns 1.600 arquivos, o Pages pode demorar mais que os 10 min padrao para sincronizar
