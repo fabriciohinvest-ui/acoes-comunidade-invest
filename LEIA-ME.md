@@ -48,13 +48,16 @@ A lista se monta sozinha (`universo.py`, uma vez por semana):
 
 - **Ações**: todo código de ação negociado no mercado à vista da B3 no último mês, de empresa que está na lista de companhias da B3. O nome vem do cadastro da CVM, e o setor e o segmento, da classificação da B3.
 - **FIIs**: todo fundo imobiliário negociado no último mês que aparece no informe mensal da CVM (pelo ISIN). O tipo (papel, tijolo, fundo de fundos ou híbrido) sai da carteira do último informe.
-- **BDRs**: BDR de empresa (não de ETF) negociado no último mês, cuja empresa entrega 10-K/10-Q à SEC. A empresa americana é achada pelo nome, e o setor vem do código SIC.
+- **BDRs**: BDR de empresa (não de ETF) negociado no último mês, cuja empresa entrega balanço à SEC. A empresa é achada pelo nome, e o setor vem do código SIC.
+  - Empresa americana (10-K/10-Q): balanço da própria SEC.
+  - Empresa de fora dos EUA (20-F: TSMC, Nubank, ASML, Alibaba, Inter, Stone, Novo Nordisk...): balanço anual e trimestral do Yahoo Finance, convertido para dólar pelo câmbio de cada data, com o nº de ações em ADRs. Quem não divulga trimestre fica só com o anual, e a página avisa no topo.
+- **ETFs**: todo fundo de índice negociado no último mês (CODBDI 14 no arquivo da B3: BOVA11, IVVB11, SMAL11...). Nome pelo Yahoo; administrador, proventos e desdobramentos pela B3. Não têm balanço: a página mostra cotação, proventos, comparação com índices, quedas e "quanto tempo segurar".
 
 Ficam de fora, por enquanto:
 
 - as **units** (SANB11, TAEE11, KLBN11...), porque o nº de ações da CVM conta ON e PN separadas;
 - os FIIs sem ISIN no informe da CVM (uns 15% dos negociados);
-- os BDRs de empresas que entregam 20-F (balanço em IFRS);
+- os BDRs de empresas que não entregam balanço à SEC (SK Hynix, por exemplo);
 - as ações do S&P 500 sem BDR.
 
 A lista `EMPRESAS` do `atualizar.py` continua valendo por cima: o que está escrito lá (nome, segmento, código nos EUA) vence o que veio da lista automática, e esses ativos entram mesmo sem negócio no mês.

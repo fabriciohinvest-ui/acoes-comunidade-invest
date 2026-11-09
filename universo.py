@@ -20,7 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 import atualizar as A
 
 ARQ = os.path.join(A.CACHE, 'universo.json')
-VERSAO = 2  # suba quando mudar a regra da lista: a lista guardada e refeita na hora, sem esperar a semana
+VERSAO = 4  # suba quando mudar a regra da lista: a lista guardada e refeita na hora, sem esperar a semana
 DIAS = 30  # negociado nesse periodo
 
 
@@ -276,6 +276,11 @@ def tickers_sec():
                       lambda: json.loads(A.baixar('https://www.sec.gov/files/company_tickers.json', headers={'User-Agent': A.UA_SEC}, timeout=60)))
 
 
+# nome curto que o nome da B3 nao da (pelo codigo nos EUA)
+NOMES_BDR = {'NU': 'Nubank', 'TSM': 'TSMC (Taiwan Semiconductor)', 'STNE': 'StoneCo', 'NVO': 'Novo Nordisk', 'PAGS': 'PagSeguro',
+             'BABA': 'Alibaba', 'BIDU': 'Baidu', 'PDD': 'PDD (Temu)', 'INTR': 'Inter&Co', 'XP': 'XP Inc'}
+
+
 def bdrs(neg):
     lista = {r['issuingCompany']: r for r in b3_paginas('GetCompaniesBDR') if r.get('codeCategoryBVMF') == '6'}
     sec = list(tickers_sec().values())
@@ -303,8 +308,10 @@ def bdrs(neg):
         if not cands:
             return None
         cod = re.sub(r'\d', '', em['issuingCompany'])
-        # varias classes (GOOGL e GOOG): fica a que mais parece o codigo da B3
-        return max(cands, key=lambda v: (len(os.path.commonprefix([v['ticker'], cod])), -len(v['ticker'])))
+        # varias classes (GOOGL e GOOG): fica a que mais parece o codigo da B3. Codigo de 5 letras terminado em F e a acao
+        # de fora negociada no balcao americano (BPPFF), sem dividendos no Yahoo: o ADR na bolsa (BP) vem antes
+        return max(cands, key=lambda v: (not (len(v['ticker']) == 5 and v['ticker'].endswith('F')),
+                                         len(os.path.commonprefix([v['ticker'], cod])), -len(v['ticker'])))
 
     candidatos = []
     for t, p in neg.items():
@@ -326,11 +333,67 @@ def bdrs(neg):
     out = []
     for t, p, em, cik, us in candidatos:
         s = subs.get(cik)
-        if not s or not any(f in ('10-K', '10-Q') for f in s['filings']['recent']['form']):
-            continue  # empresa estrangeira (20-F, IFRS) ou sem balanco na SEC: o robo le so o US GAAP dos 10-K/10-Q
+        formas = set(s['filings']['recent']['form']) if s else set()
+        if formas & {'10-K', '10-Q'}:
+            estrangeira = False  # balanco da SEC (10-K/10-Q, US GAAP)
+        elif formas & {'20-F', '20-F/A', '40-F'}:
+            estrangeira = True  # empresa de fora dos EUA (TSMC, Nubank...): balanco pelo Yahoo, que traz os trimestres (veja fin_estrangeira)
+        else:
+            continue  # sem balanco na SEC
         setor, segmento = sic_setor(s.get('sic'))
-        out.append({'ticker': t, 'tipo': 'bdr', 'nome': nome_bonito(em['companyName']), 'razao': em['companyName'], 'b3': t[:4],
-                    'cik': cik, 'us': us, 'isin': p['isin'], 'setor': setor, 'segmento': segmento})
+        e = {'ticker': t, 'tipo': 'bdr', 'nome': NOMES_BDR.get(us) or nome_bonito(em['companyName']), 'razao': em['companyName'], 'b3': t[:4],
+             'cik': cik, 'us': us, 'isin': p['isin'], 'setor': setor, 'segmento': segmento}
+        if estrangeira:
+            e['estrangeira'] = True
+        out.append(e)
+    return out
+
+
+# ---------------------------------------------------------------- ETFs (fundos de indice)
+ETF_TIPOS = [  # pelo nome do fundo; o que nao casar fica so "ETF"
+    (r'BITCOIN|CRIPTO|CRYPTO|ETHER|SOLANA|\bHASH|\bBLOCKCHAIN|\bXRP\b|\bDEFI\b|\bWEB3\b', 'Criptoativos'),
+    (r'\bOURO\b|\bGOLD\b', 'Ouro'),
+    (r'IMA-?B|\bIRF-?M\b|\bIDKA\b|TESOURO|RENDA FIXA|\bDEB[EÊ]NTURE|\bIMA\b|\bCDI\b|\bSELIC\b|\bPRE\b|INFLA[CÇ]|CREDITO PRIVADO|CRÉDITO PRIVADO', 'Renda fixa'),
+    (r'S&P|NASDAQ|\bMSCI\b|EUROPA|EUROPE|CHINA|JAP[AÃ]O|JAPAN|\bEUA\b|\bUSA\b|GLOBAL|MUNDO|WORLD|EXTERIOR|EMERGENT|\bIE\b|INVESTIMENTO NO EXTERIOR|INTERNACIONAL', 'Exterior'),
+]
+SIGLAS_ETF = {'S&P', 'MSCI', 'ETF', 'ESG', 'BTG', 'XP', 'BB', 'IT', 'IA', 'AI', 'EUA', 'USA', 'IMA-B', 'IRF-M', 'IDKA', 'CDI', 'IPCA', 'IBOV', 'SMLL',
+              'IDIV', 'IFIX', 'B3', 'BR', 'II', 'III', 'IV', 'NTN-B', 'DI', 'GPS', 'REIT', 'REITS', 'FTSE', 'PIMCO', 'BNP', 'UBS', 'JPM', 'AUVP'}
+
+
+def nome_etf(longo, curto):
+    """nome do ETF a partir do nome longo do Yahoo: "ISHARES S&P 500 CLASSE DE INDICE ..." vira "iShares S&P 500"."""
+    s = (longo or curto or '').strip()
+    s = re.split(r'\s+(?:-\s+)?(?:CLASSE|FUNDO|FDO|FI|FIC|FICFI|FUND)\b|\s+-\s+', s, maxsplit=1, flags=re.I)[0].strip(' -.,')
+    pal = []
+    for w in s.split():
+        u = w.upper()
+        pal.append('iShares' if u == 'ISHARES' else u if u in SIGLAS_ETF or re.search(r'\d', u) and len(u) <= 6 else w.capitalize())
+    return ' '.join(pal) or curto
+
+
+def etfs(neg):
+    """fundos de indice (CODBDI 14 no arquivo da B3): nome pelo Yahoo, guardado por uma semana"""
+    cands = sorted(t for t, p in neg.items() if p['bdi'] == '14' and p['isin'][6:9] == 'CTF' and re.fullmatch(r'[A-Z0-9]{4}1[1-3]', t))
+
+    def meta(t):
+        try:
+            m = A.em_cache(f'yahoo/meta_{t}', 24 * 7, lambda: json.loads(A.baixar(
+                f'https://query1.finance.yahoo.com/v8/finance/chart/{t}.SA?range=5d&interval=1d', headers={'User-Agent': 'Mozilla/5.0'}, timeout=30))['chart']['result'][0]['meta'])
+            return t, m
+        except Exception as ex:
+            print('  aviso: Yahoo sem o nome de', t, repr(ex)[:100])
+            return t, {}
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        metas = dict(ex.map(meta, cands))
+    out = []
+    for t in cands:
+        m = metas.get(t) or {}
+        longo = (m.get('longName') or '').strip()
+        nome = nome_etf(longo, (m.get('shortName') or neg[t].get('nomres') or t).strip())
+        alvo = (longo or nome).upper()
+        segmento = next((g for rx, g in ETF_TIPOS if re.search(rx, alvo)), 'Ações Brasil' if re.search(r'IBOV|BOVESPA|SMALL|SMLL|DIVIDEND|IDIV|BRASIL|\bB3\b', alvo) else 'ETF')
+        out.append({'ticker': t, 'tipo': 'etf', 'nome': nome, 'razao': longo.title() if longo else nome, 'b3': t[:4], 'isin': neg[t]['isin'],
+                    'setor': 'ETF', 'segmento': segmento})
     return out
 
 
@@ -346,7 +409,7 @@ def main():
     if len(neg) < 500:
         sys.exit('a B3 trouxe poucos pregoes; a lista anterior continua valendo')
     partes = {}
-    for nome, func in (('acoes', acoes), ('FIIs', fiis), ('BDRs', bdrs)):
+    for nome, func in (('acoes', acoes), ('FIIs', fiis), ('BDRs', bdrs), ('ETFs', etfs)):
         try:
             partes[nome] = func(neg)
             print(f' {nome}: {len(partes[nome])}')
@@ -355,7 +418,7 @@ def main():
             partes[nome] = None
     if any(v is None for v in partes.values()) and os.path.exists(ARQ):
         antes = json.load(open(ARQ, encoding='utf-8'))['ativos']
-        tipo = {'acoes': 'acao', 'FIIs': 'fii', 'BDRs': 'bdr'}
+        tipo = {'acoes': 'acao', 'FIIs': 'fii', 'BDRs': 'bdr', 'ETFs': 'etf'}
         for nome, v in partes.items():
             if v is None:
                 partes[nome] = [e for e in antes if e['tipo'] == tipo[nome]]
