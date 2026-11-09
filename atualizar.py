@@ -698,6 +698,133 @@ def fin_eua(cik):
     return anual, ttm, ttm_ref, trim
 
 
+# ---------------------------------------------------------------- empresas de fora dos EUA (20-F): balanco pelo Yahoo
+# A SEC tem o 20-F (so anual, e com atraso no companyfacts). O Yahoo Finance traz o balanco anual (uns 4 anos) e o trimestral
+# (uns 5 trimestres) na moeda da empresa, e o valor de mercado do ultimo pregao em dolar. O robo converte tudo para dolar e
+# conta as acoes em ADRs, porque a cotacao que a pagina usa e a do ADR nos EUA (TSMC: 1 ADR = 5 acoes de Taiwan).
+YF_CAMPOS = {  # campo do robo: campos do Yahoo, vale o primeiro que existir
+    'receita': ['TotalRevenue', 'OperatingRevenue'], 'custo_pos': ['CostOfRevenue'], 'lucro_bruto': ['GrossProfit'],
+    'ebit': ['OperatingIncome', 'EBIT'], 'ebitda': ['EBITDA', 'NormalizedEBITDA'], 'lucro_liquido': ['NetIncome'],
+    'lucro_ctrl': ['NetIncomeCommonStockholders', 'NetIncome'], 'imposto': ['TaxProvision'], 'depreciacao': ['ReconciledDepreciation'],
+    'ativo_total': ['TotalAssets'], 'ativo_circ': ['CurrentAssets'], 'passivo_tot': ['TotalLiabilitiesNetMinorityInterest'],
+    'passivo_circ': ['CurrentLiabilities'], 'pl': ['StockholdersEquity'], 'pl_consolidado': ['TotalEquityGrossMinorityInterest', 'StockholdersEquity'],
+    'disponibilidade': ['CashCashEquivalentsAndShortTermInvestments', 'CashAndCashEquivalents'], 'divida_bruta': ['TotalDebt'],
+    'acoes': ['OrdinarySharesNumber', 'ShareIssued'],
+}
+YF_FLUXO = ('receita', 'custo_pos', 'lucro_bruto', 'ebit', 'ebitda', 'lucro_liquido', 'lucro_ctrl', 'imposto', 'depreciacao')
+ADR_RAZOES = (0.1, 0.2, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 40, 50, 100, 200)
+MOEDAS = {'TWD': 'dólares taiwaneses', 'BRL': 'reais', 'EUR': 'euros', 'CNY': 'yuans', 'DKK': 'coroas dinamarquesas', 'GBP': 'libras',
+          'JPY': 'ienes', 'KRW': 'wons', 'HKD': 'dólares de Hong Kong', 'CAD': 'dólares canadenses', 'CHF': 'francos suíços',
+          'INR': 'rúpias', 'MXN': 'pesos mexicanos', 'ARS': 'pesos argentinos', 'CLP': 'pesos chilenos', 'COP': 'pesos colombianos',
+          'SEK': 'coroas suecas', 'NOK': 'coroas norueguesas', 'AUD': 'dólares australianos', 'ILS': 'shekels', 'ZAR': 'rands'}
+
+
+def yahoo_balanco(sym):
+    """{tipo do Yahoo: [[data, moeda, valor]]}, guardado por 20 horas"""
+    tipos = sorted({p + t for p in ('annual', 'quarterly') for v in YF_CAMPOS.values() for t in v}) + ['trailingMarketCap', 'trailingPeRatio']
+
+    def busca():
+        raw = baixar(f'https://query1.finance.yahoo.com/ws/fundamentals-timeseries/v1/finance/timeseries/{sym}?type={",".join(tipos)}'
+                     f'&period1=1420070400&period2={int(time.time())}', headers={'User-Agent': 'Mozilla/5.0'}, timeout=60)
+        out = {}
+        for r in json.loads(raw)['timeseries']['result']:
+            t = r['meta']['type'][0]
+            out[t] = [[v['asOfDate'], v.get('currencyCode'), v['reportedValue']['raw']] for v in (r.get(t) or []) if v and v.get('reportedValue')]
+        return out
+    with _yahoo_vez:
+        return em_cache(f'yahoo/balanco_{sym}', 20, busca)
+
+
+def fin_estrangeira(e, px_us):
+    """(anual, ttm, ttm_ref, trim, aviso) no mesmo formato do fin_eua, em dolar e com o n. de acoes em ADRs"""
+    Y = yahoo_balanco(e['us'])
+
+    def serie(per, campo):
+        for t in YF_CAMPOS[campo]:
+            v = {d: x for d, m, x in Y.get(per + t, [])}
+            if v:
+                return v
+        return {}
+    moeda = next((m for k, L in Y.items() if k.startswith(('annual', 'quarterly')) and 'Share' not in k for d, m, x in L if m), 'USD')
+    if moeda == 'USD':
+        fx = lambda d: 1.0
+    else:
+        cambio, _, _ = yahoo(f'{moeda}USD=X')  # dolares por 1 unidade da moeda da empresa
+        fx = lambda d: preco_em(cambio, d) or (cambio[min(cambio)] if cambio else None)
+    def bruto(per, d):  # valores do periodo em dolar; o n. de acoes ainda em acoes da empresa (vira ADRs no fim)
+        f = fx(d)
+        a = {}
+        for k in YF_CAMPOS:
+            v = serie(per, k).get(d)
+            a[k] = None if v is None else v if k == 'acoes' else (v * f if f else None)
+        return a
+
+    def fechar(a):  # mesmos campos e sinais do balanco americano (fin_eua)
+        a['custos'] = -a['custo_pos'] if a.get('custo_pos') else None
+        if a.get('lucro_bruto') is None and a.get('receita') and a.get('custo_pos'):
+            a['lucro_bruto'] = a['receita'] - a['custo_pos']
+        if a.get('ebitda') is None and a.get('ebit') is not None and a.get('depreciacao'):
+            a['ebitda'] = a['ebit'] + a['depreciacao']
+        if a.get('ativo_total') and a.get('ativo_circ') is not None:
+            a['ativo_nc'] = a['ativo_total'] - a['ativo_circ']
+        pt, plc = a.pop('passivo_tot', None), a.get('pl_consolidado')
+        if pt is not None and a.get('passivo_circ') is not None:
+            a['passivo_nc'] = pt - a['passivo_circ']
+        a['passivo_total'] = pt + plc if pt is not None and plc is not None else pt  # passivo + patrimonio (= ativo total), como no balanco brasileiro
+        d_ = a.get('divida_bruta')
+        a['divida_liquida'] = d_ - (a.get('disponibilidade') or 0) if d_ is not None else None
+        return a
+
+    anual = {}
+    for d in sorted(serie('annual', 'receita') or serie('annual', 'lucro_liquido')):
+        a = fechar(bruto('annual', d))
+        a['fim'] = d
+        anual[int(d[:4])] = a
+    if not anual:
+        raise ValueError('sem balanco anual no Yahoo')
+    ult = max(anual)
+    ttm, ttm_ref, so_anual = dict(anual[ult]), anual[ult]['fim'], True
+    qb = serie('quarterly', 'receita') or serie('quarterly', 'lucro_liquido')
+    qs = sorted(qb)[-4:]
+    if len(qs) == 4 and qs[-1] > ttm_ref and (dt.date.fromisoformat(qs[-1]) - dt.date.fromisoformat(qs[0])).days < 300:
+        Q = [bruto('quarterly', d) for d in qs]
+        t = dict(Q[-1])  # saldos do ultimo trimestre; resultados = soma dos 4 trimestres
+        for k in YF_FLUXO:
+            vs = [q.get(k) for q in Q]
+            t[k] = sum(vs) if all(v is not None for v in vs) else None
+        ttm, ttm_ref, so_anual = fechar(t), qs[-1], False
+    trim = {}
+    for d in sorted(qb):
+        r = bruto('quarterly', d)
+        trim[d] = {'receita': r.get('receita'), 'lucro_liquido': r.get('lucro_liquido'), 'lucro_ctrl': r.get('lucro_ctrl')}
+    # quantas acoes da empresa cada ADR representa (TSMC: 5, Alibaba: 8). Pelo P/L do Yahoo, que usa o preco do ADR:
+    # o valor de mercado do Yahoo usa a acao de casa, e o ADR pode ter agio (o da TSMC fica uns 15% acima).
+    # Com prejuizo (sem P/L), vai pelo valor de mercado mesmo.
+    p_hoje = px_us[max(px_us)] if px_us else None
+    n_hoje, ll = ttm.get('acoes'), ttm.get('lucro_ctrl') or ttm.get('lucro_liquido')
+    pe = (Y.get('trailingPeRatio') or [[None, None, None]])[-1][2]
+    mc = (Y.get('trailingMarketCap') or [[None, None, None]])[-1][2]
+    r = p_hoje * n_hoje / (pe * ll) if p_hoje and n_hoje and pe and pe > 0 and ll and ll > 0 else p_hoje * n_hoje / mc if p_hoje and n_hoje and mc else None
+    razao = None
+    if r:
+        razao = min(ADR_RAZOES, key=lambda x: abs(__import__('math').log(x / r)))
+        if abs(razao / r - 1) > 0.25:
+            razao = round(r, 2)
+    for a in [*anual.values(), ttm]:
+        a['acoes'] = a['acoes'] / razao if a.get('acoes') and razao else None
+    partes = []
+    if moeda != 'USD':
+        partes.append(f'A empresa publica o balanço em {MOEDAS.get(moeda, moeda)}; aqui ele aparece em dólar (US$), convertido pelo câmbio do fim de cada período.')
+    if so_anual:
+        partes.append(f'Esta empresa não divulga balanço trimestral completo: os números do balanço são anuais, do ano fechado em '
+                      f'{MESES[int(ttm_ref[5:7]) - 1]}/{ttm_ref[:4]}. A cotação e os indicadores que usam o preço (P/L, P/VP, DY) atualizam todo dia.')
+    else:
+        partes.append('Empresa de fora dos EUA (entrega à SEC o relatório anual 20-F): o balanço anual e o trimestral vêm do Yahoo Finance.')
+    if not razao:
+        partes.append('Não deu para calcular quantas ações cada ADR representa: os indicadores por ação ficam "-".')
+    return anual, ttm, ttm_ref, trim, ' '.join(partes)
+
+
 # ---------------------------------------------------------------- outros
 def ptax():
     """dolar PTAX venda diario desde 2009 (SGS 1): baixado uma vez por rodada, para todos os BDRs"""
@@ -838,6 +965,8 @@ def proventos_bdr(e, prov_b3, divs_us, px):
         return reais
     # casa cada provento da B3 com o dividendo americano mais proximo para calibrar
     us = [(dt.date.fromisoformat(d), v) for d, v in divs_us]
+    if not us:
+        return reais  # sem dividendos nos EUA para calibrar: ficam so os da B3
     ks, dif_dc, dif_pg = [], [], []
     for p in reais:
         dc = dt.date.fromisoformat(p['data_com'])
@@ -1213,9 +1342,72 @@ def montar_fii(e, historico=False):
             'composicao': {'data': max(cvm), 'itens': itens}, 'cotistas': cotistas, 'proventos': prov, 'eventos': [{'data': d, 'fator': k} for d, k in fat]}
 
 
+def montar_etf(e, historico=False):
+    """ETF (fundo de indice): cotacao, proventos e eventos da B3 e do Yahoo. Nao tem balanco."""
+    print('==', e['ticker'])
+    cot_raw = cot_ler(e['ticker'])
+    if not cot_raw:
+        raise ValueError('sem cotacao na B3')
+    par = {'cnpj': '0', 'identifierFund': e['b3'], 'typeFund': 20}
+    q = base64.b64encode(json.dumps(par).encode()).decode()
+    try:
+        sup = em_cache(f'b3/GetListedSupplementFunds/{chave_arquivo(par)}', 20,
+                       lambda: json.loads(baixar(f'https://sistemaswebb3-listados.b3.com.br/fundsProxy/fundsCall/GetListedSupplementFunds/{q}', timeout=60)))
+    except ValueError:
+        sup = {}
+    fat = []
+    for s_ in sup.get('stockDividends') or []:
+        if s_.get('isinCode') == e['isin'] and s_.get('lastDatePrior') and s_['label'] in EVENTOS_PRECO:
+            f = num_br(s_['factor'])
+            fat.append((data_br(s_['lastDatePrior']), f if s_['label'] == 'GRUPAMENTO' else 1 + f / 100))
+    fat = validar_eventos(sorted(set(fat), reverse=True), cot_raw)
+    cot = ajustar(cot_raw, fat)
+    dias = sorted(cot)
+    hoje_d = dias[-1]
+    preco = cot[hoje_d][3]
+    # proventos: a B3 mostra 12 meses (guardados para o historico crescer); os mais antigos vem do Yahoo
+    b3 = [{'tipo': c['label'].title(), 'data_com': data_br(c['lastDatePrior']), 'pagamento': data_br(c['paymentDate']) if c.get('paymentDate') else None,
+           'valor': num_br(c['rate'])} for c in sup.get('cashDividends') or [] if c.get('isinCode') == e['isin'] and c.get('lastDatePrior')]
+    arq = os.path.join(CACHE, 'proventos', e['ticker'] + '.json')
+    os.makedirs(os.path.dirname(arq), exist_ok=True)
+    guard = json.load(open(arq)) if os.path.exists(arq) else []
+    reais = sorted({(p['data_com'], round(p['valor'], 6)): p for p in guard + b3}.values(), key=lambda p: p['data_com'])
+    if reais:
+        json.dump(reais, open(arq, 'w'), ensure_ascii=False, indent=0)
+    prov = list(reais)
+    try:
+        _, divs, _ = yahoo(e['ticker'] + '.SA', diario=False)
+    except Exception as ex:
+        print('  Yahoo indisponivel:', ex)
+        divs = []
+    for d, v in divs:
+        ant = [x for x in dias if x < d]
+        dc = ant[-1] if ant else d
+        if any(abs((dt.date.fromisoformat(p['data_com']) - dt.date.fromisoformat(dc)).days) < 8 for p in prov):
+            continue  # o mesmo provento que ja veio da B3
+        prov.append({'tipo': 'Rendimento', 'data_com': dc, 'pagamento': None, 'valor': round(v, 4)})
+    prov.sort(key=lambda p: p['data_com'], reverse=True)
+    um_ano = (dt.date.fromisoformat(hoje_d) - dt.timedelta(days=365)).isoformat()
+    base = next((d for d in dias if d >= um_ano), dias[0])
+    prov12 = sum(p['valor'] for p in prov if um_ano < p['data_com'] <= hoje_d)
+    liq = statistics.mean([cot[d][4] for d in dias[-21:]])
+    ind = {'dy': prov12 / preco * 100 if preco else None, 'prov_12m': prov12, 'var_12m': (preco / cot[base][3] - 1) * 100,
+           'rent_12m': ((preco + prov12) / cot[base][3] - 1) * 100, 'ultimo_provento': prov[0]['valor'] if prov else None,
+           'ultimo_provento_data': prov[0]['data_com'] if prov else None, 'liquidez_diaria': liq}
+    info = {'nome_completo': e.get('razao') or e['nome'], 'administrador': (sup.get('ifd') or '').strip() or None,
+            'listado_desde': data_br(sup['quotedPer']) if sup.get('quotedPer') else None, 'nome_pregao': (sup.get('fund') or '').strip() or None,
+            'isin': e['isin'], 'liquidez_diaria': liq}
+    return {'ticker': e['ticker'], 'tipo': 'etf', 'nome': e['nome'], 'razao': e.get('razao') or e['nome'], 'setor': e['setor'], 'segmento': e['segmento'],
+            'atualizado': dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).strftime('%Y-%m-%d %H:%M'), 'fechamento': hoje_d, 'preco': preco,
+            'cotacao': [[d] + cot[d] for d in dias], 'moeda_balanco': 'BRL', 'balanco_ref': hoje_d, 'indicadores': ind, 'info': info,
+            'anual': {}, 'ttm': {}, 'hist_indicadores': {}, 'trimestres': {}, 'proventos': prov, 'eventos': [{'data': d, 'fator': k} for d, k in fat]}
+
+
 def montar(e, historico=False):
     if e['tipo'] == 'fii':
         return montar_fii(e, historico)
+    if e['tipo'] == 'etf':
+        return montar_etf(e, historico)
     print('==', e['ticker'])
     cot_raw = cot_ler(e['ticker'])
     if not cot_raw:
@@ -1284,9 +1476,13 @@ def montar(e, historico=False):
                 'setor_b3': det.get('industryClassification'), 'cnpj': e['cnpj'], 'site': det.get('website'), 'atividade': det.get('activity')}
         moeda = 'BRL'
     else:
-        anual, ttm, ref, trim = fin_eua_guardado(e['cik'])
         px_us, divs_us, splits = yh
-        splits_depois = lambda d: __import__('math').prod(k for dd, k in splits if dd > d)
+        if e.get('estrangeira'):  # 20-F: balanco pelo Yahoo, ja em dolar e com as acoes em ADRs de hoje (sem somar desdobramentos)
+            anual, ttm, ref, trim, out['aviso'] = fin_estrangeira(e, px_us)
+            splits_depois = lambda d: 1
+        else:
+            anual, ttm, ref, trim = fin_eua_guardado(e['cik'])
+            splits_depois = lambda d: __import__('math').prod(k for dd, k in splits if dd > d)
         prov = proventos_bdr({**e, 'desde': e.get('desde') or dias[0]}, prov, divs_us, px)  # sem estimar antes do BDR existir
         d_us = max(px_us); p_us = px_us[d_us]
         n = ttm['acoes']

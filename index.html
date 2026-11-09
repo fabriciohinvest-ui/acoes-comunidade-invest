@@ -55,16 +55,16 @@ footer{font-size:12.5px;color:var(--mu);margin-top:20px}
 </style>
 </head>
 <body>
-<nav class="bar"><div class="in"><b>Comunidade Invest</b><a class="on" href="index.html">Ações, FIIs e BDRs</a><a href="tesouro.html">Tesouro Direto</a></div></nav>
+<nav class="bar"><div class="in"><b>Comunidade Invest</b><a class="on" href="index.html">Ações, FIIs, BDRs e ETFs</a><a href="tesouro.html">Tesouro Direto</a></div></nav>
 <main class="wrap">
-  <h1>Pesquise uma ação, FII ou BDR</h1>
+  <h1>Pesquise uma ação, FII, BDR ou ETF</h1>
   <p class="sub" id="sub">Digite o código (ex.: BBAS3) ou o nome da empresa ou do fundo.</p>
   <div class="busca">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
     <input id="q" type="search" placeholder="Buscar por código ou nome" autocomplete="off" aria-label="Buscar ativo">
   </div>
   <div class="filtros">
-    <div class="seg" id="tipos"><button data-t="" class="on">Todos</button><button data-t="acao">Ações</button><button data-t="fii">FIIs</button><button data-t="bdr">BDRs</button></div>
+    <div class="seg" id="tipos"><button data-t="" class="on">Todos</button><button data-t="acao">Ações</button><button data-t="fii">FIIs</button><button data-t="bdr">BDRs</button><button data-t="etf">ETFs</button></div>
     <select class="sel" id="setor" aria-label="Setor"><option value="">Todos os setores</option></select>
     <span class="cont" id="cont"></span>
   </div>
@@ -85,7 +85,7 @@ const nf=c=>new Intl.NumberFormat('pt-BR',{minimumFractionDigits:c,maximumFracti
 const isNum=v=>v!=null&&isFinite(v);
 const grande=(v,m)=>{if(!isNum(v))return'-';const a=Math.abs(v),p=m==='USD'?'US$ ':'R$ ';return a>=1e12?p+N2.format(a/1e12)+' tri':a>=1e9?p+N2.format(a/1e9)+' bi':a>=1e6?p+N2.format(a/1e6)+' mi':p+N2.format(a)};
 const tira=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
-const TIPO={acao:'Ação',fii:'FII',bdr:'BDR'};
+const TIPO={acao:'Ação',fii:'FII',bdr:'BDR',etf:'ETF'};
 const COLS=[['ticker','Ativo',r=>`<div class="at"><div class="logo">${r.ticker.slice(0,4)}</div><div><b>${r.ticker}<span class="tag">${TIPO[r.tipo]||r.tipo}</span></b><small>${r.nome}</small></div></div>`],
   ['preco','Cotação',r=>'R$ '+N2.format(r.preco)],['var_dia','Dia',r=>pc(r.var_dia,1)],['var_12m','12 meses',r=>pc(r.var_12m,1)],
   ['dy','DY',r=>isNum(r.dy)?N2.format(r.dy)+'%':'-'],['pvp','P/VP',r=>isNum(r.pvp)?N2.format(r.pvp):'-'],['pl','P/L',r=>isNum(r.pl)?N2.format(r.pl):'-'],
