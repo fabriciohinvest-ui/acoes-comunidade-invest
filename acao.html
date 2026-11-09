@@ -162,6 +162,9 @@ h4.tech{font-size:13.5px;margin:14px 0 0;color:var(--mu);font-weight:600}
 @media (max-width:760px){.trmE{grid-template-columns:minmax(0,1fr) auto 26px}.trmX{grid-column:3}.cmpQuemC ul{grid-template-columns:1fr 1fr}}
 @media (max-width:420px){.cmpQuemC ul{grid-template-columns:1fr}}
 .aviso{border:1px solid var(--line);border-left:4px solid var(--c3);border-radius:10px;background:var(--s);padding:12px 16px;margin:0 0 14px}.aviso b{font-size:14px}.aviso p{font-size:13.5px;color:var(--mu);margin:4px 0 0;line-height:1.45}
+.sec.fechado.l10 tbody tr:nth-child(n+11){display:none}
+.cart td{vertical-align:middle}.cart .ctn{color:var(--mu)}.cart .ctt{color:var(--mu);font-size:13px}.ctb{display:inline-block;vertical-align:middle;width:80px;height:6px;border-radius:3px;background:var(--soft);margin-right:10px;overflow:hidden}.ctb i{display:block;height:100%;background:var(--c2);border-radius:3px}
+@media (max-width:760px){.cart .ctt{display:none}.cart th:nth-child(2){display:none}.ctb{width:44px;margin-right:6px}}
 </style>
 </head>
 <body>
@@ -528,20 +531,30 @@ const FF={...F,r:brl3,g:v=>grande(v,'R$'),n:v=>isNum(v)?N0.format(v):'-'};
 function renderEtf(){
   M='R$';const I=A.indicadores,f=A.info,c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],temProv=A.proventos.length>0;
   document.title=`${A.ticker}: ${A.nome} · Comunidade Invest`;
-  const secs=[['cotacao','Cotação'],['sobre','ETF'],...(temProv?[['dividendos','Proventos']]:[]),['graficos','Gráficos'],['assinantes','Assinantes']];
+  const C=A.carteira,temCart=C&&!C.sigilo&&C.itens&&C.itens.length,infra=A.segmento==='Fundo de infraestrutura';
+  const secs=[['cotacao','Cotação'],['sobre',infra?'Fundo':'ETF'],...(temCart?[['carteira','Carteira']]:[]),...(temProv?[['dividendos','Proventos']]:[]),['graficos','Gráficos'],['assinantes','Assinantes']];
   $('#nav').innerHTML=`<a class="volta" href="${PESQUISA}">← Pesquisa</a><b>${A.ticker}</b>`+secs.map(([i,t])=>`<a data-go="${i}">${t}</a>`).join('');
   const pc=v=>`<b class="num ${v>=0?'pos':'neg'}">${(v>=0?'+':'')+N2.format(v)}%</b>`;
-  $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">ETF · ${A.segmento} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
+  $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${infra?'Fundo de infraestrutura (FI-Infra)':'ETF · '+A.segmento} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
   <div class="kp"><div><span>Cotação</span><b class="num">${brl(A.preco)}</b><small class="num ${u[4]>=ant[4]?'pos':'neg'}">${(u[4]>=ant[4]?'+':'')+N2.format((u[4]/ant[4]-1)*100)}% no dia</small></div>
   <div><span>Variação (12M)</span>${pc(I.var_12m)}</div>${temProv?`<div><span>Rentabilidade (12M)</span>${pc(I.rent_12m)}<small>cota + proventos</small></div><div><span>Dividend Yield</span><b class="num">${F.p(I.dy)}</b></div>`:''}<div><span>Liquidez diária</span><b class="num">${grande(I.liquidez_diaria,'R$')}</b><small>média do último mês</small></div></div>
   ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><div class="tecbox"><button class="techead" id="tecTg" aria-expanded="'+(st.tecAb?'true':'false')+'"><span>Análise técnica</span><small>'+(st.tecAb?'Ver menos ▴':'Ver mais ▾')+'</small></button><div id="tecCorpo"'+(st.tecAb?'':' hidden')+'><div class="tec" id="tec" role="group" aria-label="Análise técnica"><span class="tl">No gráfico do preço:</span>'+tecBotoes()+'</div><div id="gTec"></div></div></div><p class="note">Clique no gráfico e arraste para o lado para ver quanto o preço subiu ou caiu entre duas datas (só o preço, sem proventos). Preço de fechamento na B3, corrigido por desdobramentos e grupamentos. Indicadores técnicos descrevem o comportamento passado do preço; não são recomendação de compra ou venda.</p>')}
-  ${sec('sobre','Informações sobre o ETF','',`<p class="note" style="margin:0 0 12px">O ETF é um fundo negociado na bolsa como uma ação. Ele segue um índice: cada cota acompanha o sobe e desce de uma cesta de ativos. Não tem balanço, lucro ou P/L como uma empresa.</p><div class="inf">${infHTML([['Nome completo',f.nome_completo],['Tipo',A.segmento],['Administrador',f.administrador||'-'],['Na bolsa desde',f.listado_desde?dBR(f.listado_desde):'-'],['Liquidez média diária',grande(I.liquidez_diaria,'R$')],['Proventos',temProv?`${brl3(I.prov_12m)} por cota nos últimos 12 meses`:'Não distribui: o que o fundo recebe fica na cota'],['Código ISIN',f.isin]])}</div>`)}
+  ${sec('sobre',infra?'Informações sobre o fundo':'Informações sobre o ETF','',`<p class="note" style="margin:0 0 12px">${infra?'Fundo de infraestrutura negociado na bolsa (FI-Infra): investe em debêntures de projetos de infraestrutura, que dão isenção de imposto de renda para pessoa física. Não segue um índice como um ETF.':'O ETF é um fundo negociado na bolsa como uma ação. Ele segue um índice: cada cota acompanha o sobe e desce de uma cesta de ativos. Não tem balanço, lucro ou P/L como uma empresa.'}</p><div class="inf">${infHTML([['Nome completo',f.nome_completo],['Tipo',A.segmento],['Administrador',f.administrador||'-'],['Na bolsa desde',f.listado_desde?dBR(f.listado_desde):'-'],['Liquidez média diária',grande(I.liquidez_diaria,'R$')],['Proventos',temProv?`${brl3(I.prov_12m)} por cota nos últimos 12 meses`:'Não distribui: o que o fundo recebe fica na cota'],['Código ISIN',f.isin]])}</div>`)}
+  ${temCart?sec('carteira','O que tem dentro do '+A.ticker,'',carteiraHTML(C),C.itens.length>10?'l10':''):C&&C.sigilo?sec('carteira','O que tem dentro do '+A.ticker,'',`<p class="note" style="margin:0">A gestora pediu sigilo da carteira de ${mesBR(C.mes.slice(0,4)+'-'+C.mes.slice(4))} à CVM: os fundos podem adiar a divulgação por um tempo. A composição aparece aqui quando for publicada.</p>`):''}
   ${temProv?sec('dividendos','Proventos · '+A.ticker,'','<div class="tw" id="tProv"></div><div class="pg" id="pg"></div>','l5'):''}
   <h2 class="divisor" id="graficos">Gráficos</h2>
   ${secExtrasGraf()}
   <footer><p><b>Fontes:</b> B3 (cotações, proventos, desdobramentos e índices), Yahoo Finance (nome do fundo e proventos antigos), Banco Central (CDI e IPCA). Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
   <p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>`;
   ligar();ligarBusca();desenhar('cot');if(temProv)desenhar('prov');ligarExtras();
+  $$('#carteira [data-abrir]').forEach(a=>a.onclick=e=>{e.preventDefault();const t=a.dataset.abrir;if(window.CI_ACOES&&window.CI_ACOES[t])abrirAcao(t);else location.href='?t='+encodeURIComponent(t)});
+}
+// tabela "o que tem dentro": as 10 maiores e "Ver mais" para o resto (CVM, carteira do mes)
+function carteiraHTML(C){
+  const mx=Math.max(...C.itens.map(x=>x[2]),1),um=C.itens[0],feeder=um&&um[2]>90&&/fundo|exterior/i.test(um[3]);
+  const lin=([n,cod,p,tipo,pag])=>`<tr><td>${cod?`<b>${pag?`<a href="?t=${cod}" data-abrir="${cod}">${cod}</a>`:cod}</b> `:''}<span class="ctn">${cod&&n===cod?'':n}</span></td><td class="ctt">${tipo}</td><td class="r"><span class="ctb"><i style="width:${Math.max(0,p)/mx*100}%"></i></span>${N2.format(p)}%</td></tr>`;
+  return`<div class="tw"><table class="t num cart"><thead><tr><th>Ativo</th><th>Tipo</th><th class="r">% do patrimônio</th></tr></thead><tbody>${C.itens.map(lin).join('')}</tbody></table></div>
+  <p class="note">${C.itens.length} ${C.itens.length>1?'ativos':'ativo'} na carteira de ${dBR(C.data)}, último informe mensal entregue à CVM (sai uns 35 dias depois do fim do mês). Percentual sobre o patrimônio do fundo; ações emprestadas pelo fundo estão somadas à posição.${Math.abs(C.outros)>=0.05?` Caixa, valores a receber e a pagar: ${N2.format(C.outros)}%.`:''}${feeder?' Este ETF investe por meio de outro fundo: a carteira mostra esse fundo, não os ativos que estão dentro dele.':''}</p>`;
 }
 function renderFii(){
   M='R$';const I=A.indicadores,f=A.info;

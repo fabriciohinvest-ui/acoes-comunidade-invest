@@ -21,7 +21,7 @@ empresas americanas) mais as EMPRESAS abaixo, que valem por cima (nome e segment
 Em escala, cada arquivo grande (cotacoes do dia, balancos da CVM, informe dos FIIs, comunicados) e baixado uma vez
 para todos os ativos, e as respostas da B3, da SEC e do Yahoo ficam guardadas em cache/rede/ por algumas horas ou dias.
 """
-import csv, io, json, os, re, sys, time, zipfile, base64, statistics, threading, urllib.request, datetime as dt
+import csv, io, json, os, re, sys, time, zipfile, unicodedata, base64, statistics, threading, urllib.request, datetime as dt
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 import builtins
@@ -1342,6 +1342,112 @@ def montar_fii(e, historico=False):
             'composicao': {'data': max(cvm), 'itens': itens}, 'cotistas': cotistas, 'proventos': prov, 'eventos': [{'data': d, 'fator': k} for d, k in fat]}
 
 
+# ---------------------------------------------------------------- carteira dos ETFs (CDA da CVM)
+# Todo fundo entrega a carteira do mes a CVM (Composicao e Diversificacao das Aplicacoes). Os ETFs ("classes de indice",
+# CLASSES FIIM) ficam no cda_fie; quem pediu sigilo aparece so no cda_fie_CONFID, sem os ativos. Sai uns 35 dias depois do mes.
+CDA_URL = 'https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS'
+CDA_FORA = ('Valores a receber', 'Valores a pagar', 'Disponibilidades')  # entram juntos como "caixa e outros"
+PALAVRAS_GENERICAS = {'FUNDO', 'FUNDOS', 'FD', 'FDO', 'DE', 'DO', 'DA', 'DOS', 'DAS', 'EM', 'E', 'D', 'INDICE', 'CLASSE', 'CLASSES', 'INVESTIMENTO',
+                      'INVEST', 'INV', 'RESPONSABILIDADE', 'RESP', 'LIMITADA', 'LTDA', 'FI', 'FIC', 'COTAS', 'COTA', 'IE', 'FIF'}
+
+
+def palavras_fundo(nome):
+    """palavras que distinguem o fundo (sem acento, sem "fundo de indice", "responsabilidade limitada"...)"""
+    s = unicodedata.normalize('NFKD', (nome or '').upper()).encode('ascii', 'ignore').decode()
+    return frozenset(w for w in re.sub(r'[^A-Z0-9]+', ' ', s).split() if w not in PALAVRAS_GENERICAS)
+
+
+def cda_etfs():
+    """{'mes', 'fundos': {cnpj: {nome, data, pl, itens: {chave: [nome, codigo, valor, tipo]}}}, 'sigilo': [nomes]}"""
+    def busca():
+        hoje = dt.date.today()
+        for k in range(1, 6):
+            m = hoje.month - k
+            y, m = (hoje.year, m) if m > 0 else (hoje.year - 1, m + 12)
+            ym = f'{y}{m:02d}'
+            z = baixar(f'{CDA_URL}/cda_fi_{ym}.zip', timeout=300)
+            if not z:
+                continue
+            zf = zipfile.ZipFile(io.BytesIO(z))
+            if f'cda_fie_{ym}.csv' not in zf.namelist():
+                continue
+            fundos = {}
+            for r in csv.DictReader(io.TextIOWrapper(zf.open(f'cda_fie_{ym}.csv'), encoding='latin-1'), delimiter=';'):
+                if 'FIIM' not in r['TP_FUNDO_CLASSE']:
+                    continue
+                f = fundos.setdefault(r['CNPJ_FUNDO_CLASSE'], {'nome': r['DENOM_SOCIAL'].strip(), 'data': r['DT_COMPTC'],
+                                                               'pl': float(r['VL_PATRIM_LIQ'] or 0), 'itens': {}})
+                tp, ta = r['TP_APLIC'].strip(), (r['TP_ATIVO'] or '').strip()
+                if tp in CDA_FORA:
+                    continue
+                v = float(r['VL_MERC_POS_FINAL'] or 0)
+                cod = (r['CD_ATIVO'] or '').strip()
+                ds = (r.get('DS_ATIVO') or '').strip()
+                emissor = (r.get('EMISSOR') or '').strip()
+                if emissor.isdigit():
+                    emissor = ''  # codigo interno do emissor no exterior (9000132): vale o codigo do ativo (QQQ)
+                if tp.startswith('Ações') or tp.startswith('Brazilian Depository'):  # inclui as acoes emprestadas, somadas a posicao
+                    chave = nome = cod or ds
+                    tipo = 'BDR' if 'BDR' in ta or 'Depository' in tp else ta or 'Ação'
+                    if not cod:
+                        tipo = 'Ação no exterior'  # sem codigo da B3 (ex.: "NCIQ US EQUITY")
+                elif tp == 'Investimento no Exterior':
+                    chave = nome = emissor or ds or cod
+                    tipo, cod = ('Fundo no exterior' if 'Fundo' in ta else 'Ativo no exterior'), ''
+                elif tp == 'Cotas de Fundos':
+                    chave = nome = emissor or cod
+                    tipo, cod = 'Cotas de fundo', ''
+                elif tp.startswith('Títulos Públicos'):
+                    nome = f"{ta or 'Título público'} {r['DT_VENC'][:4]}".strip() if r.get('DT_VENC') else ta or 'Título público'
+                    chave, tipo, cod = nome, 'Título público', ''
+                elif tp.startswith('Operações Compromissadas'):
+                    chave = nome = 'Operações compromissadas'
+                    tipo, cod = 'Caixa', ''
+                else:
+                    nome = emissor or (r.get('DS_ATIVO') or '').strip() or cod or tp
+                    chave, tipo = tp + '|' + nome, ta or tp
+                it = f['itens'].setdefault(chave, [nome, cod, 0.0, tipo])
+                it[2] += v
+            if len(fundos) < 50:
+                continue  # arquivo do mes ainda incompleto: vale o anterior
+            sigilo = []
+            if f'cda_fie_CONFID_{ym}.csv' in zf.namelist():
+                sigilo = sorted({r['DENOM_SOCIAL'].strip() for r in csv.DictReader(io.TextIOWrapper(zf.open(f'cda_fie_CONFID_{ym}.csv'), encoding='latin-1'), delimiter=';')
+                                 if 'FIIM' in r['TP_FUNDO_CLASSE']})
+            print(f' CVM carteira dos ETFs: {ym}, {len(fundos)} fundos ({len(sigilo)} com sigilo)')
+            return {'mes': ym, 'fundos': fundos, 'sigilo': sigilo}
+        return {}
+    return memo('cda_etfs', lambda: em_cache('cvm/cda_etfs', 24 * 3, busca))
+
+
+def carteira_etf(e):
+    """carteira do ETF no CDA, achado pelo nome: {data, itens: [[nome, codigo, %, tipo, tem_pagina]], outros, sigilo}"""
+    C = cda_etfs()
+    if not C:
+        return None
+    alvo = palavras_fundo(e.get('razao') or e['nome'])
+    if not alvo:
+        return None
+    por = {cnpj: palavras_fundo(f['nome']) for cnpj, f in C['fundos'].items()}
+    achados = [c for c, p in por.items() if p == alvo] or [c for c, p in por.items() if p and (alvo <= p or p <= alvo)]
+    if len(achados) != 1:
+        if any(palavras_fundo(n) == alvo for n in C.get('sigilo', [])):
+            return {'sigilo': True, 'mes': C['mes']}
+        return None
+    f = C['fundos'][achados[0]]
+    if not f['pl']:
+        return None
+    nomes = memo('nomes_ativos', lambda: {x['ticker']: x['nome'] for x in carregar_empresas()})
+    itens = []
+    for nome, cod, v, tipo in f['itens'].values():
+        pct = v / f['pl'] * 100
+        if abs(pct) < 0.005:
+            continue
+        itens.append([nomes.get(cod, nome) if cod else nome, cod or None, round(pct, 3), tipo, cod in nomes])
+    itens.sort(key=lambda x: -x[2])
+    return {'data': f['data'], 'itens': itens, 'outros': round(100 - sum(x[2] for x in itens), 3), 'sigilo': False}
+
+
 def montar_etf(e, historico=False):
     """ETF (fundo de indice): cotacao, proventos e eventos da B3 e do Yahoo. Nao tem balanco."""
     print('==', e['ticker'])
@@ -1400,7 +1506,8 @@ def montar_etf(e, historico=False):
     return {'ticker': e['ticker'], 'tipo': 'etf', 'nome': e['nome'], 'razao': e.get('razao') or e['nome'], 'setor': e['setor'], 'segmento': e['segmento'],
             'atualizado': dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).strftime('%Y-%m-%d %H:%M'), 'fechamento': hoje_d, 'preco': preco,
             'cotacao': [[d] + cot[d] for d in dias], 'moeda_balanco': 'BRL', 'balanco_ref': hoje_d, 'indicadores': ind, 'info': info,
-            'anual': {}, 'ttm': {}, 'hist_indicadores': {}, 'trimestres': {}, 'proventos': prov, 'eventos': [{'data': d, 'fator': k} for d, k in fat]}
+            'anual': {}, 'ttm': {}, 'hist_indicadores': {}, 'trimestres': {}, 'proventos': prov, 'eventos': [{'data': d, 'fator': k} for d, k in fat],
+            'carteira': carteira_etf(e)}
 
 
 def montar(e, historico=False):
