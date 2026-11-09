@@ -69,10 +69,17 @@ O plano da seção 9 foi feito para ações, FIIs e BDRs. Falta o tipo `eua` (S&
   - **Lista refeita quando a regra muda**: `universo.json` guarda `versao`. Se mudar a regra da lista, suba `VERSAO` no `universo.py`, e a próxima rodada refaz a lista sem esperar a semana.
   - **CNPJ de filial**: quando a B3 traz o CNPJ de uma filial (Tupy), a lista usa o da matriz no cadastro da CVM, desde que só exista uma companhia com aquela raiz.
 - **Log**: com 8 ativos ao mesmo tempo, cada linha sai inteira e, durante um ativo, com `[TICKER]` na frente.
+- **BDRs de empresas estrangeiras (20-F) e ETFs (08/11/2026, à noite)**:
+  - **20-F** (`estrangeira: true` no `universo.json`, `fin_estrangeira`): a SEC só tem o anual, com atraso. O balanço vem do Yahoo (`fundamentals-timeseries`, sem login): uns 4 anos e 5 trimestres, na moeda da empresa.
+    - **Câmbio:** tudo é convertido para dólar pelo câmbio do fim de cada período (`{MOEDA}USD=X` no Yahoo).
+    - **TTM:** a soma dos 4 últimos trimestres. Sem trimestres, fica o último ano, e o JSON leva `aviso`, que a página mostra no topo.
+    - **Ações por ADR:** o nº de ações é contado em ADRs, porque a cotação usada é a do ADR. A proporção sai do P/L do Yahoo (preço do ADR ÷ lucro por ADR) e encaixa numa lista de proporções comuns: TSMC 5, Alibaba e Baidu 8. Pelo valor de mercado não dá certo, porque o Yahoo calcula com a ação de casa e o ADR da TSMC tem uns 15% de ágio. Com prejuízo, usa o valor de mercado.
+  - **ETFs** (`tipo: etf`, `montar_etf`, `renderEtf` no `acao.html`): CODBDI 14. Nome pelo Yahoo (`nome_etf` limpa o nome longo), segmento pelo nome (`ETF_TIPOS`), administrador, proventos e desdobramentos pelo `GetListedSupplementFunds` da B3 (typeFund 20).
+  - **Lista:** `VERSAO = 3` no `universo.py`, para refazer a lista na hora.
 - **Ficaram de fora**:
   - units;
   - FIIs sem ISIN no informe da CVM (uns 15%);
-  - BDRs de empresas que entregam 20-F;
+  - BDRs de empresas que não entregam balanço à SEC (SK Hynix);
   - o tipo `eua`.
 - **Limite da fonte**: algumas empresas americanas aparecem com o balanço atrasado porque a própria base da SEC (`companyfacts`) ainda não trouxe os 10-Q mais novos. Em 08/11/2026, o Citi estava em dez/2025 e a Southern em mar/2026. O robô usa o mais recente que existe; não é erro do código.
 - **Testes de 08/11/2026** (no computador, com `--so`): 22 ativos variados, 20 BDRs de anos fiscais e bancos diferentes e 90 sorteados (30 ações, 30 FIIs e 30 BDRs, de muito a pouco negociados). Todos saíram sem erro. Com os 88 ativos novos, o histórico desde 2009 levou uns 3 minutos e o pico de memória ficou em 1,2 GB.

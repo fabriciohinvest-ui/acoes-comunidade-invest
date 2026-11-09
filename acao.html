@@ -161,6 +161,7 @@ h4.tech{font-size:13.5px;margin:14px 0 0;color:var(--mu);font-weight:600}
 .lock .lockImp{display:block;color:var(--fg);margin-top:8px}
 @media (max-width:760px){.trmE{grid-template-columns:minmax(0,1fr) auto 26px}.trmX{grid-column:3}.cmpQuemC ul{grid-template-columns:1fr 1fr}}
 @media (max-width:420px){.cmpQuemC ul{grid-template-columns:1fr}}
+.aviso{border:1px solid var(--line);border-left:4px solid var(--c3);border-radius:10px;background:var(--s);padding:12px 16px;margin:0 0 14px}.aviso b{font-size:14px}.aviso p{font-size:13.5px;color:var(--mu);margin:4px 0 0;line-height:1.45}
 </style>
 </head>
 <body>
@@ -388,6 +389,7 @@ function sec(id,titulo,ctrls,corpo,prev){
   return`<section class="sec ${prev?prev+(st.ab[id]?'':' fechado'):''}" id="${id}"><div class="sh"><h2>${titulo}</h2><div class="ctrls">${ctrls||''}</div></div><div class="sb">${corpo}</div>${prev?`<button class="mais" data-mais="${id}">${st.ab[id]?'Ver menos ▴':'Ver mais ▾'}</button>`:''}</section>`}
 function render(){
   if(A.tipo==='fii')return renderFii();
+  if(A.tipo==='etf')return renderEtf();
   M=A.moeda_balanco==='USD'?'US$':'R$';const I=A.indicadores,bdr=A.tipo==='bdr';
   const c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],v12=c.find(r=>r[0]>=String(+u[0].slice(0,4)-1)+u[0].slice(4));
   document.title=`${A.ticker}: ${A.nome} · Comunidade Invest`;
@@ -395,6 +397,7 @@ function render(){
   $('#nav').innerHTML=`<a class="volta" href="${PESQUISA}">← Pesquisa</a><b>${A.ticker}</b>`+secs.map(([i,t])=>`<a data-go="${i}">${t}</a>`).join('');
   const indDisp=IND.flatMap(g=>g[1]).filter(([k])=>isNum(I[k])||Object.values(A.hist_indicadores).some(h=>isNum(h[k])));
   $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">${A.setor} · ${A.segmento}${bdr?' · BDR':''} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
+  ${A.aviso?`<div class="aviso" role="note"><b>Sobre os números desta empresa</b><p>${A.aviso}</p></div>`:''}
   <div class="kp"><div><span>Cotação</span><b class="num">${brl(A.preco)}</b><small class="num ${u[4]>=ant[4]?'pos':'neg'}">${(u[4]>=ant[4]?'+':'')+N2.format((u[4]/ant[4]-1)*100)}% no dia</small></div>
   <div><span>Variação (12M)</span><b class="num ${u[4]>=v12[4]?'pos':'neg'}">${N2.format((u[4]/v12[4]-1)*100)}%</b></div><div><span>P/L</span><b class="num">${F.x(I.pl)}</b></div><div><span>P/VP</span><b class="num">${F.x(I.pvp)}</b></div><div><span>DY</span><b class="num">${F.p(I.dy)}</b></div></div>
   ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><div class="tecbox"><button class="techead" id="tecTg" aria-expanded="'+(st.tecAb?'true':'false')+'"><span>Análise técnica</span><small>'+(st.tecAb?'Ver menos ▴':'Ver mais ▾')+'</small></button><div id="tecCorpo"'+(st.tecAb?'':' hidden')+'><div class="tec" id="tec" role="group" aria-label="Análise técnica"><span class="tl">No gráfico do preço:</span>'+tecBotoes()+'</div><div id="gTec"></div></div></div><p class="note">Clique no gráfico e arraste para o lado para ver quanto o preço subiu ou caiu entre duas datas (só o preço, sem proventos). Preço de fechamento na B3, corrigido por desdobramentos e grupamentos. Indicadores técnicos descrevem o comportamento passado do preço; não são recomendação de compra ou venda.</p>')}
@@ -414,7 +417,7 @@ function render(){
   ${sec('patrimonio','Evolução do patrimônio · '+A.nome,seg('pt',[['5','5A'],['10','10A'],['max','MAX']],'pt'),'<div id="gPt"></div>')}
   ${secExtrasGraf()}
   ${secCom()}
-  <footer><p><b>Fontes:</b> ${bdr?`B3 (cotação e proventos do BDR), SEC/EUA (balanços da ${A.razao}), Yahoo Finance (cotação nos EUA), Banco Central (dólar PTAX, CDI e IPCA), B3 (índices), SEC (documentos da empresa)`:'B3 (cotações, proventos, desdobramentos e índices), CVM (balanços DFP e ITR, free float no Formulário de Referência, comunicados e fatos relevantes), Banco Central (CDI e IPCA), Yahoo Finance (IVVB11)'}. Balanço mais recente: ${dBR(A.balanco_ref)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
+  <footer><p><b>Fontes:</b> ${bdr?`B3 (cotação e proventos do BDR), ${A.aviso?`Yahoo Finance (balanços da ${A.razao} e cotação nos EUA)`:`SEC/EUA (balanços da ${A.razao}), Yahoo Finance (cotação nos EUA)`}, Banco Central (dólar PTAX, CDI e IPCA), B3 (índices), SEC (documentos da empresa)`:'B3 (cotações, proventos, desdobramentos e índices), CVM (balanços DFP e ITR, free float no Formulário de Referência, comunicados e fatos relevantes), Banco Central (CDI e IPCA), Yahoo Finance (IVVB11)'}. Balanço mais recente: ${dBR(A.balanco_ref)}. Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
   <p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>`;
   ligar();ligarBusca();
   ['cot','ind','hi','dv','prov','rad','po','inf','rl','lc','res','pt','bal'].forEach(desenhar);ligarExtras();
@@ -445,7 +448,8 @@ function ligar(){
   $$('[data-seg]').forEach(s=>s.querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=s.dataset.seg;st[k]=['hi','res','fha'].includes(k)?+b.dataset.v:b.dataset.v;s.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));DES(k)}));
   $$('[data-mais]').forEach(b=>b.onclick=()=>{const id=b.dataset.mais,el=document.getElementById(id);st.ab[id]=!st.ab[id];el.classList.toggle('fechado',!st.ab[id]);b.textContent=st.ab[id]?'Ver menos ▴':'Ver mais ▾';
     if(id==='dividendos'){st.pg=0;DES('prov')}if(!st.ab[id]&&el.getBoundingClientRect().top<0)el.scrollIntoView({block:'start'})});
-  const sel=$('#selInd'),tem=k=>[...sel.options].some(o=>o.value===k);
+  const sel=$('#selInd');if(!sel)return; // ETF: sem indicadores de balanco
+  const tem=k=>[...sel.options].some(o=>o.value===k);
   const mapa=k=>tem(k)?k:fii?({ultimo_rendimento:'rend',rend_medio_12m:'rend',rend_12m:'rend',dy_medio_5a:'dy',rent_12m:'dy',valor_mercado:'pl',liquidez_diaria:'pl',cotas:'cotistas',taxa_adm_12m:'pl'})[k]:null;
   const marca=()=>$$('[data-ind]').forEach(x=>x.classList.toggle('on',mapa(x.dataset.ind)===st.ind));
   $$('[data-ind]').forEach(b=>b.onclick=e=>{if(e.target.closest('.aj'))return;const k=mapa(b.dataset.ind);if(k){st.ind=k;sel.value=k;marca();DES(fii?'find':'ind')}ir('gind')});
@@ -520,6 +524,25 @@ const FIND=[['Principais',[['dy','Dividend Yield (12M)','p','Rendimentos com dat
  ['Mais dados',[['liquidez_diaria','Liquidez média diária','g'],['valor_mercado','Valor de mercado','g'],['pl','Patrimônio líquido','g'],['cotistas','Nº de cotistas','n'],['cotas','Cotas emitidas','n'],['taxa_adm_12m','Taxa de adm. (12M)','p','Despesa com taxa de administração nos últimos 12 informes, em % do patrimônio'],['dy_medio_5a','DY médio 5 anos','p'],['rend_12m','Rendimentos (12M)','r']]]];
 const N3=new Intl.NumberFormat('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:3}),brl3=v=>isNum(v)?'R$ '+N3.format(v):'-';
 const FF={...F,r:brl3,g:v=>grande(v,'R$'),n:v=>isNum(v)?N0.format(v):'-'};
+// ===== ETF (fundo de indice): sem balanco; cotacao, proventos e os graficos que usam so o preco =====
+function renderEtf(){
+  M='R$';const I=A.indicadores,f=A.info,c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],temProv=A.proventos.length>0;
+  document.title=`${A.ticker}: ${A.nome} · Comunidade Invest`;
+  const secs=[['cotacao','Cotação'],['sobre','ETF'],...(temProv?[['dividendos','Proventos']]:[]),['graficos','Gráficos'],['assinantes','Assinantes']];
+  $('#nav').innerHTML=`<a class="volta" href="${PESQUISA}">← Pesquisa</a><b>${A.ticker}</b>`+secs.map(([i,t])=>`<a data-go="${i}">${t}</a>`).join('');
+  const pc=v=>`<b class="num ${v>=0?'pos':'neg'}">${(v>=0?'+':'')+N2.format(v)}%</b>`;
+  $('#app').innerHTML=`<div class="hd"><div style="display:flex;gap:14px;align-items:center"><div class="logo">${A.ticker.slice(0,4)}</div><div><h1>${A.ticker} · ${A.nome}</h1><div class="sub">ETF · ${A.segmento} · fechamento de ${dBR(A.fechamento)}</div></div></div>${buscaHTML()}</div>
+  <div class="kp"><div><span>Cotação</span><b class="num">${brl(A.preco)}</b><small class="num ${u[4]>=ant[4]?'pos':'neg'}">${(u[4]>=ant[4]?'+':'')+N2.format((u[4]/ant[4]-1)*100)}% no dia</small></div>
+  <div><span>Variação (12M)</span>${pc(I.var_12m)}</div>${temProv?`<div><span>Rentabilidade (12M)</span>${pc(I.rent_12m)}<small>cota + proventos</small></div><div><span>Dividend Yield</span><b class="num">${F.p(I.dy)}</b></div>`:''}<div><span>Liquidez diária</span><b class="num">${grande(I.liquidez_diaria,'R$')}</b><small>média do último mês</small></div></div>
+  ${sec('cotacao','Cotação '+A.ticker,seg('cot',[['1m','1M'],['6m','6M'],['1a','1A'],['5a','5A'],['10a','10A'],['max','MAX']],'cot'),'<div id="gCot"></div><div class="tecbox"><button class="techead" id="tecTg" aria-expanded="'+(st.tecAb?'true':'false')+'"><span>Análise técnica</span><small>'+(st.tecAb?'Ver menos ▴':'Ver mais ▾')+'</small></button><div id="tecCorpo"'+(st.tecAb?'':' hidden')+'><div class="tec" id="tec" role="group" aria-label="Análise técnica"><span class="tl">No gráfico do preço:</span>'+tecBotoes()+'</div><div id="gTec"></div></div></div><p class="note">Clique no gráfico e arraste para o lado para ver quanto o preço subiu ou caiu entre duas datas (só o preço, sem proventos). Preço de fechamento na B3, corrigido por desdobramentos e grupamentos. Indicadores técnicos descrevem o comportamento passado do preço; não são recomendação de compra ou venda.</p>')}
+  ${sec('sobre','Informações sobre o ETF','',`<p class="note" style="margin:0 0 12px">O ETF é um fundo negociado na bolsa como uma ação. Ele segue um índice: cada cota acompanha o sobe e desce de uma cesta de ativos. Não tem balanço, lucro ou P/L como uma empresa.</p><div class="inf">${infHTML([['Nome completo',f.nome_completo],['Tipo',A.segmento],['Administrador',f.administrador||'-'],['Na bolsa desde',f.listado_desde?dBR(f.listado_desde):'-'],['Liquidez média diária',grande(I.liquidez_diaria,'R$')],['Proventos',temProv?`${brl3(I.prov_12m)} por cota nos últimos 12 meses`:'Não distribui: o que o fundo recebe fica na cota'],['Código ISIN',f.isin]])}</div>`)}
+  ${temProv?sec('dividendos','Proventos · '+A.ticker,'','<div class="tw" id="tProv"></div><div class="pg" id="pg"></div>','l5'):''}
+  <h2 class="divisor" id="graficos">Gráficos</h2>
+  ${secExtrasGraf()}
+  <footer><p><b>Fontes:</b> B3 (cotações, proventos, desdobramentos e índices), Yahoo Finance (nome do fundo e proventos antigos), Banco Central (CDI e IPCA). Atualizado em ${A.atualizado.slice(8,10)}/${A.atualizado.slice(5,7)} às ${A.atualizado.slice(11)}.</p>
+  <p class="legal">Conteúdo educativo da Comunidade Invest. Dados públicos e indicadores calculados; não é recomendação de compra ou venda.</p></footer>`;
+  ligar();ligarBusca();desenhar('cot');if(temProv)desenhar('prov');ligarExtras();
+}
 function renderFii(){
   M='R$';const I=A.indicadores,f=A.info;
   const c=A.cotacao,u=c[c.length-1],ant=c[c.length-2],v12=c.find(r=>r[0]>=String(+u[0].slice(0,4)-1)+u[0].slice(4));
@@ -867,10 +890,10 @@ function secExtrasGraf(){
   +sec('gdd','Quanto caiu e quanto demorou para voltar',seg('dd',[['1','1A'],['2','2A'],['5','5A'],['10','10A'],['max','MAX']],'dd'),`<div class="box2 b3" id="ddBox" style="margin:0 0 12px"></div><div id="gDd"></div><div class="tw" id="ddTab" style="margin-top:12px"></div><p class="note" id="ddNota"></p>`)
   +(A.tipo!=='fii'?'':sec('grenda','Renda x inflação',``,`<p class="note" style="margin:0 0 6px">${A.tipo==='fii'?'Rendimentos':'Proventos'} pagos por ${A.tipo==='fii'?'cota':'ação'} em cada ano, no valor da época e corrigidos pela inflação até hoje. Quando a barra corrigida diminui com o tempo, a renda não acompanhou a inflação.</p><div id="gRenda"></div><h3 style="font-size:16px;margin:18px 0 4px">Quem comprou em cada ano recebe hoje</h3><div class="tw" id="yocTab"></div><p class="note" id="rendaNota"></p>`,'l4'))
   +'<h2 class="divisor" id="assinantes">Para assinantes</h2>'
-  +sec('gterm','Termômetro: hoje comparado ao próprio histórico',seg('trm',[['1','1A'],['2','2A'],['5','5A'],['10','10A']],'trm'),`<p class="note" style="margin:0 0 4px">Traço grande = hoje. Traço pequeno = média. A barra vai do menor ao maior valor do próprio ${A.tipo==='fii'?'fundo':'ativo'} no período${A.tipo==='fii'?'':' (os múltiplos de preço no fim de cada mês, com o preço do mês e o último balanço publicado; ROE, margens e endividamento ano a ano)'}. Mostra se o número está alto ou baixo para o padrão dele, não se é hora de comprar ou vender.</p><div id="gTerm"></div>`,'tm')
+  +(A.tipo==='etf'?'':sec('gterm','Termômetro: hoje comparado ao próprio histórico',seg('trm',[['1','1A'],['2','2A'],['5','5A'],['10','10A']],'trm'),`<p class="note" style="margin:0 0 4px">Traço grande = hoje. Traço pequeno = média. A barra vai do menor ao maior valor do próprio ${A.tipo==='fii'?'fundo':'ativo'} no período${A.tipo==='fii'?'':' (os múltiplos de preço no fim de cada mês, com o preço do mês e o último balanço publicado; ROE, margens e endividamento ano a ano)'}. Mostra se o número está alto ou baixo para o padrão dele, não se é hora de comprar ou vender.</p><div id="gTerm"></div>`,'tm'))
   +sec('gseg','Quanto tempo segurar',seg('sg',[['1','1A'],['2','2A'],['5','5A'],['10','10A']],'sg'),`<p class="note" style="margin:0 0 8px">Se alguém tivesse comprado ${A.ticker} em qualquer dia do histórico, como estaria depois de 1, 2, 5 ou 10 anos? Conta o preço e os ${A.tipo==='fii'?'rendimentos':'proventos'}. "Média" é a média de todas as datas de compra. Toque num prazo para ver o gráfico.</p><div class="sgc" id="sgTab"></div><h3 style="font-size:15px;margin:16px 0 2px" id="sgTit"></h3><div id="gSg"></div><p class="note" id="sgNota"></p>`)
-  +sec('gsetor','Lado a lado com o setor','','<div id="gSetor"></div>','tm')
-  +sec('gdonos',A.tipo==='fii'?'Quem são os cotistas':A.tipo==='bdr'?'Número de ações':'Quem são os donos e o número de ações',(A.tipo==='fii'?seg('dn',[['cotistas','Cotistas'],['cotas','Cotas emitidas']],'dn'):'')+seg('na',[['2','2A'],['5','5A'],['10','10A']],'na'),'<div id="gDonos"></div>');
+  +(A.tipo==='etf'?'':sec('gsetor','Lado a lado com o setor','','<div id="gSetor"></div>','tm'))
+  +(A.tipo==='etf'?'':sec('gdonos',A.tipo==='fii'?'Quem são os cotistas':A.tipo==='bdr'?'Número de ações':'Quem são os donos e o número de ações',(A.tipo==='fii'?seg('dn',[['cotistas','Cotistas'],['cotas','Cotas emitidas']],'dn'):'')+seg('na',[['2','2A'],['5','5A'],['10','10A']],'na'),'<div id="gDonos"></div>'));
 }
 const EXTRA={cmp:desenharCmp,trm:desenharTerm,dd:desenharDd,sg:desenharSg,com:desenharCom,renda:desenharRenda,rosca:desenharRosca,dn:desenharDonos,na:desenharDonos,setor:desenharSetor};
 function ligarExtras(){
